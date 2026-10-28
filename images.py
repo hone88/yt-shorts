@@ -1,6 +1,6 @@
 """シーンごとの背景画像を作る（use_images が true のチャンネルだけ）。
 OPENAI_API_KEY があれば画像生成APIで作り、なければ色のグラデーションで代わりの背景を作る。"""
-import base64, json, os, sys, pathlib, urllib.request, hashlib, shutil
+import base64, json, os, sys, pathlib, urllib.request, hashlib, shutil, subprocess
 from PIL import Image, ImageDraw, ImageFilter, ImageOps
 
 IMAGE_MODEL = os.environ.get("IMAGE_MODEL", "gpt-image-1")
@@ -45,8 +45,21 @@ def main():
     if script.get("id") and clip_src.is_dir():
         dst = script_path.parent / "clips"; dst.mkdir(exist_ok=True)
         n = 0
+        scenes_n = len(script["scenes"])
         for f in sorted(clip_src.iterdir()):
-            if f.suffix.lower() in (".mp4", ".mov", ".webm"):
+            if f.suffix.lower() in (".mp4", ".mov", ".webm") and not f.stem[:1].isdigit():
+                # 1本の長い動画（all.mp4 など、名前が数字で始まらないもの）は、シーンの数で均等に切り分ける
+                total = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
+                                              "-of", "csv=p=0", str(f)], capture_output=True, text=True).stdout)
+                step = total / scenes_n
+                for k in range(scenes_n):
+                    piece = dst / f"{k + 1:02d}.mp4"
+                    if not (clip_src / piece.name).exists():
+                        subprocess.run(["ffmpeg", "-y", "-ss", f"{k * step:.3f}", "-i", str(f), "-t", f"{step:.3f}",
+                                        "-an", "-c:v", "libx264", "-preset", "veryfast", "-pix_fmt", "yuv420p", str(piece)],
+                                       check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                print(f"{f.name}（{total:.1f}秒）を {scenes_n} シーンに切り分けました")
+            elif f.suffix.lower() in (".mp4", ".mov", ".webm"):
                 shutil.copy(f, dst / f.name.lower()); n += 1
             elif f.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp") and f.stem.isdigit():
                 # 画像を置いた場合は、ゆっくりズームする背景として使う（01.jpg → シーン1）
