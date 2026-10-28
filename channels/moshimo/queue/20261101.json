@@ -1,15 +1,57 @@
 {
   "title": "もしも太陽が突然消えたら、地球はいつ気づく？",
   "description": "太陽が突然消えたら、地球が気づくのは何分後？その後の地球はどうなるのか、時間の流れに沿って考えてみました。\n他に試してほしい「もしも」はコメントで！\n\n※思考実験です。実際の現象とは異なる部分があります",
-  "tags": ["もしも", "思考実験", "科学", "雑学", "太陽", "宇宙"],
+  "tags": [
+    "もしも",
+    "思考実験",
+    "科学",
+    "雑学",
+    "太陽",
+    "宇宙"
+  ],
   "topic": "もしも太陽が消えたら、地球はいつ気づくか",
   "scenes": [
-    {"time": "0秒", "caption": "太陽が突然消える", "narration": "もしも、太陽が突然消えたら？", "image_prompt": "The sun glowing over a calm ocean horizon, then suddenly vanishing, leaving an empty sky, static wide shot, vertical 9:16, 5 seconds"},
-    {"time": "8分20秒後", "caption": "まだ気づかない", "narration": "太陽の光が地球に届くまで、約8分20秒。それまでの間、僕たちは何も知らずにいつもの昼を過ごしています。", "image_prompt": "People-free sunny city park on a normal bright afternoon, gentle breeze in the trees, slow pan, vertical 9:16, 5 seconds"},
-    {"time": "8分20秒後", "caption": "空が真っ暗に", "narration": "そして8分20秒後、空が一気に真っ暗に。太陽の光を反射している月も、同時に見えなくなります。", "image_prompt": "A bright daytime sky rapidly turning to deep night over a quiet town, streetlights flickering on, static shot, vertical 9:16, 5 seconds"},
-    {"time": "同じ瞬間", "caption": "地球がまっすぐ進む", "narration": "重力の変化も光と同じ速さで伝わるので、地球はこの瞬間、太陽のまわりを回るのをやめて、まっすぐ宇宙へ進み始めます。", "image_prompt": "Planet Earth drifting alone through dark empty space in a straight line, distant stars, slow tracking shot, vertical 9:16, 5 seconds"},
-    {"time": "1週間後", "caption": "世界が凍り始める", "narration": "植物は光合成ができなくなり、1週間ほどで、地表の平均気温は氷点下まで下がると考えられています。", "image_prompt": "Frost slowly spreading across leaves and grass in darkness, cold blue light, macro slow push-in, vertical 9:16, 5 seconds"},
-    {"time": "数か月後", "caption": "海にふたができる", "narration": "海の表面は凍りますが、その氷がふたの役目をして、深い海はかなり長い間、凍らずに残ると考えられています。", "image_prompt": "A vast frozen ocean surface under a black starry sky, faint blue glow beneath the ice, slow aerial move, vertical 9:16, 5 seconds"},
-    {"time": "その後", "caption": "深海で生き残る", "narration": "地球の内側の熱で温められた深海では、生き物が生き延びるかもしれません。他に試してほしい「もしも」は、コメントで教えてください。", "image_prompt": "Deep sea hydrothermal vent releasing warm shimmering water, small glowing creatures drifting nearby, slow push-in, vertical 9:16, 5 seconds"}
+    {
+      "time": "0秒",
+      "caption": "太陽が突然消える",
+      "narration": "もしも、太陽が突然消えたら？",
+      "image_prompt": "The sun glowing over a calm ocean horizon, then suddenly vanishing, leaving an empty sky, static wide shot, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "8分間",
+      "caption": "まだ気づかない",
+      "narration": "太陽の光が地球に届くまで、約8分20秒。それまでの間、僕たちは何も知らずにいつもの昼を過ごしています。",
+      "image_prompt": "An empty sunny city park on a normal bright afternoon, gentle breeze in the trees, slow pan, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "8分20秒後",
+      "caption": "空が真っ暗に",
+      "narration": "そして8分20秒後、空が一気に真っ暗に。太陽の光を反射している月も、同時に見えなくなります。",
+      "image_prompt": "A bright daytime sky rapidly turning to deep night over a quiet town, streetlights flickering on, static shot, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "同じ瞬間",
+      "caption": "地球がまっすぐ進む",
+      "narration": "重力の変化も光と同じ速さで伝わるので、地球はこの瞬間、太陽のまわりを回るのをやめて、まっすぐ宇宙へ進み始めます。",
+      "image_prompt": "Planet Earth drifting alone through dark empty space in a straight line, distant stars, slow tracking shot, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "1週間後",
+      "caption": "世界が凍り始める",
+      "narration": "植物は光合成ができなくなり、1週間ほどで、地表の平均気温は氷点下まで下がると考えられています。",
+      "image_prompt": "Frost slowly spreading across leaves and grass in darkness, cold blue light, macro slow push-in, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "数か月後",
+      "caption": "海にふたができる",
+      "narration": "海の表面は凍りますが、その氷がふたの役目をして、深い海はかなり長い間、凍らずに残ると考えられています。",
+      "image_prompt": "A vast frozen ocean surface under a black starry sky, faint blue glow beneath the ice, slow aerial move, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "その後",
+      "caption": "深海で生き残る",
+      "narration": "地球の内側の熱で温められた深海では、生き物が生き延びるかもしれません。他に試してほしい「もしも」は、コメントで教えてください。",
+      "image_prompt": "Deep sea hydrothermal vent releasing warm shimmering water, small glowing creatures drifting nearby, slow push-in, vertical 9:16, 5 seconds"
+    }
   ]
 }
