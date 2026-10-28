@@ -1,0 +1,15 @@
+{
+  "title": "もしも月が突然消えたら？",
+  "description": "月が突然消えたら、地球には何が起きるのか。1.3秒後から数百万年後まで、時間の流れに沿って考えてみました。\n他に試してほしい「もしも」はコメントで！\n\n※思考実験です。実際の現象とは異なる部分があります",
+  "tags": ["もしも", "思考実験", "科学", "雑学", "月", "宇宙"],
+  "topic": "もしも月が突然消えたら",
+  "scenes": [
+    {"time": "0秒", "caption": "月が突然消える", "narration": "もしも、月が突然消えたら？", "image_prompt": "Full moon glowing over a quiet night landscape, slowly fading away into an empty dark sky, static wide shot, vertical 9:16, 5 seconds"},
+    {"time": "1.3秒後", "caption": "1.3秒遅れで気づく", "narration": "月の光が地球に届くまで、約1.3秒。僕たちは、月が消えたことに1.3秒遅れで気づきます。", "image_prompt": "A beam of soft moonlight crossing the darkness of space toward Earth, slow tracking shot, vertical 9:16, 5 seconds"},
+    {"time": "その夜", "caption": "夜が真っ暗に", "narration": "満月の夜でも、外は真っ暗。そのかわり、夜空の星は今よりずっとよく見えるようになります。", "image_prompt": "A very dark countryside at night under a sky full of stars and the Milky Way, slow tilt up, vertical 9:16, 5 seconds"},
+    {"time": "数時間後", "caption": "潮が小さくなる", "narration": "潮の満ち引きを起こす力の多くは、月の重力によるもの。残るのは太陽の分だけで、満ち引きはずっと小さくなります。", "image_prompt": "Calm low ocean tide gently lapping on a wide sandy beach at dusk, slow dolly forward, vertical 9:16, 5 seconds"},
+    {"time": "数か月後", "caption": "生き物が迷う", "narration": "月の満ち欠けに合わせて、一斉に卵を産むサンゴもいます。そんな生き物たちのリズムが、乱れてしまうかもしれません。", "image_prompt": "Underwater coral reef at night with tiny particles drifting in the water, gentle current, slow push-in, vertical 9:16, 5 seconds"},
+    {"time": "数百万年後", "caption": "季節が変わる？", "narration": "月は、地球の傾きを安定させる役目もしていると考えられています。長い時間がたつと、季節が今より極端になる可能性も。", "image_prompt": "Planet Earth from space slowly wobbling on its axis with sunlight sweeping across, slow orbit move, vertical 9:16, 5 seconds"},
+    {"time": "その後", "caption": "月は守り神だった", "narration": "いつも見上げていた月は、地球の守り神だったのかもしれません。他に試してほしい「もしも」は、コメントで教えてください。", "image_prompt": "A lone person silhouetted on a hill looking up at a starry moonless night sky, peaceful mood, static shot, vertical 9:16, 5 seconds"}
+  ]
+}
