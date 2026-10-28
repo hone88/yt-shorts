@@ -144,7 +144,10 @@ def main():
     lst = base / "segments.txt"
     lst.write_text("".join(f"file '{p.resolve()}'\n" for p in segs), encoding="utf-8")
     out = base / "short.mp4"
-    run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(lst), "-c", "copy", "-movflags", "+faststart", str(out)])
+    # 声が小さくならないよう、ショート動画の標準的な音量（-14 LUFS）にそろえる
+    run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(lst), "-c:v", "copy",
+         "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-c:a", "aac", "-b:a", "192k", "-ar", "44100",
+         "-movflags", "+faststart", str(out)])
     dur = duration(out)
     tags = " ".join("#" + t for t in script.get("tags", []))
     checks = "\n".join(f"- シーン{c.get('scene')}: {c.get('problem')} → {c.get('fix')}" for c in script.get("factcheck", [])) or "- なし"
