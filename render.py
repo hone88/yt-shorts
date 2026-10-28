@@ -156,6 +156,7 @@ def main():
 
 【概要欄】
 {script['description']}
+{('▶ ほかの「もしも」はこちら ' + style['handle']) if style.get('handle') else ''}
 
 {tags}
 
