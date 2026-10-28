@@ -41,20 +41,27 @@ def main():
     style = json.loads((pathlib.Path("channels") / script["channel"] / "style.json").read_text(encoding="utf-8"))
     # 自分で作った動画クリップ（channels/<名前>/clips/<台本ID>/01.mp4 ...）があればそれを使う
     clip_src = pathlib.Path("channels") / script["channel"] / "clips" / str(script.get("id", ""))
+    own_images = {}
     if script.get("id") and clip_src.is_dir():
         dst = script_path.parent / "clips"; dst.mkdir(exist_ok=True)
         n = 0
         for f in sorted(clip_src.iterdir()):
             if f.suffix.lower() in (".mp4", ".mov", ".webm"):
                 shutil.copy(f, dst / f.name.lower()); n += 1
-        print(f"自作クリップ {n} 本を背景に使います（足りないシーンは画像の背景）")
-    if not style.get("use_images"):
+            elif f.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp") and f.stem.isdigit():
+                # 画像を置いた場合は、ゆっくりズームする背景として使う（01.jpg → シーン1）
+                own_images[int(f.stem) - 1] = f
+        print(f"自作クリップ {n} 本・自作画像 {len(own_images)} 枚を背景に使います（足りないシーンは仮の背景）")
+    if not style.get("use_images") and not own_images:
         print("このチャンネルは背景画像なし")
         return
     out = script_path.parent / "images"; out.mkdir(exist_ok=True)
     use_api = bool(os.environ.get("OPENAI_API_KEY"))
     for i, s in enumerate(script["scenes"]):
         p = out / f"{i:02d}.png"
+        if i in own_images:
+            Image.open(own_images[i]).convert("RGB").save(p)
+            continue
         prompt = s.get("image_prompt", s["caption"])
         if use_api:
             try:
