@@ -1,0 +1,49 @@
+{
+  "title": "もしも地球の自転が5秒だけ止まったら？",
+  "description": "地球の自転が、もしも5秒だけ止まったら何が起きるのか。時間の流れに沿って考えてみました。\n他に試してほしい「もしも」はコメントで！\n\n※思考実験です。実際の現象とは異なる部分があります",
+  "tags": [
+    "もしも",
+    "思考実験",
+    "科学",
+    "雑学",
+    "地球"
+  ],
+  "scenes": [
+    {
+      "time": "0秒",
+      "caption": "自転が5秒止まる",
+      "narration": "もしも、地球の自転が5秒だけ止まったら？",
+      "image_prompt": "Slow cinematic push-in on planet Earth from orbit, clouds suddenly freezing in place, soft sunlight, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "0.1秒後",
+      "caption": "地面だけが止まる",
+      "narration": "止まるのは地面だけ。日本あたりの僕たちは、時速1400キロ近くのまま東へ動き続けます。",
+      "image_prompt": "Wide shot of an empty city street at dawn, fierce wind blowing debris and leaves sharply to the right, handheld camera shake, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "1秒後",
+      "caption": "空気も止まらない",
+      "narration": "空気も同じ速さで動き続けるので、地上には観測史上最大の台風をはるかに超える暴風が吹き荒れます。",
+      "image_prompt": "A towering wall of dust and wind rolling across open plains toward the camera, dark dramatic sky, low-angle shot, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "2秒後",
+      "caption": "海が押し寄せる",
+      "narration": "海の水も止まれません。巨大な津波となって、大陸の東側の海岸へ押し寄せます。",
+      "image_prompt": "A colossal ocean wave rising and surging toward a distant coastline under storm clouds, camera slowly tilting up, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "5秒後",
+      "caption": "自転が再開",
+      "narration": "そして5秒後、自転が再開。でも、すでに動き出した空気と海は、すぐには止まりません。",
+      "image_prompt": "Earth from orbit with huge spiral storm systems swirling across the continents, slow orbit camera move, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "その後",
+      "caption": "たった5秒で",
+      "narration": "たった5秒でも、地球の景色は大きく変わってしまうと考えられています。他に試してほしい「もしも」は、コメントで教えてください。",
+      "image_prompt": "Calm sunrise over a quiet landscape after a storm, mist drifting, slow dolly forward, hopeful mood, vertical 9:16, 5 seconds"
+    }
+  ]
+}

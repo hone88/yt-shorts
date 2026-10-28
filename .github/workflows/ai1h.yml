@@ -1,0 +1,16 @@
+name: AI副業チャンネル（月・水・金）
+
+on:
+  schedule:
+    - cron: "13 22 * * 0,2,4"   # 日本時間 月・水・金 7:13
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  make:
+    uses: ./.github/workflows/_make.yml
+    with:
+      channel: ai1h
+    secrets: inherit

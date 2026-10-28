@@ -1,0 +1,44 @@
+name: もしもチャンネル（クリップをアップしたら作る）
+
+# channels/moshimo/clips/<台本ID>/ に動画クリップをアップロードすると、
+# 同じIDの台本（channels/moshimo/queue/<台本ID>.json）で文字と声を入れた動画を作る。
+on:
+  push:
+    paths:
+      - "channels/moshimo/clips/**"
+  workflow_dispatch:
+    inputs:
+      script_id:
+        description: "台本ID（例 20261030）。空なら queue の一番古い台本を、仮の背景で作る"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  find:
+    runs-on: ubuntu-latest
+    outputs:
+      id: ${{ steps.id.outputs.id }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: id
+        run: |
+          if [ -n "${{ github.event.inputs.script_id }}" ]; then
+            ID="${{ github.event.inputs.script_id }}"
+          else
+            ID=$(git diff --name-only HEAD~1 HEAD | grep '^channels/moshimo/clips/' | cut -d/ -f4 | grep -v '^\.gitkeep$' | head -1)
+          fi
+          echo "台本ID: $ID"
+          echo "id=$ID" >> "$GITHUB_OUTPUT"
+
+  make:
+    needs: find
+    uses: ./.github/workflows/_make.yml
+    with:
+      channel: moshimo
+      script_id: ${{ needs.find.outputs.id }}
+    secrets: inherit

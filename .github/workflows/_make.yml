@@ -1,0 +1,72 @@
+name: ショート動画を作る（共通）
+
+on:
+  workflow_call:
+    inputs:
+      channel:
+        required: true
+        type: string
+      script_id:
+        required: false
+        type: string
+        default: ""
+    secrets:
+      ANTHROPIC_API_KEY:
+        required: false
+      OPENAI_API_KEY:
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  make:
+    runs-on: ubuntu-latest
+    services:
+      voicevox:
+        image: voicevox/voicevox_engine:cpu-latest
+        ports:
+          - 50021:50021
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 必要なソフトを入れる
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          pip install -q pillow
+
+      - name: VOICEVOX の起動を待つ
+        run: |
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:50021/version && exit 0
+            sleep 3
+          done
+          echo "VOICEVOX が起動しませんでした" && exit 1
+
+      - name: 台本 → 画像 → 音声 → 動画
+        env:
+          CHANNEL: ${{ inputs.channel }}
+          SCRIPT_ID: ${{ inputs.script_id }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          VOICEVOX_URL: http://localhost:50021
+          JP_FONT: /usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc
+        run: ./make_short.sh
+
+      - name: 使った台本の移動を保存する
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A channels
+          git diff --cached --quiet || (git commit -m "使った台本を used に移動" && git push)
+
+      - name: 完成した動画をリリースに置く
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          D="out/${{ inputs.channel }}"
+          TAG="${{ inputs.channel }}-$(TZ=Asia/Tokyo date +%Y%m%d-%H%M)"
+          TITLE="[${{ inputs.channel }}] $(python3 -c "import json;print(json.load(open('$D/script.json'))['title'])")"
+          gh release create "$TAG" "$D/short.mp4" "$D/upload_memo.txt" \
+            --title "$TITLE" --notes-file "$D/upload_memo.txt"
