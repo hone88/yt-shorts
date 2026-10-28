@@ -30,13 +30,15 @@ jobs:
           if [ -n "${{ github.event.inputs.script_id }}" ]; then
             ID="${{ github.event.inputs.script_id }}"
           else
-            ID=$(git diff --name-only HEAD~1 HEAD | grep '^channels/moshimo/clips/' | cut -d/ -f4 | grep -v '^\.gitkeep$' | head -1)
+            # clips/<台本ID>/<ファイル> の形でアップされたものだけ拾う（フォルダに入っていないファイルは無視）
+            ID=$(git diff --name-only --diff-filter=AR HEAD~1 HEAD | grep -E '^channels/moshimo/clips/[^/]+/[^/]+$' | cut -d/ -f4 | head -1)
           fi
           echo "台本ID: $ID"
           echo "id=$ID" >> "$GITHUB_OUTPUT"
 
   make:
     needs: find
+    if: needs.find.outputs.id != ''
     uses: ./.github/workflows/_make.yml
     with:
       channel: moshimo

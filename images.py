@@ -1,7 +1,7 @@
 """シーンごとの背景画像を作る（use_images が true のチャンネルだけ）。
 OPENAI_API_KEY があれば画像生成APIで作り、なければ色のグラデーションで代わりの背景を作る。"""
 import base64, json, os, sys, pathlib, urllib.request, hashlib, shutil
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter, ImageOps
 
 IMAGE_MODEL = os.environ.get("IMAGE_MODEL", "gpt-image-1")
 STYLE = "cinematic still, dramatic natural lighting, highly detailed, no text, no letters, no logos, no people's faces in close-up"
@@ -60,7 +60,7 @@ def main():
     for i, s in enumerate(script["scenes"]):
         p = out / f"{i:02d}.png"
         if i in own_images:
-            Image.open(own_images[i]).convert("RGB").save(p)
+            ImageOps.exif_transpose(Image.open(own_images[i])).convert("RGB").save(p)
             continue
         prompt = s.get("image_prompt", s["caption"])
         if use_api:
