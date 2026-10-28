@@ -126,12 +126,17 @@ def main():
         seg = seg_dir / f"{i:02d}.mp4"
         clip = find_clip(base, i)
         if clip:
-            # 自分で作った動画クリップを背景に敷き、文字を重ねる（短ければループ、長ければ切る）
+            # 自分で作った動画クリップを背景に敷き、文字を重ねる。
+            # 声より短いクリップはループさせず（ループすると冒頭に戻る瞬間がチラついて見える）、
+            # ゆっくり再生にして声の長さに合わせる。長いクリップは途中で切る。
             ov_png = img_dir / f"{i:02d}_overlay.png"
             ov.save(ov_png)
-            vf = (f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
-                  f"eq=brightness=-0.12,fps=30,setsar=1[bg];[bg][1:v]overlay=0:0[v]")
-            run(["ffmpeg", "-y", "-stream_loop", "-1", "-i", str(clip), "-i", str(ov_png), "-i", str(wav),
+            stretch = max(1.0, (secs + 0.1) / max(duration(clip), 0.1))
+            vf = (f"[0:v]setpts={stretch:.4f}*(PTS-STARTPTS),"
+                  f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
+                  f"eq=brightness=-0.12,fps=30,setsar=1,tpad=stop_mode=clone:stop_duration=1[bg];"
+                  f"[bg][1:v]overlay=0:0[v]")
+            run(["ffmpeg", "-y", "-i", str(clip), "-i", str(ov_png), "-i", str(wav),
                  "-filter_complex", vf, "-map", "[v]", "-map", "2:a", "-t", f"{secs:.3f}", *enc, str(seg)])
         else:
             png = img_dir / f"{i:02d}.png"

@@ -52,10 +52,13 @@ def main():
                 total = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
                                               "-of", "csv=p=0", str(f)], capture_output=True, text=True).stdout)
                 step = total / scenes_n
+                # 場面の切り替わりはフェードで重なっていることが多いので、前後を少しずつ削って隣の場面が混ざらないようにする
+                margin = min(0.5, step * 0.12)
                 for k in range(scenes_n):
                     piece = dst / f"{k + 1:02d}.mp4"
                     if not (clip_src / piece.name).exists():
-                        subprocess.run(["ffmpeg", "-y", "-ss", f"{k * step:.3f}", "-i", str(f), "-t", f"{step:.3f}",
+                        subprocess.run(["ffmpeg", "-y", "-ss", f"{k * step + margin:.3f}", "-i", str(f),
+                                        "-t", f"{step - 2 * margin:.3f}",
                                         "-an", "-c:v", "libx264", "-preset", "veryfast", "-pix_fmt", "yuv420p", str(piece)],
                                        check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 print(f"{f.name}（{total:.1f}秒）を {scenes_n} シーンに切り分けました")
