@@ -35,7 +35,8 @@ def cover(path):
     im = im.resize((int(im.width * s) + 1, int(im.height * s) + 1), Image.LANCZOS)
     l, t = (im.width - W) // 2, (im.height - H) // 2
     im = im.crop((l, t, l + W, t + H))
-    return ImageEnhance.Brightness(im).enhance(0.62)
+    # 背景はもとの明るさのまま使う（文字は縁取りと字幕の帯で読めるようにしてある）
+    return im
 
 
 def outlined(d, xy, text, f, fill, anchor="mm", width=6):
@@ -134,7 +135,7 @@ def main():
             stretch = max(1.0, (secs + 0.1) / max(duration(clip), 0.1))
             vf = (f"[0:v]setpts={stretch:.4f}*(PTS-STARTPTS),"
                   f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
-                  f"eq=brightness=-0.12,fps=30,setsar=1,tpad=stop_mode=clone:stop_duration=1[bg];"
+                  f"fps=30,setsar=1,tpad=stop_mode=clone:stop_duration=1[bg];"
                   f"[bg][1:v]overlay=0:0[v]")
             run(["ffmpeg", "-y", "-i", str(clip), "-i", str(ov_png), "-i", str(wav),
                  "-filter_complex", vf, "-map", "[v]", "-map", "2:a", "-t", f"{secs:.3f}", *enc, str(seg)])
