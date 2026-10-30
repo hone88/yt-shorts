@@ -1,5 +1,5 @@
 """tools/voice/<名前>.json の各セリフを VOICEVOX で読み上げ、out/voice/<名前>/<リール>/<id>.wav に保存する。
-JSON の形: {"speaker": 8, "speed": 1.15, "reels": {"r1": {"scenes": [{"id": "01", "say": "..."}]}}}"""
+JSON の形: {"speaker": 8, "speed": 1.15, "reels": {"r1": {"scenes": [{"id": "01", "say": "...", "speaker": 3}]}}}（scene の speaker・speed は省略可）"""
 import json, os, sys, pathlib, urllib.request, urllib.parse
 
 URL = os.environ.get("VOICEVOX_URL", "http://localhost:50021")
@@ -25,5 +25,5 @@ for src in sys.argv[1:]:
         out = pathlib.Path("out/voice") / src.stem / reel
         out.mkdir(parents=True, exist_ok=True)
         for s in body["scenes"]:
-            synth(s["say"], data.get("speaker", 8), data.get("speed", 1.1), out / f"{s['id']}.wav")
+            synth(s["say"], s.get("speaker", data.get("speaker", 8)), s.get("speed", data.get("speed", 1.1)), out / f"{s['id']}.wav")
             print(reel, s["id"], "OK")
