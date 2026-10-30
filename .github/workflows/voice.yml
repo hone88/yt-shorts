@@ -1,7 +1,7 @@
 name: 読み上げ音声だけ作る（tools/voice）
 
 # tools/voice/<名前>.json を置く（更新する）と、VOICEVOX で全セリフの音声を作り、
-# Actions の成果物（Artifacts）に voice-<名前> として置く。動画は作らない。
+# Actions の成果物（Artifacts）と、voice-out ブランチの <名前>/ に置く。動画は作らない。
 on:
   push:
     paths:
@@ -11,6 +11,9 @@ on:
       file:
         description: "tools/voice/ の JSON ファイル名（例 dotjp.json）"
         required: true
+
+permissions:
+  contents: write
 
 jobs:
   voice:
@@ -48,3 +51,14 @@ jobs:
           name: voice-${{ steps.f.outputs.name }}
           path: out/voice/${{ steps.f.outputs.name }}
           retention-days: 14
+      - name: voice-out ブランチにも置く（main は汚さない）
+        run: |
+          N="${{ steps.f.outputs.name }}"
+          mkdir -p /tmp/vo && cp -r "out/voice/$N" /tmp/vo/
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git checkout --orphan voice-out
+          git rm -rfq . && git clean -fdq
+          cp -r /tmp/vo/* .
+          git add -A && git commit -qm "読み上げ音声: $N"
+          git push -f origin voice-out
