@@ -1,0 +1,57 @@
+{
+  "title": "もしも重力が1秒だけ消えたら？",
+  "description": "もしも重力が1秒だけ消えたら、人は宇宙に飛ばされる？実は、ほとんど浮きません。その1秒に起きることを、時間の流れに沿って考えてみました。\n他に試してほしい「もしも」はコメントで！\n\n※思考実験です。実際の現象とは異なる部分があります",
+  "tags": [
+    "もしも",
+    "思考実験",
+    "科学",
+    "雑学",
+    "重力",
+    "物理"
+  ],
+  "topic": "もしも重力が1秒だけ消えたら",
+  "scenes": [
+    {
+      "time": "0秒",
+      "caption": "重力が1秒消える",
+      "narration": "もしも、重力が1秒だけ消えたら？",
+      "image_prompt": "A person walking down a city sidewalk at night, feet starting to lift gently off the ground, side tracking shot, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "0.1秒後",
+      "caption": "宇宙へ？→ほぼ浮かない",
+      "narration": "人は宇宙に飛ばされる？……いいえ、ほとんど浮きません。",
+      "image_prompt": "Close-up of a walker's shoes hovering just above the pavement, almost not rising at all, slow push-in, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "0.3秒後",
+      "caption": "浮くのはたった2cm",
+      "narration": "地球は赤道で秒速460メートルも回っているのに、1秒で地面から離れるのは、たった2センチほど。体はまっすぐ進もうとして、丸い地面が少しだけ下に逃げるからです。",
+      "image_prompt": "Earth from space with an arrow showing its rotation, then a macro shot of a tiny gap under a shoe sole, slow zoom, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "0.5秒後",
+      "caption": "ジャンプが止まらない",
+      "narration": "ジャンプ中の人は、落ちてきません。蹴った勢いのまま、上へ上へ進み続けます。",
+      "image_prompt": "A person jumping on a city street and rising past their normal peak without slowing, camera tilting up, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "0.8秒後",
+      "caption": "噴水が空へ",
+      "narration": "投げたボールも、噴水の水も、弧を描かずに、まっすぐ空へ。",
+      "image_prompt": "A thrown ball flying in a straight line, then a plaza fountain whose water shoots straight up without arcing, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "1秒後",
+      "caption": "重力が戻る",
+      "narration": "そして1秒後、重力が戻ります。ジャンプしていた人は、いつもより高いところから落ちてきます。",
+      "image_prompt": "A person high above a city street starts falling back down and lands, camera following, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "？",
+      "caption": "もし戻らなかったら？",
+      "narration": "……もし、重力が戻ってこなかったら？他に試してほしい「もしも」は、コメントで教えてください。",
+      "image_prompt": "The same person walking down the night city sidewalk as in the first shot, feet starting to lift, vertical 9:16, 5 seconds"
+    }
+  ]
+}
