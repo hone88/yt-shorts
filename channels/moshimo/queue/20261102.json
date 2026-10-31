@@ -1,6 +1,6 @@
 {
-  "title": "もしも太陽が突然消えたら、地球はいつ気づく？",
-  "description": "太陽が突然消えたら、地球が気づくのは何分後？その後の地球はどうなるのか、時間の流れに沿って考えてみました。\n他に試してほしい「もしも」はコメントで！\n\n※思考実験です。実際の現象とは異なる部分があります",
+  "title": "もしも太陽が突然消えたら？8分間だれも気づかない",
+  "description": "太陽が突然消えても、僕たちは8分20秒気づかない。その後の地球はどうなるのか、時間の流れに沿って考えてみました。\n他に試してほしい「もしも」はコメントで！\n\n※思考実験です。実際の現象とは異なる部分があります",
   "tags": [
     "もしも",
     "思考実験",
@@ -12,22 +12,22 @@
   "topic": "もしも太陽が消えたら、地球はいつ気づくか",
   "scenes": [
     {
-      "time": "0秒",
-      "caption": "太陽が突然消える",
-      "narration": "もしも、太陽が突然消えたら？",
-      "image_prompt": "The sun glowing over a calm ocean horizon, then suddenly vanishing, leaving an empty sky, static wide shot, vertical 9:16, 5 seconds"
+      "time": "8分20秒後",
+      "caption": "昼なのに真っ暗",
+      "narration": "昼なのに、空が一瞬で真っ暗に。もしも、太陽が突然消えたら？",
+      "image_prompt": "A bright sunny daytime sky over a quiet town suddenly turning pitch black within a second, streetlights flickering on, static wide shot, vertical 9:16, 5 seconds"
     },
     {
-      "time": "8分間",
-      "caption": "まだ気づかない",
-      "narration": "太陽の光が地球に届くまで、約8分20秒。それまでの間、僕たちは何も知らずにいつもの昼を過ごしています。",
+      "time": "0秒",
+      "caption": "でも誰も気づかない",
+      "narration": "実は太陽が消えても、光が届くまで約8分20秒。それまで僕たちは、いつもの昼を過ごしています。",
       "image_prompt": "An empty sunny city park on a normal bright afternoon, gentle breeze in the trees, slow pan, vertical 9:16, 5 seconds"
     },
     {
       "time": "8分20秒後",
-      "caption": "空が真っ暗に",
-      "narration": "そして8分20秒後、空が一気に真っ暗に。太陽の光を反射している月も、同時に見えなくなります。",
-      "image_prompt": "A bright daytime sky rapidly turning to deep night over a quiet town, streetlights flickering on, static shot, vertical 9:16, 5 seconds"
+      "caption": "月も消える",
+      "narration": "そして8分20秒後、空が真っ暗に。太陽の光を反射している月も、同時に見えなくなります。",
+      "image_prompt": "A bright full moon in a night sky slowly fading away until only stars remain, static shot, vertical 9:16, 5 seconds"
     },
     {
       "time": "同じ瞬間",
