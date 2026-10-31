@@ -1,0 +1,56 @@
+{
+  "title": "もしもラーメン山岡家がこの世になかったら？",
+  "description": "深夜にラーメンが食べたくなったとき、もしも山岡家がなかったら？お店の歴史やこだわりを調べながら考えてみました。あなたの「なくなったら困る店」はコメントで！\n\n※思考実験です。実在のお店がなくなるという話ではありません",
+  "tags": [
+    "もしも",
+    "思考実験",
+    "山岡家",
+    "ラーメン",
+    "雑学"
+  ],
+  "topic": "もしも山岡家がこの世になかったら",
+  "scenes": [
+    {
+      "time": "深夜2時",
+      "caption": "開いてる店がない",
+      "narration": "深夜2時。ラーメンが食べたいのに、開いている店がない。もしも、山岡家がこの世になかったら？",
+      "image_prompt": "A dark empty roadside at 2am, a small ramen shop with all its lights off, a lone car's headlights passing by, static wide shot, photorealistic, no readable signs, text or logos, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "1988年",
+      "caption": "始まりは茨城",
+      "narration": "山岡家の1号店は、1988年に茨城県牛久市で生まれました。24時間営業のスタイルは、ここから始まったとされています。",
+      "image_prompt": "A quiet countryside road in Japan at night with one small roadside restaurant glowing warmly, nostalgic film look, slow push-in, photorealistic, no readable signs, text or logos, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "深夜",
+      "caption": "夜の居場所が消える",
+      "narration": "今では全国に200店舗以上。夜中も開いている店が多く、仕事帰りや夜勤明けの人の居場所になっています。",
+      "image_prompt": "A large truck on a night highway pulling into a brightly lit roadside parking lot, slow tracking shot, photorealistic, no readable signs, text or logos, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "朝6時",
+      "caption": "朝ラーもなくなる",
+      "narration": "朝から豚骨ラーメンを食べる、いわゆる朝ラー。この楽しみも、なくなってしまうかもしれません。",
+      "image_prompt": "A steaming bowl of rich creamy pork bone ramen with thick noodles on a counter in soft morning light, slow push-in, photorealistic, no readable signs, text or logos, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "3日間",
+      "caption": "家では作れない味",
+      "narration": "スープは豚骨と水だけで、丸3日間煮込み続けるとされています。この味を家で再現するのは、かなり大変です。",
+      "image_prompt": "A huge stock pot of milky pork bone broth bubbling hard with thick steam rising in a busy kitchen, close-up, photorealistic, no readable signs, text or logos, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "その後",
+      "caption": "別の店を探す旅",
+      "narration": "結局みんな、夜中に開いている別の店を探して、車を走らせることになりそうです。",
+      "image_prompt": "Car headlights driving through an empty night road toward faint glowing lights in the distance, slow tracking shot from behind, photorealistic, no readable signs, text or logos, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "結論",
+      "caption": "いつもの店のありがたさ",
+      "narration": "いつも開いている店ほど、なくなって初めてありがたさに気づくのかも。あなたの、なくなったら困る店はどこ？",
+      "image_prompt": "A warm glowing roadside ramen shop at dawn with steam drifting out the door, peaceful mood, slow dolly forward, photorealistic, no readable signs, text or logos, vertical 9:16, 5 seconds"
+    }
+  ]
+}
