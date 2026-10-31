@@ -211,3 +211,131 @@ def duck(music, voice, amount=0.55, attack=0.05, release=0.35):
         acc = min(v, acc + a) if v > acc else max(v, acc - r)
         g[i] = acc
     return music * (1 - amount * g)
+
+
+# ====================================================================
+# 参考リールの分析から足した部品（2026-10-31）
+# ====================================================================
+def reverb(y, decay=0.5, delays=(0.031, 0.047, 0.071, 0.097, 0.13), tail=1.2):
+    """簡単な残響（余韻）"""
+    out = np.concatenate([y, np.zeros(int(tail * SR))])
+    src = out.copy()
+    for i, d in enumerate(delays):
+        n = int(d * SR)
+        for k in range(1, 8):
+            sh = n * k
+            if sh >= len(out):
+                break
+            out[sh:] += src[:-sh] * (decay ** (k + i * 0.5)) * 0.35
+    return out
+
+
+def sfx_boom(vol=0.9, sec=2.4):
+    """冒頭・劇的な場面の低い「ドン」（長い余韻）"""
+    x = t_(sec)
+    f = 38 + 30 * np.exp(-x * 9)
+    y = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-x * 1.6)
+    y += lowpass(noise(sec, 21), 0.06) * np.exp(-x * 6) * 1.2
+    return y * vol
+
+
+def sfx_transition(vol=0.8):
+    """場面転換の決まった音：シュッ（0.45秒）→ドン＋余韻。シリーズ全話で同じ音を使う"""
+    out = np.zeros(int(2.4 * SR))
+    sw = 0.45
+    x = t_(sw)
+    n = noise(sw, 31)
+    sweep = np.zeros_like(n)
+    acc, k0 = 0.0, 0.02
+    for i, v in enumerate(n):
+        k = k0 + 0.5 * (i / len(n)) ** 2
+        acc += k * (v - acc)
+        sweep[i] = acc
+    put(out, sweep * (x / sw) ** 2 * 0.9, 0)
+    hit = sfx_boom(1.0, 1.9)
+    hit[: int(0.08 * SR)] += noise(0.08, 32) * np.exp(-t_(0.08) * 40) * 0.6
+    put(out, hit, sw)
+    tail = lowpass(noise(1.8, 33), 0.25) * np.exp(-t_(1.8) * 2.2) * 0.25
+    put(out, tail, sw)
+    return out * vol
+
+
+def sfx_stopwatch(sec, interval=0.5, vol=0.2):
+    """時間を数える場面の秒針（ストップウォッチ）"""
+    out = np.zeros(int(sec * SR))
+    t = 0.0
+    while t < sec:
+        put(out, sfx_tick(vol), t)
+        t += interval
+    return out
+
+
+def sfx_riser(sec=1.2, vol=0.45):
+    """答えの直前の盛り上がり（声を止めた間に鳴らす）"""
+    x = t_(sec)
+    f = 200 + 1600 * (x / sec) ** 2
+    y = np.sin(2 * np.pi * np.cumsum(f) / SR) * 0.25 + lowpass(noise(sec, 41), 0.15) * 0.8
+    return y * (x / sec) ** 2.5 * vol
+
+
+def amb_radio(sec, vol=0.18):
+    """無線・電話のノイズ"""
+    n = noise(sec, 51)
+    hi = n - lowpass(n, 0.3)
+    crackle = (np.random.RandomState(52).rand(len(n)) > 0.9993) * np.random.RandomState(53).randn(len(n)) * 3
+    return (hi * 0.6 + crackle) * vol
+
+
+def amb_crowd(sec, vol=0.12):
+    """街・会場のざわめき"""
+    n = lowpass(noise(sec, 61), 0.12)
+    mod = 1 + 0.4 * np.sin(2 * np.pi * 0.7 * t_(sec)) * np.sin(2 * np.pi * 0.23 * t_(sec))
+    return n * mod * vol * 2
+
+
+def amb_room(sec, vol=0.05):
+    """部屋の空気（無音にしないための薄い音）"""
+    return (lowpass(noise(sec, 71), 0.02) * 3 + np.sin(2 * np.pi * 50 * t_(sec)) * 0.1) * vol
+
+
+def bgm_dark(sec):
+    """暗い持続音（ドラマの土台。ずっと鳴らしておく）"""
+    out = np.zeros(int(sec * SR))
+    put(out, note(MIDI(31), sec, "pad", a=1.2, r=0.8, vol=0.2), 0)
+    put(out, note(MIDI(38), sec, "pad", a=2.0, r=0.8, vol=0.08), 0)
+    put(out, note(MIDI(43), sec, "pad", a=3.0, r=0.8, vol=0.04), 0)
+    return out
+
+
+def bgm_heavy(sec, bpm=100):
+    """重い低音（緊張が高まる場面）"""
+    out = bgm_dark(sec) * 0.7
+    beat = 60 / bpm
+    t = 0.0
+    while t < sec:
+        x = t_(0.4)
+        put(out, np.sin(2 * np.pi * (45 + 40 * np.exp(-x * 25)) * x) * np.exp(-x * 7) * 0.45, t)
+        t += beat
+    return out
+
+
+def bgm_sparse(sec):
+    """静かな場面：ぽつぽつピアノ"""
+    out = np.zeros(int(sec * SR))
+    seq = [64, 67, 71, 69, 64, 62]
+    t, i = 0.3, 0
+    while t < sec:
+        put(out, note(MIDI(seq[i % len(seq)]), 2.0, "keys", r=1.2, vol=0.07), t)
+        t += 1.6
+        i += 1
+    return out
+
+
+def fade(y, fin=0.0, fout=0.0):
+    y = y.copy()
+    n = len(y)
+    if fin:
+        k = min(n, int(fin * SR)); y[:k] *= np.linspace(0, 1, k)
+    if fout:
+        k = min(n, int(fout * SR)); y[-k:] *= np.linspace(1, 0, k)
+    return y
