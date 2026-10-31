@@ -1,7 +1,7 @@
 """キャラクター定義書の設定画（1キャラ1枚・横長）"""
-import math, sys
+import math, os, sys
 from PIL import Image, ImageDraw
-sys.path.insert(0, "/home/claude/dotjp")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import engine as E
 import g3d as G
 from g3d import Camera, Rig, render

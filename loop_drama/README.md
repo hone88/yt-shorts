@@ -1,5 +1,16 @@
 # ガクチカ・ループ　キャラクター定義書
 
+**作り始める前に `注意点.md` を読むこと。**
+
+| ファイル | 中身 |
+| --- | --- |
+| `characters.py` | キャラクター定義書（寸法・色・顔の模様・表情） |
+| `g3d.py` | 目の高さのカメラで描く3D描画 |
+| `audio.py` | 自作のBGM・効果音・ダッキング |
+| `ep1c.py` / `mix1.py` | 第1話の映像／音（作り方の見本） |
+| `ep1b.py` / `engine.py` / `scenes.py` | 文字（日時・字幕・ルールカード）と旧描画 |
+| `designsheet.py` | 設定画を作る |
+
 毎話、ここの定義だけを使って人物を描く。見た目を変えるときは `characters.py` だけを直し、
 `python3 designsheet.py kanata suit mio iv mo tokei` で設定画（`設定画/`）を作り直す。
 
