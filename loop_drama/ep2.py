@@ -101,8 +101,8 @@ def plan():
         S.append(O.Shot("wake", 0.25 + L("b3") + 0.4, [(0.25, "b3")]))
     S.append(O.Shot("join", 0.45 + L("01") + 0.5, [(0.45, "01")]))
     ln, t = seq(["02", "03"], 0.5, extra={"03": 0.6})   # 「1対1」の前に間
-    s = O.Shot("one", t + 0.6, ln); s.rev = ln[1][0] - 0.05; s.camon = ln[1][0] + L("03") + 0.15; S.append(s)
-    ln, t = seq(["04", "05", "06"], 0.4)
+    s = O.Shot("one", t + 0.4, ln); s.rev = ln[1][0] - 0.05; s.camon = ln[1][0] + L("03") + 0.15; S.append(s)
+    ln, t = seq(["04", "05"], 0.4)
     S.append(O.Shot("info", t + 0.3, ln))
     ln, t = seq(["07", "08"], 1.6)
     s = O.Shot("doze", t + 0.3, ln); s.tk = 1.0; S.append(s)
@@ -199,8 +199,8 @@ def self_view(t, expr):
     """カナタ側のカメラ（右下の小窓）"""
     k = kanata_bed(expr)
     k.set(head_pitch=0.05)
-    img = room_img(k, Camera((2.55, 2.45, 1.62), (2.5, 3.75, 1.55), 44), glow=0.6)
-    return img.convert("RGB").crop((60, 380, 1020, 1000))
+    img = room_img(k, Camera((2.55, 1.9, 1.75), (2.5, 3.75, 1.45), 44), glow=0.6)
+    return img.convert("RGB").crop((0, 520, 1080, 1218))
 
 
 TX, TY, TW, TH = 40, 560, 1000, 470   # ミオの枠
@@ -386,11 +386,11 @@ def frame(s, t):
         img = call_ui(s, t, cam_on=on, kexpr="shock")
         clock(img, "10:00", counter=False)
         if s.rev < t < s.camon:
-            big_word(img, "1対1！？", t - s.rev, YEL)
+            big_word(img, "1対1！？", t - s.rev, YEL, y=1150)
     elif n == "info":
-        img = call_ui(s, t, cam_on=True, kexpr="open" if t < line_t(s, "06") else "normal")
+        img = call_ui(s, t, cam_on=True, kexpr="open")
         clock(img, "10:05", counter=False)
-        a, b, c = (x[0] for x in s.lines)
+        a, b = (x[0] for x in s.lines)
         if t < b:
             slide(img, (t - a - 0.2) / 0.3, [("議員インターン", "2月1日〜3月31日", (64, 110, 220)), ("NPOインターン", "2月1日〜3月31日", (40, 160, 110))])
         else:
