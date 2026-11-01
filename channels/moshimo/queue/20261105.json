@@ -1,0 +1,56 @@
+{
+  "title": "もしもラーメン山岡家がこの世になかったら？",
+  "description": "深夜2時、目の前のラーメンが消えた。もしも山岡家がなかったら、夜の街はどうなる？お店の歴史を調べながら考えてみました。\nあなたは深夜ラーメン派？朝ラー派？コメントで教えてください！\n\n※思考実験です。実在のお店がなくなるという話ではありません",
+  "tags": [
+    "もしも",
+    "思考実験",
+    "山岡家",
+    "ラーメン",
+    "雑学"
+  ],
+  "topic": "もしも山岡家がこの世になかったら（作り直し版）",
+  "scenes": [
+    {
+      "time": "深夜2時",
+      "caption": "ラーメンが消えた",
+      "narration": "深夜2時。目の前のラーメンが、消えた。もしも、山岡家がこの世になかったら？",
+      "image_prompt": "A steaming bowl of pork bone ramen on a late-night counter suddenly vanishing, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "1988年",
+      "caption": "始まりは牛久",
+      "narration": "山岡家の1号店は1988年、茨城県の牛久市。24時間営業のスタイルは、ここから始まったとされています。",
+      "image_prompt": "A lone small roadside restaurant glowing in a dark countryside at night, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "深夜",
+      "caption": "夜の行き場",
+      "narration": "今では全国に200店舗以上。夜中も開いている店が多く、仕事帰りや夜勤明けの人が集まります。",
+      "image_prompt": "A truck pulling into a brightly lit roadside parking lot at night, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "3日間",
+      "caption": "スープは3日がかり",
+      "narration": "スープは豚骨と水だけで、丸3日間煮込み続けるとされています。家でまねするのは、かなり大変です。",
+      "image_prompt": "A huge pot of milky pork bone broth bubbling with thick steam, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "その夜",
+      "caption": "ラーメン難民が発生",
+      "narration": "そんな店がなかったら、夜中に開いている店を探して、車でさまよう人が増えるかもしれません。",
+      "image_prompt": "Cars wandering a dark street past rows of closed shops at night, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "朝6時",
+      "caption": "朝ラーも消える",
+      "narration": "朝から豚骨ラーメンを食べる、いわゆる朝ラー。この楽しみ方も、生まれていなかったかもしれません。",
+      "image_prompt": "A steaming bowl of pork bone ramen in soft morning light, vertical 9:16, 5 seconds"
+    },
+    {
+      "time": "あなたは？",
+      "caption": "深夜派？朝ラー派？",
+      "narration": "あなたは深夜ラーメン派？それとも朝ラー派？コメントで教えてください。",
+      "image_prompt": "Split view of a ramen bowl at night and a ramen bowl in the morning, vertical 9:16, 5 seconds"
+    }
+  ]
+}
