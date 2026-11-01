@@ -7,6 +7,7 @@ exec(src)
 VID = float(sys.argv[2])
 S = [float(x) for x in sys.argv[3].split(",")]
 FL, NO, Q = float(sys.argv[4]), float(sys.argv[5]), float(sys.argv[6])
+RT = float(sys.argv[7])  # 空が青に戻りはじめる秒
 TAIL = 2.6
 DUR = VID + TAIL
 N = int(SR * DUR)
@@ -58,7 +59,7 @@ put(sfx, boom(2.0), 0.0, 0.45)
 put(sfx, whoosh(FL + 0.05, True) * 2.2, 0.0, 0.55)          # 0秒から吸い込むように大きくなる「フゥ…」
 put(sfx, whoosh(0.55, False) * 1.6, FL, 0.45)               # 黒くなった瞬間から抜けていく「…ゥン」
 put(sfx, shimmer(1.0, True), 0.0, 0.10)
-put(sfx, boom(2.4), FL + 0.05, 0.7)
+put(sfx, boom(2.4), FL, 0.7)
 put(sfx, shimmer(1.2, True), FL, 0.12)
 
 # --- 2. 不安なパッド＋心臓の音がだんだん速く → 「……」でほぼ無音 → 「いいえ」でドン
@@ -80,35 +81,37 @@ t = t_(3.0); put(sfx, np.sin(2 * np.pi * 6000 * t) * env(len(t), 0.4, 1.5) * 0.1
 transition(S[2])
 # 4. 落ちる：キックが入る＋下がる風切り音
 transition(S[3])
-drums(bgm, S[3], S[6] - 0.6, 70, 1.2, hats=False)
+drums(bgm, S[3], S[6], 70, 1.2, hats=False)
 put(sfx, whoosh(2.5, False), S[3] + 0.3, 0.28)
 # 5. 肺：ハイハットも入ってテンポ感アップ＋シューッ
 transition(S[4])
-drums(bgm, S[4], S[6] - 0.6, 140, 0.8, hats=True)
-mystery(bgm, S[4], S[6] - 0.6, 0.5, arp=True)
+drums(bgm, S[4], S[6], 140, 0.8, hats=True)
+mystery(bgm, S[4], S[6], 0.5, arp=True)
 put(sfx, lp(noise(2.5), 3000) * env(I(2.5), 0.2, 0.6), S[4] + 0.4, 0.16)
 # 6. つば：ぶくぶく＋上がっていく音で「10秒」へためる
 transition(S[5])
-drums(bgm, S[5], S[6] - 0.6, 280, 0.9, hats=True)
-mystery(bgm, S[5], S[6] - 0.6, 0.6, arp=True)
+drums(bgm, S[5], S[6], 280, 0.9, hats=True)
+mystery(bgm, S[5], S[6], 0.6, arp=True)
 tt = S[5] + 0.3
 while tt < S[6] - 0.4:
     put(sfx, bubble(), tt, 0.11, pan=rng.uniform(-0.5, 0.5)); tt += rng.uniform(0.05, 0.16)
 put(sfx, riser(S[6] - S[5]), S[5], 0.30)
 
 # --- 7. 空気が戻る：一瞬の無音 → 大きなドンと風 → 明るいBGMが全開で戻る
-bgm[I(S[6] - 0.6):I(S[6])] *= 0.05
-put(sfx, boom(2.6), S[6], 0.8)
-put(sfx, whoosh(1.2, False), S[6], 0.5)
-lofi(bgm, S[6] + 0.05, Q, 1.9)
-put(sfx, birds(Q - S[6]), S[6] + 0.6, 0.06, pan=0.4)
+transition(S[6], 0.6)                       # 黒い街に切り替わる
+bgm[I(S[6]):I(RT)] *= 0.04                  # 空が戻るまでの「ため」
+put(sfx, whoosh(RT - S[6], True), S[6], 0.35)
+put(sfx, boom(2.6), RT, 0.8)                # 空が青に戻りはじめた瞬間にドン
+put(sfx, whoosh(1.2, False), RT, 0.5)
+lofi(bgm, RT, Q, 1.9)
+put(sfx, birds(Q - RT), RT + 0.5, 0.06, pan=0.4)
 
 # --- 8. 「……もし」でBGMがぶつっと止まる → 低い不安な音とチクタク → 声のあとは音楽だけで余韻
 put(sfx, shimmer(1.0, True), Q - 0.1, 0.10)
 mystery(bgm, Q + 0.3, DUR, 0.9, arp=True)
 for k in range(int((VID - Q) / 0.5)):
     put(sfx, tick(), Q + 0.3 + k * 0.5, 0.22)
-put(sfx, boom(2.0), Q + 0.3, 0.4)
+put(sfx, boom(2.0), Q, 0.5)
 put(sfx, chime_end(), VID - 0.2, 0.12)
 
 fade = np.ones(N); fo = I(1.5); fade[-fo:] = np.linspace(1, 0, fo)
