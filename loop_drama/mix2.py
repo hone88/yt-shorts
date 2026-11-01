@@ -47,10 +47,10 @@ call_end = dz.start
 A.put(music, A.amb_room(call_end - jo.start, 0.05), jo.start)
 A.put(music, A.fade(A.bgm_morning(on.start + on.rev - jo.start - 0.6), 0.4, 0.5), jo.start)
 A.put(fx, A.sfx_ding(0.3), on.start + 0.05)               # 通話に入った音
-# 「1対1！？」：声を止めて盛り上げ→ドン
-A.put(fx, A.sfx_riser(0.7, 0.4), on.start + on.rev - 0.7)
-A.put(fx, A.sfx_boom(0.9, 2.4), on.start + on.rev)
-A.put(fx, A.sfx_pop(0.35), on.start + on.camon)          # カメラON
+# 「カメラOFFでもOK」：やわらかく見せる
+A.put(fx, A.sfx_pop(0.35), on.start + on.rev)
+A.put(fx, A.sfx_ding(0.3), on.start + on.rev + 0.05)
+A.put(fx, A.sfx_boom(0.45, 1.8), on.start + on.rev)
 A.put(music, A.fade(A.bgm_morning(dz.start - on.start - on.rev + 0.3), 0.8, 0.4), on.start + on.rev + 0.5)
 A.put(fx, A.sfx_whoosh(0.4, True, 0.3), inf.start + inf.lines[0][0])
 A.put(fx, A.sfx_whoosh(0.4, True, 0.3), inf.start + inf.lines[1][0] - 0.1)
@@ -71,6 +71,9 @@ A.put(fx, A.sfx_transition(0.45), ask.start - 0.45)
 A.put(music, A.amb_room(ask.dur + no.dur + ok.dur, 0.05), ask.start)
 A.put(music, A.fade(A.bgm_sparse(ask.dur + no.dur + ok.dur), 0.5, 0.6), ask.start)
 A.put(fx, A.sfx_heart(0.45), no.start + 0.2); A.put(fx, A.sfx_heart(0.5), no.start + 1.2)
+A.put(fx, A.sfx_riser(0.6, 0.25), ok.start + ok.camon - 0.6)   # 自分からカメラON
+A.put(fx, A.sfx_pop(0.4), ok.start + ok.camon)
+A.put(fx, A.sfx_chime_end(), ok.start + ok.camon + 0.05)
 
 # 5) 春にできること：カードが1つずつ
 A.put(fx, A.sfx_transition(0.55), li.start - 0.45)

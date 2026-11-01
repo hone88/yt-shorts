@@ -1,4 +1,4 @@
-"""ガクチカ・ループ 第2話「説明会」（オンライン説明会はスタッフと1対1）。
+"""ガクチカ・ループ 第2話「説明会」（オンライン説明会。カメラはオフのままでもOK）。
 python3 ep2.py still <shot> <t> [A|B] | python3 ep2.py build [A|B]
 A：第1話の投票で「説明会に出る」が勝った版。B：「もう一度寝る」が勝った版（冒頭だけ違う）"""
 import math, os, subprocess, sys, wave
@@ -40,8 +40,8 @@ def L(i):
 
 TEXT = {
     "01": ("K", "…カメラは、[オフ]で|いいか。"),
-    "02": ("M", "カメラつけて？|[1対1]だから、|私しかいないよ。"),
-    "03": ("K", "え、[1対1]なの！？"),
+    "02": ("M", "カナタ、来てくれてありがとう！|カメラは[オフのまま]で|[大丈夫]だよ。"),
+    "03": ("K", "…あ、[オフでいい]んだ。"),
     "04": ("M", "春休みの[2か月]、|[議員]さんか[NPO]で、|インターンをするの。"),
     "05": ("M", "議員さんは[朝10時]から。|[午前だけ・午後だけ]も|OK。"),
     "06": ("K", "…それなら、|[行けるかも]。"),
@@ -100,8 +100,8 @@ def plan():
         S.append(O.Shot("flash", 0.3 + L("b2") + 0.7, [(0.3, "b2")]))
         S.append(O.Shot("wake", 0.25 + L("b3") + 0.4, [(0.25, "b3")]))
     S.append(O.Shot("join", 0.45 + L("01") + 0.5, [(0.45, "01")]))
-    ln, t = seq(["02", "03"], 0.5, extra={"03": 0.6})   # 「1対1」の前に間
-    s = O.Shot("one", t + 0.4, ln); s.rev = ln[1][0] - 0.05; s.camon = ln[1][0] + L("03") + 0.15; S.append(s)
+    ln, t = seq(["02", "03"], 0.5, extra={"03": 0.3})
+    s = O.Shot("one", t + 0.4, ln); s.rev = ln[0][0] + L("02") * 0.5; S.append(s)
     ln, t = seq(["04", "05"], 0.4)
     S.append(O.Shot("info", t + 0.3, ln))
     ln, t = seq(["07", "08"], 1.6)
@@ -110,7 +110,7 @@ def plan():
     S.append(O.Shot("ask", t + 0.2, ln))
     S.append(O.Shot("none", 0.3 + L("11") + 0.8, [(0.3, "11")]))   # 答えのあとに間
     ln, t = seq(["12"], 0.3)
-    S.append(O.Shot("okay", t + 1.0, ln))
+    s = O.Shot("okay", t + 1.5, ln); s.camon = t + 0.1; S.append(s)   # カナタが自分からカメラON
     ln, t = seq(["13", "14"], 0.3, extra={"14": 0.1})
     S.append(O.Shot("list", t + 0.4, ln))
     ln, t = seq(["15", "16"], 0.3)
@@ -176,7 +176,7 @@ def tokei_near(t, expr="angry", drop_t=None, pos=(2.93, 3.2, 1.55)):
     return C.tokei_boxes(add(pos, (0, 0, dz)), t, expr, 0.5, math.pi + 0.45)
 
 
-# ---------- ビデオ通話（1対1） ----------
+# ---------- ビデオ通話 ----------
 MIO_SET = P.blocks(-3, 4, 1, 2, -1, 3, hexc("#e9e4d8"), 0.03, 31) + [
     P.slab(1.3, 0.9, -1, 0.9, 0.3, 2.2, hexc("#7a5434")),
     P.slab(1.32, 0.86, 0.1, 0.86, 0.04, 0.3, hexc("#d8584a")),
@@ -229,7 +229,6 @@ def call_ui(s, t, cam_on=False, kexpr="open", mexpr=None):
     d.text((sx + 18, sy + sh - 42), "カナタ", font=O.F(BOLD, 28), fill=YEL)
     # 参加者の数
     f = O.F(BLACK, 34)
-    d.text((TX, TY + TH + 14), "● 参加者 2人", font=f, fill=(150, 156, 175))
     return img
 
 
@@ -382,13 +381,12 @@ def frame(s, t):
             dd.text((35, 14), lab, font=f, fill=(255, 255, 255))
             E.paste_center(img, im, 540, 1090, E.pop(t - 0.2))
     elif n == "one":
-        on = t > s.camon
-        img = call_ui(s, t, cam_on=on, kexpr="shock")
+        img = call_ui(s, t, cam_on=False)
         clock(img, "10:00", counter=False)
-        if s.rev < t < s.camon:
-            big_word(img, "1対1！？", t - s.rev, YEL, y=1150)
+        if t > s.rev:
+            big_word(img, "カメラOFFでもOK", t - s.rev, YEL, y=1068, size=96)
     elif n == "info":
-        img = call_ui(s, t, cam_on=True, kexpr="open")
+        img = call_ui(s, t, cam_on=False)
         clock(img, "10:05", counter=False)
         a, b = (x[0] for x in s.lines)
         if t < b:
@@ -406,15 +404,17 @@ def frame(s, t):
         if a + 0.3 < t < b + 0.2:
             card3(img, (t - a - 0.3) / 0.3)
     elif n == "ask":
-        img = call_ui(s, t, cam_on=True, kexpr="open")
+        img = call_ui(s, t, cam_on=False)
         clock(img, "10:30", counter=False)
     elif n == "none":
         k = kanata_bed("blank"); k.set(head_pitch=0.25)
         img = room_img(k, face_cam(t, s.dur, 0.45), glow=0.7)
         clock(img, "10:30")
     elif n == "okay":
-        img = call_ui(s, t, cam_on=True, kexpr="open", mexpr="smile" if t > s.lines[0][0] + L("12") * 0.6 else None)
+        img = call_ui(s, t, cam_on=t > s.camon, kexpr="smile", mexpr="smile" if t > s.lines[0][0] + L("12") * 0.6 else None)
         clock(img, "10:31", counter=False)
+        if t > s.camon:
+            big_word(img, "カメラ ON", t - s.camon, (90, 220, 120), y=1130, size=100)
     elif n == "list":
         a, b = (x[0] for x in s.lines)
         img = call_ui(s, t, cam_on=True, kexpr="shock" if t > b else "open")
@@ -439,7 +439,7 @@ def frame(s, t):
         O.caption(img, "あなたなら、", 560, t, size=84)
         O.caption(img, "説明会で何を聞く？", 680, t, size=96, col=YEL)
         for txt, y, sz, col, path in ((["コメントで教えてね"], 860, 64, (255, 255, 255), BLACK),
-                                      (["説明会はスタッフと1対1・オンラインでもOK"], 1000, 44, (200, 210, 235), BOLD),
+                                      (["説明会はオンラインでも対面でもOK"], 1000, 44, (200, 210, 235), BOLD),
                                       (["次回 第3話「落とす場じゃない」"], 1130, 50, (255, 255, 255), BLACK),
                                       (["あなたの「力を入れたこと」は、まだ作れる。"], 1250, 44, (255, 255, 255), BOLD),
                                       (["ドットジェイピー広島第一支部", "春インターン申込は12月31日まで"], 1380, 48, YEL, BLACK),
