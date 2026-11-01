@@ -30,10 +30,13 @@ def tick():
     return lp(x, 4000)
 
 
-def heartbeat(buf, t0, t1, bpm, gain):
-    b = 60 / bpm; tt = t0
-    while tt < t1:
-        put(buf, kick(), tt, 0.22 * gain); put(buf, kick(), tt + 0.22, 0.14 * gain); tt += b
+def heartbeat(buf, t0, t1, gain):
+    tt = t0
+    while tt < t1 - 0.15:
+        k = (tt - t0) / (t1 - t0)              # 0→1 で間隔 0.75秒→0.32秒、音も大きく
+        g = gain * (0.7 + 0.6 * k)
+        put(buf, lp(kick(), 200, 2) * 2.2, tt, 0.30 * g); put(buf, lp(kick(), 200, 2) * 2.2, tt + 0.2, 0.2 * g)
+        tt += 0.75 - 0.43 * k
 
 
 def drums(buf, t0, t1, bpm, gain, hats=True):
@@ -52,13 +55,18 @@ stop = np.stack([np.interp(pos, np.arange(N), L[:, c]) for c in (0, 1)], 1) * np
 L[I(FL):] = 0; L[I(FL):I(FL) + len(n)] = stop
 bgm += L
 put(sfx, boom(2.0), 0.0, 0.45)
+put(sfx, whoosh(FL + 0.05, True) * 2.2, 0.0, 0.55)          # 0秒から吸い込むように大きくなる「フゥ…」
+put(sfx, whoosh(0.55, False) * 1.6, FL, 0.45)               # 黒くなった瞬間から抜けていく「…ゥン」
+put(sfx, shimmer(1.0, True), 0.0, 0.10)
 put(sfx, boom(2.4), FL + 0.05, 0.7)
 put(sfx, shimmer(1.2, True), FL, 0.12)
 
 # --- 2. 不安なパッド＋心臓の音がだんだん速く → 「……」でほぼ無音 → 「いいえ」でドン
 mystery(bgm, FL + 0.4, NO, 0.9, arp=False)
-heartbeat(sfx, S[1] + 0.1, NO - 0.2, 80, 0.9)
-put(sfx, riser(NO - S[1] - 0.2), S[1], 0.22)
+heartbeat(sfx, S[1] + 0.1, NO, 1.0)
+put(sfx, riser(NO - S[1] - 0.1), S[1], 0.22)
+a, b = I(NO), I(NO + 0.35)
+f = I(0.06); bgm[a:a + f] *= np.linspace(1, 0.02, f)[:, None]; bgm[a + f:I(NO + 0.4)] *= 0.02
 put(sfx, boom(2.6), NO + 0.35, 0.75)
 put(sfx, shimmer(1.4, False), NO + 0.35, 0.10)
 
@@ -67,29 +75,32 @@ mystery(bgm, NO + 0.35, S[6] - 0.05, 1.0, arp=True)
 # 3. 音が消える：BGMを「こもった音」に（空気がなく音が届かない感じ）＋耳鳴り
 a, b = I(S[2]), I(S[3])
 for c in (0, 1):
-    bgm[a:b, c] = lp(bgm[a:b, c], 350, 2) * 1.4
+    bgm[a:b, c] = lp(bgm[a:b, c], 350, 2) * 1.0
 t = t_(3.0); put(sfx, np.sin(2 * np.pi * 6000 * t) * env(len(t), 0.4, 1.5) * 0.12, S[2] + 0.6, 0.25)
 transition(S[2])
 # 4. 落ちる：キックが入る＋下がる風切り音
 transition(S[3])
-drums(bgm, S[3], S[5], 70, 0.9, hats=False)
+drums(bgm, S[3], S[6] - 0.6, 70, 1.2, hats=False)
 put(sfx, whoosh(2.5, False), S[3] + 0.3, 0.28)
 # 5. 肺：ハイハットも入ってテンポ感アップ＋シューッ
 transition(S[4])
-drums(bgm, S[4], S[5], 140, 0.5, hats=True)
+drums(bgm, S[4], S[6] - 0.6, 140, 0.8, hats=True)
+mystery(bgm, S[4], S[6] - 0.6, 0.5, arp=True)
 put(sfx, lp(noise(2.5), 3000) * env(I(2.5), 0.2, 0.6), S[4] + 0.4, 0.16)
 # 6. つば：ぶくぶく＋上がっていく音で「10秒」へためる
 transition(S[5])
-drums(bgm, S[5], S[6] - 0.6, 140, 0.8, hats=True)
+drums(bgm, S[5], S[6] - 0.6, 280, 0.9, hats=True)
+mystery(bgm, S[5], S[6] - 0.6, 0.6, arp=True)
 tt = S[5] + 0.3
 while tt < S[6] - 0.4:
     put(sfx, bubble(), tt, 0.11, pan=rng.uniform(-0.5, 0.5)); tt += rng.uniform(0.05, 0.16)
 put(sfx, riser(S[6] - S[5]), S[5], 0.30)
 
 # --- 7. 空気が戻る：一瞬の無音 → 大きなドンと風 → 明るいBGMが全開で戻る
+bgm[I(S[6] - 0.6):I(S[6])] *= 0.05
 put(sfx, boom(2.6), S[6], 0.8)
 put(sfx, whoosh(1.2, False), S[6], 0.5)
-lofi(bgm, S[6] + 0.05, Q, 1.25)
+lofi(bgm, S[6] + 0.05, Q, 1.9)
 put(sfx, birds(Q - S[6]), S[6] + 0.6, 0.06, pan=0.4)
 
 # --- 8. 「……もし」でBGMがぶつっと止まる → 低い不安な音とチクタク → 声のあとは音楽だけで余韻
