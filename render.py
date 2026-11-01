@@ -23,7 +23,7 @@ def wrap(draw, text, f, max_w):
         lines.append(line)
     # 句読点で行が始まらないよう、前の行の最後に付ける（禁則）
     for k in range(1, len(lines)):
-        while lines[k] and lines[k][0] in "。、，．！？」）":
+        while lines[k] and lines[k][0] in "。、，．！？」）…":
             lines[k - 1] += lines[k][0]; lines[k] = lines[k][1:]
     lines = [l for l in lines if l]
     # 最後の行が1〜2文字だけ（「ら？」など）にならないよう、前の行から文字を回す
