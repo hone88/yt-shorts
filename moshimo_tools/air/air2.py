@@ -9,6 +9,7 @@ from air import W, H, FPS, sky, city, cl, SKIN
 
 CLIPS = [2.3, 3.8, 5.7, 4.4, 5.1, 4.2, 5.1, 5.9]
 FLIP = 0.5
+XT = 2.33  # 「いいえ」と同時に×が出る（完成版で5.72秒）
 
 
 def ground(d, k):
@@ -52,16 +53,16 @@ def a2(t):  # 体がふくらむ…？ → 大きな×、ふつうの体のま�
     img = city(sky(1, t), 1)
     d = ImageDraw.Draw(img)
     ground(d, 1)
-    puff = 1 + 0.25 * cl(t / 1.2) * (1 if t < 1.8 else 0)
-    if t < 1.8:  # 風船みたいにふくらむ想像（点線の輪郭）
+    puff = 1 + 0.25 * cl(t / 2.0) * (1 if t < XT else 0)
+    if t < XT:  # 風船みたいにふくらむ想像（点線の輪郭）
         r = 175 * puff
         for a in range(0, 360, 12):
             x0 = 360 + r * math.cos(math.radians(a)); y0 = 700 + r * 1.15 * math.sin(math.radians(a))
             d.ellipse([x0 - 10, y0 - 10, x0 + 10, y0 + 10], fill=(255, 120, 130))
-    sc = puff if t < 1.8 else 1.0
+    sc = puff if t < XT else 1.0
     person(d, 360, 885 - 330 * sc, t, walk=False, scale=sc)
-    if t >= 1.8:  # ×
-        a = cl((t - 1.8) / 0.15)
+    if t >= XT:  # ×
+        a = cl((t - XT) / 0.15)
         L = 190 * a
         for sgn in (1, -1):
             d.line([(360 - L, 700 - L * sgn), (360 + L, 700 + L * sgn)], fill=(239, 68, 68), width=26)
