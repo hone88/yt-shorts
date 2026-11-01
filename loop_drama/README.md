@@ -10,6 +10,8 @@
 | `ep1c.py` / `mix1.py` | 第1話の映像／音（作り方の見本） |
 | `ep1b.py` / `engine.py` / `scenes.py` | 文字（日時・字幕・ルールカード）と旧描画 |
 | `designsheet.py` | 設定画を作る |
+| `企画書.md` | 全18話の構成・分岐・第1話の台本・投稿文の決まり |
+| `voice/ep1/` | 第1話の声（VOICEVOX） |
 
 毎話、ここの定義だけを使って人物を描く。見た目を変えるときは `characters.py` だけを直し、
 `python3 designsheet.py kanata suit mio iv mo tokei` で設定画（`設定画/`）を作り直す。

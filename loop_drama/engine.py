@@ -5,8 +5,22 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 W, H = 1080, 1920
 COS = 0.8660254
-FONT_BLACK = "/usr/share/fonts/opentype/noto/NotoSansCJK-Black.ttc"
-FONT_BOLD = "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc"
+import os as _os
+_FONT_DIRS = ["/usr/share/fonts/opentype/noto", _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "fonts")]
+
+
+def _find_font(names):
+    """システムのNotoフォント、なければリポジトリ直下の fonts/（tools/setup.sh が入れる）から探す。"""
+    for d in _FONT_DIRS:
+        for n in names:
+            p = _os.path.join(d, n)
+            if _os.path.exists(p):
+                return p
+    raise FileNotFoundError("日本語フォントがありません。bash tools/setup.sh を実行してください")
+
+
+FONT_BLACK = _find_font(["NotoSansCJK-Black.ttc", "NotoSansCJKjp-Black.otf"])
+FONT_BOLD = _find_font(["NotoSansCJK-Bold.ttc", "NotoSansCJKjp-Bold.otf"])
 
 # 素材: (上面の色, 側面の色, 模様)
 MATS = {
