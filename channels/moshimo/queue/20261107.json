@@ -1,0 +1,23 @@
+{
+ "title": "もしも空気が10秒だけ消えたら、人は破裂する？",
+ "description": "空気が消えたら、人の体は風船みたいに破裂する？……実は破裂しません。そのかわり、昼なのに空は真っ黒、音は消え、つばが沸騰します。もしも空気が10秒だけ消えたら、を科学で考えてみました。\nもし空気が戻ってこなかったら？コメントで教えてください！\n\n※思考実験です。",
+ "tags": ["もしも", "思考実験", "雑学", "科学", "空気", "宇宙"],
+ "topic": "もしも空気が10秒だけ消えたら（重力の型で作り直し）",
+ "scenes": [
+  {"time": "0秒", "caption": "空気が10秒消える", "narration": "もしも、空気が10秒だけ消えたら？", "image_prompt": "Person walking in a bright city as the sky turns black"},
+  {"time": "0.1秒後", "caption": "破裂する？→しない", "narration": "人の体は、風船みたいに破裂する？……いいえ、破裂しません。", "image_prompt": "Person with a swelling outline, crossed out"},
+  {"time": "0秒", "caption": "昼なのに空が真っ黒", "narration": "そのかわり、昼なのに空は真っ黒。音も、すべて消えます。音は空気をふるわせて伝わるからです。", "image_prompt": "Speaker with sound waves vanishing under a black sky"},
+  {"time": "1秒後", "caption": "鳥も飛行機も落ちる", "narration": "1秒後。つばさを支える空気がなくなり、鳥も飛行機も、落ちはじめます。", "image_prompt": "Birds and an airplane falling"},
+  {"time": "3秒後", "caption": "肺の空気が出ていく", "narration": "3秒後。肺の空気が押し出されます。息は止めずに吐くのが、安全と考えられています。", "image_prompt": "Person exhaling"},
+  {"time": "5秒後", "caption": "つばが沸騰する", "narration": "5秒後。舌の上のつばが、体温のまま、ぶくぶくと沸騰しはじめます。", "image_prompt": "Tongue with bubbling saliva"},
+  {"time": "10秒後", "caption": "ギリギリ間に合う", "narration": "10秒後、空気が戻ります。人が気を失うのは約15秒後。ギリギリ、間に合いました。", "image_prompt": "Blue sky returning with wind"},
+  {"time": "？", "caption": "もし戻らなかったら？", "narration": "……もし、空気が戻ってこなかったら？他に試してほしい「もしも」は、コメントで教えてください。", "image_prompt": "Person looking up at a black sky, countdown ring"}
+ ],
+ "factcheck": [
+  {"scene": 2, "problem": "真空で体は破裂するか", "fix": "NASAの説明どおり、皮膚が体を押さえるので破裂しない（むくみは起こる）"},
+  {"scene": 3, "problem": "空が青いのは空気が光を散らすため", "fix": "空気がなければ昼でも黒い（月面と同じ）"},
+  {"scene": 5, "problem": "息を止めると肺を傷める", "fix": "『吐くのが安全と考えられています』とした"},
+  {"scene": 6, "problem": "体温でつばが沸騰", "fix": "約6.3kPa以下で水は37℃で沸騰。1966年のNASA事故の証言あり"},
+  {"scene": 7, "problem": "意識を失うまで約15秒", "fix": "NASAの説明に基づく"}
+ ]
+}
