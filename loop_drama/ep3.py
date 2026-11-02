@@ -92,7 +92,7 @@ def plan():
     s = O.Shot("next", t + 1.0, ln); s.rev = ln[1][0] + L("10") - 0.2; S.append(s)
     ln, t = seq(["11", "12", "13"], 0.9, extra={"13": 0.5})
     S.append(O.Shot("night", t + 0.6, ln))
-    S.append(O.Shot("end", 10.0))   # 新シリーズへの橋渡し
+    S.append(O.Shot("end", 14.5))   # 新シリーズへの橋渡し
     t = 0
     for s in S:
         n = int(round(s.dur * FPS)); s.start, s.dur = t, n / FPS; t += s.dur
@@ -330,27 +330,62 @@ def frame(s, t):
         img.alpha_composite(Image.new("RGBA", (W, H), (10, 16, 50, 110)))    # 夜
         clock(img, "2026年12月9日（水）", "21:00")
     elif n == "end":
-        # 新シリーズ「インターン生、事件です。」への橋渡し
-        img = Image.new("RGBA", (W, H), (10, 12, 26, 255))
+        # 新シリーズ「インターン生、事件です。」への橋渡し（カナタに寄る → 申し込む → 2か月後 → #1 → 大きなタイトル）
+        def night_face(tt, dur, expr, push):
+            k = Q.kanata_bed(expr)
+            k.spec = P.KANATA_PHONE
+            k.set(head_pitch=0.28)
+            im = Q.room_img(k, Camera((2.72, lerp(1.35, 1.35 + push * 0.6, ease(tt / dur)), 1.75), (2.5, 3.75, 1.58), 44))
+            im.alpha_composite(Image.new("RGBA", (W, H), (10, 16, 50, 120)))
+            im.alpha_composite(Image.new("RGBA", (W, H), (120, 170, 255, 30)))   # スマホの光
+            return im
         if t < 2.4:
-            O.caption(img, "その夜、カナタは——", 820, t, size=76)
-            if t > 1.0:
-                O.caption(img, "申し込んだ。", 980, t - 1.0, size=130, col=YEL)
-        elif t < 4.0:
-            O.caption(img, "そして、2か月後。", 900, t - 2.4, size=96)
-        elif t < 5.6:
+            img = night_face(t, 2.4, "normal", 0.5)
+            O.caption(img, "その夜、カナタは——", 1330, t - 0.2, size=92)
+        elif t < 4.8:
+            u = t - 2.4
+            img = night_face(2.4 + u, 4.8, "open", 0.5)
+            lay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+            d = ImageDraw.Draw(lay)
+            d.rounded_rectangle([250, 560, 830, 1180], radius=50, fill=(250, 250, 252, 245), outline=(30, 30, 36), width=14)
+            fh, fb = O.F(BLACK, 40), O.F(BLACK, 56)
+            d.text((540 - fh.getlength("春インターン 申込") / 2, 620), "春インターン 申込", font=fh, fill=(40, 40, 50))
+            if u < 0.9:
+                d.rounded_rectangle([320, 860, 760, 980], radius=60, fill=(255, 138, 31))
+                d.text((540 - fb.getlength("申し込む") / 2, 888), "申し込む", font=fb, fill=(255, 255, 255))
+            else:
+                d.ellipse([470, 760, 610, 900], fill=(60, 190, 110))
+                d.line([(500, 830), (530, 862), (585, 800)], fill=(255, 255, 255), width=14)
+                d.text((540 - fb.getlength("申し込みました") / 2, 940), "申し込みました", font=fb, fill=(40, 40, 50))
+            img.alpha_composite(lay)
+            if u > 0.9:
+                O.caption(img, "申し込んだ。", 1330, u - 0.9, size=150, col=YEL)
+        elif t < 6.8:
+            img = night_face(t - 4.8, 2.0, "smile", 0.35)
+            O.caption(img, "そして、2か月後。", 1330, t - 4.8, size=110)
+        elif t < 8.6:
             import case1
-            img = case1.frame(case1.shot("cold"), min(1.6, t - 4.0)).convert("RGBA")
+            img = case1.frame(case1.shot("cold"), min(1.6, t - 6.8)).convert("RGBA")
         else:
-            u = t - 5.6
-            O.caption(img, "新シリーズ", 560, u, size=64, col=(200, 210, 235))
-            O.caption(img, "インターン生、", 690, u, size=100)
-            O.caption(img, "事件です。", 820, u, size=120, col=YEL)
-            for txt, y, sz, col, path in ((["明日スタート"], 980, 70, (255, 255, 255), BLACK),
-                                          (["希望の活動先は、早いほど選べる。"], 1120, 46, (255, 255, 255), BOLD),
-                                          (["ドットジェイピー広島第一支部", "春インターン申込は12月31日まで"], 1250, 48, YEL, BLACK),
-                                          (["この物語はフィクションです"], 1380, 28, (180, 186, 210), BOLD)):
-                E.paste_center(img, E.fit_text(txt, sz, 1000, fill=col, sw=6, path=path), 540, y, E.pop(u - 0.3))
+            u = t - 8.6
+            import case1
+            img = case1.lobby_kanata_face(0.5, 4.4, "blank", push=0.35)
+            img.alpha_composite(Image.new("RGBA", (W, H), (8, 10, 24, 215)))
+            O.caption(img, "新シリーズ", 560, u, size=90, col=(200, 210, 235))
+            O.caption(img, "インターン生、", 720, u - 0.15, size=150)
+            O.caption(img, "事件です。", 900, u - 0.3, size=190, col=YEL)
+            if u > 0.6:
+                f = O.F(BLACK, 100)
+                lab = "明日スタート"
+                w = f.getlength(lab) + 80
+                bd = Image.new("RGBA", (int(w), 150), (0, 0, 0, 0))
+                ImageDraw.Draw(bd).rounded_rectangle([0, 0, w - 1, 149], radius=75, fill=(220, 50, 60))
+                ImageDraw.Draw(bd).text((40, 14), lab, font=f, fill=(255, 255, 255))
+                E.paste_center(img, bd, 540, 1100, E.pop(u - 0.6))
+            for txt, y, sz, col, path in ((["希望の活動先は、早いほど選べる。"], 1250, 52, (255, 255, 255), BOLD),
+                                          (["ドットジェイピー広島第一支部", "春インターン申込は12月31日まで"], 1380, 52, YEL, BLACK),
+                                          (["この物語はフィクションです"], 1510, 30, (180, 186, 210), BOLD)):
+                E.paste_center(img, E.fit_text(txt, sz, 1000, fill=col, sw=6, path=path), 540, y, E.pop(u - 1.0))
     if sid:
         subtitle(img, sid)
     return img
