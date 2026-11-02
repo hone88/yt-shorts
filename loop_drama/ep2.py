@@ -413,8 +413,6 @@ def frame(s, t):
     elif n == "okay":
         img = call_ui(s, t, cam_on=t > s.camon, kexpr="smile", mexpr="smile" if t > s.lines[0][0] + L("12") * 0.6 else None)
         clock(img, "10:31", counter=False)
-        if t > s.camon:
-            big_word(img, "カメラ ON", t - s.camon, (90, 220, 120), y=1130, size=100)
     elif n == "list":
         a, b = (x[0] for x in s.lines)
         img = call_ui(s, t, cam_on=True, kexpr="shock" if t > b else "open")
