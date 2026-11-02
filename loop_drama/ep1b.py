@@ -219,25 +219,28 @@ def badge(img, text, x, y, bg=(20, 26, 56), fg=(255, 255, 255), size=40, anchor=
     return w
 
 
+CLOCK_Y = 260   # 日時の枠の上端（Instagramの上の表示を避ける）
+
+
 def clock_big(img, date, time_, flash=0.0, grade=None):
-    """上中央に大きく日付と時刻。タイムリープを意識させる"""
+    """上中央に日付と時刻。Instagramの上の表示（〜約240px）とかぶらないよう、260pxから始めて行間を詰める"""
     d = ImageDraw.Draw(img)
-    fd, ft = F(BLACK, 58), F(BLACK, 170)
+    fd, ft = F(BLACK, 50), F(BLACK, 140)
     wd, wt = fd.getlength(date), ft.getlength(time_)
-    w = max(wd, wt) + 80
-    x0, y0 = 540 - w / 2, 150
+    w = max(wd, wt) + 70
+    x0, y0 = 540 - w / 2, CLOCK_Y
     lay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    ImageDraw.Draw(lay).rounded_rectangle([x0, y0, x0 + w, y0 + 300], radius=40, fill=(10, 12, 30, 200))
+    ImageDraw.Draw(lay).rounded_rectangle([x0, y0, x0 + w, y0 + 222], radius=34, fill=(10, 12, 30, 200))
     img.alpha_composite(lay)
-    d.text((540 - wd / 2, y0 + 18), date, font=fd, fill=(255, 255, 255))
+    d.text((540 - wd / 2, y0 + 10), date, font=fd, fill=(255, 255, 255))
     col = (255, 216, 77) if flash <= 0 else (255, 80, 80)
-    d.text((540 - wt / 2, y0 + 78), time_, font=ft, fill=col, stroke_width=6, stroke_fill=(10, 12, 30))
+    d.text((540 - wt / 2, y0 + 50), time_, font=ft, fill=col, stroke_width=5, stroke_fill=(10, 12, 30))
     if grade:
-        fg = F(BLACK, 46)
-        gw = fg.getlength(grade) + 48
+        fg = F(BLACK, 40)
+        gw = fg.getlength(grade) + 44
         gc = (230, 90, 90) if "4" in grade else (90, 170, 255)
-        d.rounded_rectangle([540 - gw / 2, y0 + 312, 540 + gw / 2, y0 + 380], radius=34, fill=gc)
-        d.text((540 - gw / 2 + 24, y0 + 320), grade, font=fg, fill=(255, 255, 255))
+        d.rounded_rectangle([540 - gw / 2, y0 + 230, 540 + gw / 2, y0 + 288], radius=29, fill=gc)
+        d.text((540 - gw / 2 + 22, y0 + 236), grade, font=fg, fill=(255, 255, 255))
 
 
 def counter(img, n, pulse=0.0):
@@ -245,7 +248,7 @@ def counter(img, n, pulse=0.0):
     txt = f"残りループ {n}"
     w = f.getlength(txt) + 96
     x = 540 - w / 2
-    x1, y = x + w, 548
+    x1, y = x + w, CLOCK_Y + 296
     d = ImageDraw.Draw(img)
     col = (250, 204, 60)
     d.rounded_rectangle([x, y, x1, y + 66], radius=33, fill=(20, 26, 56), outline=col if pulse > 0 else None, width=int(3 + 5 * pulse))
