@@ -15,7 +15,7 @@ for s in SH:
     for (t0, sid) in s.lines:
         A.put(voice, V.vo(sid), s.start + t0)
 
-jo, on, inf, dz, ask, no, ok, li, nx, af, en = (S[k] for k in ("join", "one", "info", "doze", "ask", "none", "okay", "list", "next", "after", "end"))
+on, inf, dz, ask, no, ok, li, nx, af, en = (S[k] for k in ("one", "info", "doze", "ask", "none", "okay", "list", "next", "after", "end"))
 
 # 1) 冒頭0.5秒以内にドン（投票結果）
 A.put(fx, A.sfx_boom(0.75, 2.4), 0.02)
@@ -41,17 +41,13 @@ else:
     A.put(music, A.fade(A.bgm_sparse(wk.dur), 0.1, 0.2), wk.start)
 
 # 2) 説明会に入る：日常のBGMを切らさずに
-A.put(fx, A.sfx_transition(0.6), jo.start - 0.45)
-A.put(fx, A.sfx_pop(0.3), jo.start + 0.2)                 # カメラOFFの札
-call_end = dz.start
-A.put(music, A.amb_room(call_end - jo.start, 0.05), jo.start)
-A.put(music, A.fade(A.bgm_morning(on.start + on.rev - jo.start - 0.6), 0.4, 0.5), jo.start)
+A.put(fx, A.sfx_transition(0.6), on.start - 0.45)
+A.put(music, A.amb_room(dz.start - on.start, 0.05), on.start)
+A.put(music, A.fade(A.bgm_morning(dz.start - on.start + 0.3), 0.4, 0.4), on.start)
 A.put(fx, A.sfx_ding(0.3), on.start + 0.05)               # 通話に入った音
-# 「カメラOFFでもOK」：やわらかく見せる
-A.put(fx, A.sfx_pop(0.35), on.start + on.rev)
-A.put(fx, A.sfx_ding(0.3), on.start + on.rev + 0.05)
-A.put(fx, A.sfx_boom(0.45, 1.8), on.start + on.rev)
-A.put(music, A.fade(A.bgm_morning(dz.start - on.start - on.rev + 0.3), 0.8, 0.4), on.start + on.rev + 0.5)
+# 「広島の大学1・2年生向け」のカード
+A.put(fx, A.sfx_whoosh(0.4, True, 0.3), on.start + on.rev - 0.15)
+A.put(fx, A.sfx_boom(0.5, 1.8), on.start + on.rev)
 A.put(fx, A.sfx_whoosh(0.4, True, 0.3), inf.start + inf.lines[0][0])
 A.put(fx, A.sfx_whoosh(0.4, True, 0.3), inf.start + inf.lines[1][0] - 0.1)
 
