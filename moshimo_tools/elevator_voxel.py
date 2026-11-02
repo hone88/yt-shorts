@@ -9,7 +9,7 @@ from voxel import Scene, render, particles, tone, blur, smooth, ease, C, f32
 
 W, H, FPS, RS = 1080, 1920, 30, 3
 CLIPS = [2.8, 4.6, 4.5, 7.1, 6.6, 6.3, 5.9, 6.7]
-XFRAC = 0.6        # 2シーン目で×が出る位置（クリップの割合）
+XFRAC = 0.52        # 2シーン目で×が出る位置（クリップの割合）
 R = np.random.default_rng(4)
 
 # 色
@@ -194,7 +194,7 @@ def frame(k, t):
         shaft_lines(c, m, 70 * f * f)
         lift = min(4.0, 6 * f * f)
         person(c, m, CX, FY + 1 + lift, CZ, "float" if f > 0.15 else "stand")
-        cam, tgt = (CX + 6, FY + 21, -14), (CX, FY + 20, CZ)
+        cam, tgt = (CX + 6, FY + 25, -14), (CX, FY + 27, CZ)
         if f > 0:
             cam, tgt = shake(cam, tgt, 0.5, t)
         img, depth = render(S, c, m, cam, tgt, 60, w, h)
@@ -208,7 +208,7 @@ def frame(k, t):
             person(c, m, CX, FY + 1, CZ, "crouch")
         else:
             person(c, m, CX, FY + 1 + min(3.0, (t - jt) * 10), CZ, "jump")
-        cam, tgt = shake((CX + 3, FY + 20, CZ - 32), (CX, FY + 19, CZ), 0.25, t)
+        cam, tgt = shake((CX + 3, FY + 22, CZ - 32), (CX, FY + 23.5, CZ), 0.25, t)
         img, depth = render(S, c, m, cam, tgt, 55, w, h)
         out = finish(img)
         if t >= T * XFRAC:
@@ -218,7 +218,7 @@ def frame(k, t):
         shaft_lines(c, m, 70 * t)
         dy = 3 + 2.5 * math.sin(t * 1.6)
         person(c, m, CX + int(round(math.sin(t * 0.9) * 2)), FY + 1 + dy, CZ, "float", look=int(round(math.sin(t * 1.3))))
-        cam = (CX - 6 + 8 * p, FY + 26, CZ - 32 + 4 * p); tgt = (CX, FY + 24, CZ)
+        cam = (CX - 6 + 8 * p, FY + 28, CZ - 32 + 4 * p); tgt = (CX, FY + 28, CZ)
         img, depth = render(S, c, m, cam, tgt, 52, w, h)
         rg = np.random.default_rng(3); n = 80
         dust = np.stack([rg.uniform(X0 + 2, X1 - 2, n), FY + 2 + (rg.uniform(0, 28, n) + 1.5 * t) % 28, rg.uniform(Z0 + 2, Z1 - 3, n)], 1)
@@ -262,7 +262,7 @@ def frame(k, t):
         cam = (CX + 0.01, CY - 1.5, CZ - 6 - 0.5); tgt = (CX, FY, CZ - 6)
         put(c, m, X0, X1, CY, CY + 2, Z0, Z1, (0.62, 0.63, 0.67), 0)  # 天井を外して真上から
         put(c, m, X0 + 6, X1 - 6, CY - 1, CY, Z0 + 6, Z1 - 6, (1.5, 1.45, 1.3), 0)
-        cam = (CX + 0.01, FY + 31 - 3 * p, CZ - 3); tgt = (CX, FY, CZ + 5)
+        cam = (CX + 0.01, FY + 31 - 3 * p, CZ - 1); tgt = (CX, FY, CZ + 9)
         S.lights = [((CX, FY + 28, CZ - 6), (0.9, 0.85, 0.75), 40)]
         img, depth = render(S, c, m, cam, tgt, 62, w, h)
         return finish(img)

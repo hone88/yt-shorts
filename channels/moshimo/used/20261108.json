@@ -5,7 +5,7 @@
  "topic": "もしもエレベーターが落ちたら",
  "scenes": [
   {"time": "0秒", "caption": "エレベーターが落ちる", "narration": "もしも、乗っているエレベーターが落ちたら？", "image_prompt": "Blocky character in a bright elevator that suddenly drops"},
-  {"time": "0.5秒後", "caption": "ジャンプで助かる？→ムリ", "narration": "着地の瞬間にジャンプすれば助かる？……いいえ、ほとんど意味がありません。", "image_prompt": "Character crouching then jumping, big red X"},
+  {"time": "0.5秒後", "caption": "ジャンプ→ほぼムダ", "narration": "着地の瞬間にジャンプすれば助かる？……いいえ、ほとんど意味がありません。", "image_prompt": "Character crouching then jumping, big red X"},
   {"time": "1秒後", "caption": "体がふわっと浮く", "narration": "落ちている間は、エレベーターと一緒に落ちるので、体がふわっと浮きます。", "image_prompt": "Character floating inside the elevator"},
   {"time": "2秒後", "caption": "時速80キロ以上", "narration": "10階、約30メートルから落ちると、地面に着くころには時速80キロ以上。ジャンプで減らせるのは、ほんの少しです。", "image_prompt": "Wide shot of the car falling fast through the shaft"},
   {"time": "でも実は", "caption": "ロープは何本もある", "narration": "でも実は、エレベーターは何本ものロープでつられていて、1本でも全体を支えられる強さがあるとされています。", "image_prompt": "Many steel ropes above the elevator car"},
