@@ -22,7 +22,8 @@ A.put(fx, A.sfx_boom(0.8, 2.4), 0.02)
 A.put(fx, A.sfx_pop(0.35), 0.05)
 A.put(music, A.amb_crowd(ou.dur, 0.1), 0)
 A.put(music, A.fade(A.bgm_dark(ou.dur + 0.3), 0.05, 0.4), 0)
-A.put(fx, A.sfx_heart(0.5), 0.9); A.put(fx, A.sfx_heart(0.55), 1.6)
+A.put(fx, A.sfx_heart(0.5), 0.6); A.put(fx, A.sfx_heart(0.55), 1.3)
+A.put(fx, A.sfx_transition(0.5), 2.4 - 0.45)                      # タイトル
 A.put(fx, A.sfx_whoosh(0.5, False, 0.3), 0.5)                     # トケイが降りてくる
 
 # 2) 選考会：やわらかいBGM。「落とす場じゃない」のカードでドン

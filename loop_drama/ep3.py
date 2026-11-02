@@ -79,7 +79,7 @@ def seq(ids, start=0.4, gap=0.25, extra=None):
 
 def plan():
     S = []
-    ln, t = seq(["01", "02"], 1.3)                  # 1.3秒までは「つかみ」の文字
+    ln, t = seq(["01", "02"], 0.35)                 # 1コマ目から声とつかみ（おさらいは付けない）
     S.append(O.Shot("outside", t + 0.3, ln))
     ln, t = seq(["03", "04"], 0.5, extra={"04": 1.5})   # ミオのセリフのあと、カードを見せる間
     s = O.Shot("intro", t + 0.4, ln); s.rev = ln[0][0] + L("03") + 0.1; S.append(s)
@@ -206,10 +206,13 @@ def clock(img, date, time_, counter=True):
 
 
 def hook(img, t):
-    if t > 1.3:
-        return
-    im = E.fit_text(["選考会って、", "落とされる場所…？"], 112, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=12, hl={1: YEL})
-    E.paste_center(img, im, 540, 1250, E.pop(t))
+    """1コマ目のつかみ（2.4秒まで）→ 第3話のタイトル（2.4〜4.4秒）"""
+    if t < 2.4:
+        im = E.fit_text(["選考会＝", "落とされる場所。"], 120, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=12, hl={1: (255, 90, 90)})
+        E.paste_center(img, im, 540, 1050, E.pop(t))
+    elif t < 4.4:
+        im = E.fit_text(["第3話", "落とす場じゃない"], 70, 900, fill=(255, 255, 255), stroke=(8, 10, 24), sw=8, hl={1: YEL})
+        E.paste_center(img, im, 540, 1080, E.pop(t - 2.4))
 
 
 def sign(img):
@@ -285,7 +288,7 @@ def frame(s, t):
         lab = "広島市青少年センター"
         w = f.getlength(lab) + 50
         d = ImageDraw.Draw(img)
-        if t > 1.3:
+        if t > 4.4:
             d.rounded_rectangle([540 - w / 2, 1060, 540 + w / 2, 1126], radius=14, fill=(30, 58, 106))
             d.text((540 - w / 2 + 25, 1068), lab, font=f, fill=(255, 255, 255))
         hook(img, t)
