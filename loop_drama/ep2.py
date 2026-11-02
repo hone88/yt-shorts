@@ -363,6 +363,7 @@ def frame(s, t):
         img = O.desat(P.frame(src, src.tf + 0.3, raw=True), 0.9)
         img = O.glitch(img, 0.5 if t < 0.25 or t > s.dur - 0.25 else 0.12, int(t * 30))
         O.clock_big(img, "2029年6月1日（金）", "10:00", flash=1, grade="大学4年")
+        big_word(img, "※トケイが見せた予告", t, YEL, y=1150, size=70)
     elif n == "wake":
         k = kanata_bed("shock"); k.set(head_pitch=0.0, lean=-0.06)
         img = room_img(k, face_cam(t, s.dur, 0.3), tokei_near(t + 3, "normal"), glow=0.6)
