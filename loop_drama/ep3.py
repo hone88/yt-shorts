@@ -92,7 +92,7 @@ def plan():
     s = O.Shot("next", t + 1.0, ln); s.rev = ln[1][0] + L("10") - 0.2; S.append(s)
     ln, t = seq(["11", "12", "13"], 0.9, extra={"13": 0.5})
     S.append(O.Shot("night", t + 0.6, ln))
-    S.append(O.Shot("end", 14.5))   # 新シリーズへの橋渡し
+    S.append(O.Shot("end", 16.0))   # 新シリーズへの橋渡し
     t = 0
     for s in S:
         n = int(round(s.dur * FPS)); s.start, s.dur = t, n / FPS; t += s.dur
@@ -363,29 +363,44 @@ def frame(s, t):
         elif t < 6.8:
             img = night_face(t - 4.8, 2.0, "smile", 0.35)
             O.caption(img, "そして、2か月後。", 1330, t - 4.8, size=110)
-        elif t < 8.6:
+        elif t < 10.1:
+            # #1の冒頭：カナタの顔にぐっと寄っていく（3.3秒）
             import case1
-            img = case1.frame(case1.shot("cold"), min(1.6, t - 6.8)).convert("RGBA")
+            u = t - 6.8
+            k = case1.kanata((3.0, 2.2, 0), 0.0, "blank")
+            e = ease(min(1, u / 3.3))
+            cam = Camera((lerp(3.25, 3.1, e), lerp(3.75, 3.3, e), 1.8), (3.0, 2.2, 1.76), 42)
+            img, _ = render(case1.LOBBY + k.boxes() + case1.reception().boxes(), cam, case1.BG_LOBBY)
+            img = img.convert("RGBA")
+            case1.clock(img, "11:50", "1人", case1.RED)
+            im = E.fit_text(["議員さんが、いない。"], 104, 1020, fill=case1.RED, stroke=(8, 10, 24), sw=12)
+            E.paste_center(img, im, 540, 720, E.pop(u))
+            if 0.35 <= u <= 0.35 + case1.L("01") + 0.3:
+                case1.subtitle(img, "01")
         else:
-            u = t - 8.6
-            import case1
-            img = case1.lobby_kanata_face(0.5, 4.4, "blank", push=0.35)
-            img.alpha_composite(Image.new("RGBA", (W, H), (8, 10, 24, 215)))
-            O.caption(img, "新シリーズ", 560, u, size=90, col=(200, 210, 235))
-            O.caption(img, "インターン生、", 720, u - 0.15, size=150)
-            O.caption(img, "事件です。", 900, u - 0.3, size=190, col=YEL)
-            if u > 0.6:
-                f = O.F(BLACK, 100)
-                lab = "明日スタート"
-                w = f.getlength(lab) + 80
-                bd = Image.new("RGBA", (int(w), 150), (0, 0, 0, 0))
-                ImageDraw.Draw(bd).rounded_rectangle([0, 0, w - 1, 149], radius=75, fill=(220, 50, 60))
-                ImageDraw.Draw(bd).text((40, 14), lab, font=f, fill=(255, 255, 255))
-                E.paste_center(img, bd, 540, 1100, E.pop(u - 0.6))
-            for txt, y, sz, col, path in ((["希望の活動先は、早いほど選べる。"], 1250, 52, (255, 255, 255), BOLD),
-                                          (["ドットジェイピー広島第一支部", "春インターン申込は12月31日まで"], 1380, 52, YEL, BLACK),
-                                          (["この物語はフィクションです"], 1510, 30, (180, 186, 210), BOLD)):
-                E.paste_center(img, E.fit_text(txt, sz, 1000, fill=col, sw=6, path=path), 540, y, E.pop(u - 1.0))
+            # 新章のタイトル（整理して大きく）
+            u = t - 10.1
+            img = Image.new("RGBA", (W, H), (12, 14, 30, 255))
+            d = ImageDraw.Draw(img)
+            def pill(text, y, size, bg, fg=(255, 255, 255), delay=0.0):
+                if u < delay:
+                    return
+                f = O.F(BLACK, size)
+                w = f.getlength(text) + size
+                bd = Image.new("RGBA", (int(w), int(size * 1.5)), (0, 0, 0, 0))
+                ImageDraw.Draw(bd).rounded_rectangle([0, 0, w - 1, size * 1.5 - 1], radius=int(size * 0.75), fill=bg)
+                ImageDraw.Draw(bd).text((size / 2, size * 0.14), text, font=f, fill=fg)
+                E.paste_center(img, bd, 540, y, E.pop(u - delay))
+            pill("新章", 470, 72, (60, 70, 110), (220, 228, 245))
+            O.caption(img, "インターン生、", 680, u - 0.15, size=150)
+            O.caption(img, "事件です。", 880, u - 0.3, size=200, col=YEL)
+            pill("明日スタート", 1110, 110, (220, 50, 60), delay=0.6)
+            if u > 1.0:
+                d.line([(140, 1270), (940, 1270)], fill=(90, 96, 130), width=3)
+            for txt, y, sz, col, path in ((["春インターン申込は12月31日まで"], 1360, 56, YEL, BLACK),
+                                          (["ドットジェイピー広島第一支部"], 1450, 46, (255, 255, 255), BLACK),
+                                          (["この物語はフィクションです"], 1540, 30, (170, 176, 200), BOLD)):
+                E.paste_center(img, E.fit_text(txt, sz, 1000, fill=col, sw=5, path=path), 540, y, E.pop(u - 1.0))
     if sid:
         subtitle(img, sid)
     return img

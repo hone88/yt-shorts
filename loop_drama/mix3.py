@@ -73,12 +73,14 @@ A.put(fx, A.sfx_heart(0.6), en.start + 7.1); A.put(fx, A.sfx_heart(0.65), en.sta
 import case1 as C1
 A.put(voice, C1.vo("01"), en.start + 6.8 + 0.35)
 A.put(fx, A.sfx_boom(0.7, 2.0), en.start + 6.82)
-A.put(music, A.fade(A.bgm_dark(3.0)[:int(1.8 * A.SR)], 0.05, 0.2), en.start + 6.8)
-A.put(fx, A.sfx_transition(0.75), en.start + 8.6 - 0.45)
-A.put(fx, A.sfx_boom(0.9, 2.4), en.start + 8.6)
-A.put(fx, A.sfx_pop(0.4), en.start + 9.2)
-A.put(music, A.fade(A.bgm_morning(en.dur - 8.6, bright=True) * 1.15, 0.1, 1.5), en.start + 8.6)
-A.put(fx, A.sfx_chime_end(), en.start + 9.3)
+A.put(music, A.fade(A.bgm_dark(3.6)[:int(3.3 * A.SR)], 0.05, 0.2), en.start + 6.8)
+A.put(fx, A.sfx_heart(0.65), en.start + 8.4); A.put(fx, A.sfx_heart(0.7), en.start + 9.1)
+A.put(fx, A.sfx_riser(0.8, 0.35), en.start + 9.3)
+A.put(fx, A.sfx_transition(0.75), en.start + 10.1 - 0.45)
+A.put(fx, A.sfx_boom(0.95, 2.4), en.start + 10.1)
+A.put(fx, A.sfx_pop(0.4), en.start + 10.7)
+A.put(music, A.fade(A.bgm_morning(en.dur - 10.1, bright=True) * 1.15, 0.1, 1.5), en.start + 10.1)
+A.put(fx, A.sfx_chime_end(), en.start + 10.8)
 
 music = A.duck(music, voice, 0.6)
 mix = voice * 1.0 + fx * 0.8 + music * 0.9
