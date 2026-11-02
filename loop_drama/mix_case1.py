@@ -1,4 +1,4 @@
-"""インターン生、事件です。#1 の音。python3 mix_case1.py → out_case1/インターン生事件です_1.mp4"""
+"""ガクチカ・ループ 第4話の音。python3 mix_case1.py → out_case1/ガクチカループ_第4話.mp4"""
 import os, subprocess, wave
 import numpy as np
 import audio as A
@@ -37,6 +37,9 @@ for k in range(3):
 A.put(music, A.fade(A.bgm_dark(st.dur + wa.dur), 0.8, 0.4), st.start + 0.6)
 A.put(fx, A.sfx_riser(0.6, 0.35), st.start + st.lines[1][0] - 0.6)
 A.put(fx, A.sfx_boom(0.9, 2.4), st.start + st.lines[1][0])
+A.put(fx, A.sfx_whoosh(0.5, False, 0.35), st.start + st.lines[2][0] - 0.6)   # トケイ
+A.put(fx, A.sfx_alarm(), st.start + st.lines[2][0] - 0.2)
+A.put(fx, A.sfx_boom(0.7, 2.0), st.start + st.lines[2][0] + V.L("13") * 0.7)
 # 11:50 残り10分：秒針と心臓
 A.put(fx, A.sfx_transition(0.5), wa.start - 0.45)
 A.put(fx, A.sfx_stopwatch(wa.dur, 0.5, 0.22), wa.start)
@@ -66,7 +69,7 @@ p = f"{OUT}/mix.wav"
 with wave.open(p, "wb") as w:
     w.setnchannels(1); w.setsampwidth(2); w.setframerate(A.SR)
     w.writeframes((mix * 32767).astype(np.int16).tobytes())
-final = f"{OUT}/インターン生事件です_1.mp4"
+final = f"{OUT}/ガクチカループ_第4話.mp4"
 subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", f"{OUT}/video.mp4", "-i", p, "-map", "0:v", "-map", "1:a", "-c:v", "copy",
                 "-af", "loudnorm=I=-16:TP=-1.5,aresample=48000", "-c:a", "aac", "-b:a", "192k", "-shortest", final + ".part.mp4"], check=True)
 os.replace(final + ".part.mp4", final)

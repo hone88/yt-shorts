@@ -330,7 +330,7 @@ def frame(s, t):
         img.alpha_composite(Image.new("RGBA", (W, H), (10, 16, 50, 110)))    # 夜
         clock(img, "2026年12月9日（水）", "21:00")
     elif n == "end":
-        # 新シリーズ「インターン生、事件です。」への橋渡し（カナタに寄る → 申し込む → 2か月後 → #1 → 大きなタイトル）
+        # 第4話（毎話、事件が起きる形）への橋渡し（カナタに寄る → 申し込む → 2か月後 → #1 → 大きなタイトル）
         def night_face(tt, dur, expr, push):
             k = Q.kanata_bed(expr)
             k.spec = P.KANATA_PHONE
@@ -378,7 +378,7 @@ def frame(s, t):
             if 0.35 <= u <= 0.35 + case1.L("01") + 0.3:
                 case1.subtitle(img, "01")
         else:
-            # 新章のタイトル（整理して大きく）
+            # 次回予告：ガクチカ・ループ 第4話（整理して大きく）
             u = t - 10.1
             img = Image.new("RGBA", (W, H), (12, 14, 30, 255))
             d = ImageDraw.Draw(img)
@@ -391,10 +391,11 @@ def frame(s, t):
                 ImageDraw.Draw(bd).rounded_rectangle([0, 0, w - 1, size * 1.5 - 1], radius=int(size * 0.75), fill=bg)
                 ImageDraw.Draw(bd).text((size / 2, size * 0.14), text, font=f, fill=fg)
                 E.paste_center(img, bd, 540, y, E.pop(u - delay))
-            pill("新章", 470, 72, (60, 70, 110), (220, 228, 245))
-            O.caption(img, "インターン生、", 680, u - 0.15, size=150)
-            O.caption(img, "事件です。", 880, u - 0.3, size=200, col=YEL)
-            pill("明日スタート", 1110, 110, (220, 50, 60), delay=0.6)
+            pill("ガクチカ・ループ", 440, 64, (60, 70, 110), (220, 228, 245))
+            O.caption(img, "第4話", 610, u - 0.1, size=120)
+            O.caption(img, "議員さんが、", 790, u - 0.2, size=140)
+            O.caption(img, "いない。", 955, u - 0.35, size=180, col=YEL)
+            pill("明日公開", 1165, 96, (220, 50, 60), delay=0.6)
             if u > 1.0:
                 d.line([(140, 1270), (940, 1270)], fill=(90, 96, 130), width=3)
             for txt, y, sz, col, path in ((["春インターン申込は12月31日まで"], 1360, 56, YEL, BLACK),

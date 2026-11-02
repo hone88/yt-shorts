@@ -1,4 +1,4 @@
-"""インターン生、事件です。#1「議員さんが、いない。」
+"""ガクチカ・ループ 第4話「議員さんが、いない。」（第4話から毎話、事件が起きる形）
 python3 case1.py still <shot> <t> | python3 case1.py build"""
 import math, os, subprocess, sys, wave
 import numpy as np
@@ -50,6 +50,7 @@ TEXT = {
     "10": ("Mo", "すまん！|[どうだった]？"),
     "11": ("K", "…名刺、|[逆さま]に出しかけました。"),
     "12": ("Mo", "はっはっは。|[上出来]だ。"),
+    "13": ("T", "逃げたら、[何もしない一日]なのだ。|面接に、[飛ばす]のだ。"),
 }
 
 
@@ -86,7 +87,7 @@ def plan():
     S.append(O.Shot("cold", max(t + 0.3, 4.4), ln))                 # 0〜2.4秒つかみ、2.4〜4.4秒タイトル
     ln, t = seq(["02", "03"], 0.6)
     s = O.Shot("office", t + 0.6, ln); s.card = ln[0][0] + L("02") * 0.5; S.append(s)
-    ln, t = seq(["04", "05"], 0.9, extra={"05": 0.3})
+    ln, t = seq(["04", "05", "13"], 0.9, extra={"05": 0.3, "13": 0.3})
     s = O.Shot("street", t + 0.5, ln); s.ring = 0.1; S.append(s)
     ln, t = seq(["06"], 1.0)
     S.append(O.Shot("wait", t + 0.4, ln))
@@ -195,11 +196,12 @@ BG_SKY = E.sky((120, 180, 240), (220, 236, 250)).convert("RGB").resize((W * G.SS
 # ---------- 文字 ----------
 def clock(img, time_, extra=None, extra_col=YEL):
     O.clock_big(img, DATE, time_, grade="議員インターン 3日目")
+    O.counter(img, 3)
     if extra:
         d = ImageDraw.Draw(img)
         f = O.F(BLACK, 40)
         w = f.getlength(extra) + 48
-        y = O.CLOCK_Y + 296
+        y = O.CLOCK_Y + 372
         d.rounded_rectangle([540 - w / 2, y, 540 + w / 2, y + 62], radius=31, fill=(20, 26, 56), outline=extra_col, width=4)
         d.text((540 - w / 2 + 24, y + 8), extra, font=f, fill=extra_col)
 
@@ -219,7 +221,7 @@ def hook_title(img, t):
         im = E.fit_text(["議員さんが、", "いない。"], 128, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=12, hl={1: RED})
         E.paste_center(img, im, 540, 1020, E.pop(t))
     elif t < 4.4:
-        im = E.fit_text(["インターン生、", "事件です。#1"], 96, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=10, hl={1: YEL})
+        im = E.fit_text(["ガクチカ・ループ", "第4話"], 104, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=10, hl={1: YEL})
         E.paste_center(img, im, 540, 1020, E.pop(t - 2.4))
 
 
@@ -278,14 +280,18 @@ def frame(s, t):
         if t > s.card and t < s.lines[1][0] - 0.1:
             card_info(img, (t - s.card) / 0.3, ["あいさつ回り", "1日6〜7か所のことも"])
     elif n == "street":
-        a, b = (x[0] for x in s.lines)
+        a, b, c = (x[0] for x in s.lines)
         mo = morishita((2.4, 2.1, 0), math.pi * 0.85, "normal", armR=1.9 if t > 0.3 else 0.05)
         k = kanata((3.3, 1.7, 0), math.pi * 1.15, "shock" if t > b - 0.1 else "normal")
         if t < b - 0.1:
             cam = Camera((2.6, -0.4, 1.7), (2.85, 1.9, 1.55), 46)
-        else:
+        elif t < c - 0.6:
             cam = Camera((3.0, -0.2, 1.75), (3.3, 1.7, 1.62), 38)
-        img, _ = render(STREET + mo.boxes() + k.boxes(), cam, BG_SKY)
+        else:   # トケイが割り込む：2人が入る画
+            u = ease(min(1, (t - c + 0.6) / 0.5))
+            cam = Camera((lerp(3.0, 3.05, u), lerp(-0.2, -0.5, u), 1.75), (lerp(3.3, 3.0, u), 1.6, 1.6), lerp(38, 48, u))
+        tk = C.tokei_boxes((2.8, 1.3, lerp(3.2, 1.5, ease(min(1, (t - c + 0.6) / 0.45)))), t, "angry" if t > c else "eyes", 0.55, math.pi + 0.35, tag="tokei") if t > c - 0.6 else []
+        img, _ = render(STREET + mo.boxes() + k.boxes() + tk, cam, BG_SKY)
         img = img.convert("RGBA")
         clock(img, "11:40")
         if t < a:
@@ -323,7 +329,7 @@ def frame(s, t):
         O.caption(img, "1人で行ける？", 680, t, size=100, col=YEL)
         for txt, y, sz, col, path in ((["コメントで教えてね"], 860, 64, (255, 255, 255), BLACK),
                                       (["議員インターン：あいさつ回りは1日6〜7か所のことも"], 1000, 40, (200, 210, 235), BOLD),
-                                      (["次の事件 #2「名刺が、あと2枚。」"], 1130, 50, (255, 255, 255), BLACK),
+                                      (["次回 第5話「名刺が、あと2枚。」"], 1130, 50, (255, 255, 255), BLACK),
                                       (["ドットジェイピー広島第一支部", "春インターン申込は12月31日まで"], 1270, 48, YEL, BLACK),
                                       (["この物語はフィクションです"], 1400, 28, (180, 186, 210), BOLD)):
             E.paste_center(img, E.fit_text(txt, sz, 1000, fill=col, sw=6, path=path), 540, y, E.pop(t - 0.3))

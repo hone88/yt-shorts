@@ -58,7 +58,7 @@ A.put(music, A.fade(A.bgm_dark(ni.dur), 0.6, 0.4), ni.start)
 A.put(fx, A.sfx_stopwatch(ni.dur - 0.5, 0.5, 0.18), ni.start + 0.3)
 A.put(fx, A.sfx_boom(0.6, 2.2), ni.start + ni.lines[2][0] + V.L("13") * 0.6)
 
-# 7) 新シリーズへの橋渡し：夜のカナタ → 申し込む（ドン）→ 2か月後 → #1の冒頭 → 大きなタイトル
+# 7) 第4話への橋渡し：夜のカナタ → 申し込む（ドン）→ 2か月後 → #1の冒頭 → 大きなタイトル
 A.put(fx, A.sfx_transition(0.55), en.start - 0.45)
 A.put(music, A.amb_room(6.8, 0.04), en.start)
 A.put(music, A.fade(A.bgm_sparse(6.9), 0.3, 0.3), en.start)
