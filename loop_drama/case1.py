@@ -252,7 +252,7 @@ def lobby_over(t, dur, rexpr="normal", talk=False, card=False):
     k = kanata((3.0, 2.2, 0), 0.0, "normal", card, armR=1.25 if card else 0.05)
     rc = reception(rexpr if not talk else ("smile" if int(t * 7) % 2 else "normal"))
     u = ease(t / max(dur, 0.01))
-    cam = Camera((lerp(3.75, 3.7, u), lerp(1.2, 1.45, u), 1.75), (3.0, 5.4, 1.5), 40)
+    cam = Camera((lerp(3.5, 3.45, u), lerp(0.9, 1.15, u), 1.78), (3.0, 5.4, 1.5), 42)
     img, _ = render(LOBBY + k.boxes() + rc.boxes(), cam, BG_LOBBY)
     return img.convert("RGBA")
 
