@@ -58,11 +58,21 @@ A.put(music, A.fade(A.bgm_dark(ni.dur), 0.6, 0.4), ni.start)
 A.put(fx, A.sfx_stopwatch(ni.dur - 0.5, 0.5, 0.18), ni.start + 0.3)
 A.put(fx, A.sfx_boom(0.6, 2.2), ni.start + ni.lines[2][0] + V.L("13") * 0.6)
 
-# 7) 終わり：音楽だけで締め、最後1.5秒でフェードアウト
+# 7) 新シリーズへの橋渡し：「申し込んだ。」でドン → 2か月後 → #1の冒頭 → 明るい締め
 A.put(fx, A.sfx_transition(0.55), en.start - 0.45)
-A.put(music, A.fade(A.bgm_morning(en.dur, bright=True) * 1.1, 0.2, 1.5), en.start)
-A.put(fx, A.sfx_chime_end(), en.start + 0.05)
-A.put(fx, A.sfx_pop(0.3), en.start + 0.3)
+A.put(music, A.fade(A.bgm_sparse(4.2), 0.2, 0.3), en.start)
+A.put(fx, A.sfx_riser(0.8, 0.35), en.start + 0.2)
+A.put(fx, A.sfx_boom(0.95, 2.4), en.start + 1.0)
+A.put(fx, A.sfx_stopwatch(1.6, 0.25, 0.2), en.start + 2.4)
+A.put(fx, A.sfx_transition(0.7), en.start + 4.0 - 0.45)
+A.put(fx, A.sfx_heart(0.6), en.start + 4.3); A.put(fx, A.sfx_heart(0.65), en.start + 4.9)
+import case1 as C1
+A.put(voice, C1.vo("01"), en.start + 4.0 + 0.35)              # #1の冒頭のセリフ
+A.put(fx, A.sfx_boom(0.7, 2.0), en.start + 4.02)
+A.put(music, A.fade(A.bgm_dark(3.0)[:int(1.6 * A.SR)], 0.05, 0.2), en.start + 4.0)
+A.put(fx, A.sfx_transition(0.6), en.start + 5.6 - 0.45)
+A.put(music, A.fade(A.bgm_morning(en.dur - 5.6, bright=True) * 1.1, 0.2, 1.5), en.start + 5.6)
+A.put(fx, A.sfx_chime_end(), en.start + 5.65)
 
 music = A.duck(music, voice, 0.6)
 mix = voice * 1.0 + fx * 0.8 + music * 0.9

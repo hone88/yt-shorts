@@ -210,4 +210,27 @@ def tokei_boxes(center, t=0.0, expr="eyes", scale=1.0, yaw=0.0, tag="tokei"):
     ]
 
 
+
+# ====================================================================
+# 受付の人（架空の会社の受付。会社名・ロゴは出さない）
+# ====================================================================
+RC_PAL = {"h": hexc("#2a2024"), "S": hexc("#f2cba8"), "W": hexc("#ffffff"), "E": hexc("#2a1c18"), "M": hexc("#c06a6a"),
+          "p": hexc("#efb0a4"), "V": hexc("#4a5a78"), "v": hexc("#3c4a64"), "w": hexc("#f6f6f6"), "L": hexc("#3a3e4a"), "K": hexc("#202024")}
+RC_FACE = ["hhhhhhhh", "hhhhhhhh", "hhSSSShh", "hSSSSSSh", "hWESSEWh", "hpSSSSph", "hSSMMSSh", "hSSSSSSh"]
+RC_EXPR = {"normal": {}, "smile": {6: "hSMSSMSh", 7: "hSSMMSSh"}}
+
+
+def reception_parts(expr="normal"):
+    p = RC_PAL
+    head = {"front": T(face_rows(RC_FACE, expr, RC_EXPR), p), "side": T(["hhhhhhhh"] * 3 + ["hhhhhSSS", "hhhhSSSE", "hhhhSSSS", "hhhhSSSS", "hhhhSSSS"], p),
+            "back": T(["hhhhhhhh"] * 8, p), "top": T(["hhhh"] * 4, p), "bottom": T(["SS"], p)}
+    body = {"front": T(["VVwSSwVV"] + ["VVwwwwVV"] * 5 + ["VVVVVVVV"] * 4 + ["vvvvvvvv"] * 2, p), "all": T(["VVVVVVVV"] * 10 + ["vvvvvvvv"] * 2, p), "top": T(["VV"], p)}
+    arm = {"all": T(["wwww"] * 10 + ["SSSS"] * 2, p), "top": T(["ww"], p), "bottom": T(["SS"], p)}
+    leg = {"all": T(["LLLL"] * 11 + ["KKKK"], p), "bottom": T(["KK"], p)}
+    return humanoid(head, body, arm, leg)
+
+
+RECEPTION = dict(name="reception", label="受付の人", parts=reception_parts)
+
+
 CAST = [KANATA, KANATA_SUIT, MIO, INTERVIEWER, MORISHITA]

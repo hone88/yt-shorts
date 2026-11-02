@@ -92,7 +92,7 @@ def plan():
     s = O.Shot("next", t + 1.0, ln); s.rev = ln[1][0] + L("10") - 0.2; S.append(s)
     ln, t = seq(["11", "12", "13"], 0.9, extra={"13": 0.5})
     S.append(O.Shot("night", t + 0.6, ln))
-    S.append(O.Shot("end", 6.0))
+    S.append(O.Shot("end", 10.0))   # 新シリーズへの橋渡し
     t = 0
     for s in S:
         n = int(round(s.dur * FPS)); s.start, s.dur = t, n / FPS; t += s.dur
@@ -330,16 +330,27 @@ def frame(s, t):
         img.alpha_composite(Image.new("RGBA", (W, H), (10, 16, 50, 110)))    # 夜
         clock(img, "2026年12月9日（水）", "21:00")
     elif n == "end":
-        img = P.end_scene(s, t)
-        O.caption(img, "あなたが", 560, t, size=84)
-        O.caption(img, "伸ばしたい力は？", 680, t, size=100, col=YEL)
-        for txt, y, sz, col, path in ((["コメントで教えてね"], 860, 64, (255, 255, 255), BLACK),
-                                      (["1次選考会は、伸ばしたい力を一緒に考える場"], 1000, 42, (200, 210, 235), BOLD),
-                                      (["次回 第4話「扉が閉まる」"], 1130, 50, (255, 255, 255), BLACK),
-                                      (["あなたの「力を入れたこと」は、まだ作れる。"], 1250, 44, (255, 255, 255), BOLD),
-                                      (["ドットジェイピー広島第一支部", "春インターン申込は12月31日まで"], 1380, 48, YEL, BLACK),
-                                      (["この物語はフィクションです"], 1500, 28, (180, 186, 210), BOLD)):
-            E.paste_center(img, E.fit_text(txt, sz, 1000, fill=col, sw=6, path=path), 540, y, E.pop(t - 0.3))
+        # 新シリーズ「インターン生、事件です。」への橋渡し
+        img = Image.new("RGBA", (W, H), (10, 12, 26, 255))
+        if t < 2.4:
+            O.caption(img, "その夜、カナタは——", 820, t, size=76)
+            if t > 1.0:
+                O.caption(img, "申し込んだ。", 980, t - 1.0, size=130, col=YEL)
+        elif t < 4.0:
+            O.caption(img, "そして、2か月後。", 900, t - 2.4, size=96)
+        elif t < 5.6:
+            import case1
+            img = case1.frame(case1.shot("cold"), min(1.6, t - 4.0)).convert("RGBA")
+        else:
+            u = t - 5.6
+            O.caption(img, "新シリーズ", 560, u, size=64, col=(200, 210, 235))
+            O.caption(img, "インターン生、", 690, u, size=100)
+            O.caption(img, "事件です。", 820, u, size=120, col=YEL)
+            for txt, y, sz, col, path in ((["明日スタート"], 980, 70, (255, 255, 255), BLACK),
+                                          (["希望の活動先は、早いほど選べる。"], 1120, 46, (255, 255, 255), BOLD),
+                                          (["ドットジェイピー広島第一支部", "春インターン申込は12月31日まで"], 1250, 48, YEL, BLACK),
+                                          (["この物語はフィクションです"], 1380, 28, (180, 186, 210), BOLD)):
+                E.paste_center(img, E.fit_text(txt, sz, 1000, fill=col, sw=6, path=path), 540, y, E.pop(u - 0.3))
     if sid:
         subtitle(img, sid)
     return img
