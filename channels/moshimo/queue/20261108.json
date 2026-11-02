@@ -1,0 +1,23 @@
+{
+ "title": "もしもエレベーターが落ちたら、最後にジャンプすれば助かる？",
+ "description": "落ちるエレベーターの中で、着地の瞬間にジャンプすれば助かる？……実は、ほとんど意味がありません。じゃあ本当はどうなっているのか、科学で考えてみました。\nあなたなら最後にジャンプする？寝そべる？コメントで教えてください！\n\n※思考実験です。",
+ "tags": ["もしも", "思考実験", "雑学", "科学", "エレベーター"],
+ "topic": "もしもエレベーターが落ちたら",
+ "scenes": [
+  {"time": "0秒", "caption": "エレベーターが落ちる", "narration": "もしも、乗っているエレベーターが落ちたら？", "image_prompt": "Blocky character in a bright elevator that suddenly drops"},
+  {"time": "0.5秒後", "caption": "ジャンプで助かる？→ムリ", "narration": "着地の瞬間にジャンプすれば助かる？……いいえ、ほとんど意味がありません。", "image_prompt": "Character crouching then jumping, big red X"},
+  {"time": "1秒後", "caption": "体がふわっと浮く", "narration": "落ちている間は、エレベーターと一緒に落ちるので、体がふわっと浮きます。", "image_prompt": "Character floating inside the elevator"},
+  {"time": "2秒後", "caption": "時速80キロ以上", "narration": "10階、約30メートルから落ちると、地面に着くころには時速80キロ以上。ジャンプで減らせるのは、ほんの少しです。", "image_prompt": "Wide shot of the car falling fast through the shaft"},
+  {"time": "でも実は", "caption": "ロープは何本もある", "narration": "でも実は、エレベーターは何本ものロープでつられていて、1本でも全体を支えられる強さがあるとされています。", "image_prompt": "Many steel ropes above the elevator car"},
+  {"time": "さらに", "caption": "非常ブレーキで止まる", "narration": "全部切れても、レールをはさんで止める非常ブレーキがあります。エレベーターは、ほぼ落ちない乗り物です。", "image_prompt": "Safety brake clamping the rail with sparks"},
+  {"time": "それでも", "caption": "寝そべるのがいい？", "narration": "それでも落ちたら？床に仰向けに寝そべって、衝撃を体全体に分けるのがいい、という説があります。", "image_prompt": "Character lying flat on the elevator floor, top view"},
+  {"time": "あなたは？", "caption": "あなたならどうする？", "narration": "あなたなら、最後にジャンプする？それとも寝そべる？他に試してほしい「もしも」は、コメントで教えてください。", "image_prompt": "Close-up of the character's face"}
+ ],
+ "factcheck": [
+  {"scene": 2, "problem": "最後のジャンプで助かるか", "fix": "BBC Science Focus・ライフハッカー：ジャンプしても助からない"},
+  {"scene": 4, "problem": "30mからの落下速度", "fix": "√(2×9.8×30)≈24m/s≈時速87km（空気抵抗なし）→『80キロ以上』"},
+  {"scene": 5, "problem": "ロープの本数と強さ", "fix": "BBC Science Focus：6〜12本で各1本が満員のかごを支えられる。国内の機種差があるので『とされています』"},
+  {"scene": 6, "problem": "非常ブレーキ", "fix": "全ロープが切れても、ブレーキがレールをはさむ（BBC Science Focus）"},
+  {"scene": 7, "problem": "寝そべる説", "fix": "ライフハッカー（MIT研究者の助言として紹介）。BBCは『座っていて』としているので『という説があります』に"}
+ ]
+}
