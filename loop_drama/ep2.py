@@ -349,7 +349,6 @@ def frame(s, t):
         img = room_img(kanata_bed("normal"), face_cam(t, s.dur, 0.15), glow=0.6)
         clock(img, "9:59")
         vote_card(img, t, "A", "説明会に出る", (255, 138, 31))
-        recap(img, t - 1.2)
     elif n == "sleep":
         k = kanata_bed("sleep" if t < 1.6 else "shock")
         k.set(head_pitch=0.45 if t < 1.6 else 0.05)
