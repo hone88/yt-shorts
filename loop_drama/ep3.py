@@ -92,7 +92,7 @@ def plan():
     s = O.Shot("next", t + 1.0, ln); s.rev = ln[1][0] + L("10") - 0.2; S.append(s)
     ln, t = seq(["11", "12", "13"], 0.9, extra={"13": 0.5})
     S.append(O.Shot("night", t + 0.6, ln))
-    S.append(O.Shot("end", 16.0))   # 新シリーズへの橋渡し
+    S.append(O.Shot("end", 13.5))   # 第4話「扉が閉まる」への橋渡し
     t = 0
     for s in S:
         n = int(round(s.dur * FPS)); s.start, s.dur = t, n / FPS; t += s.dur
@@ -330,7 +330,7 @@ def frame(s, t):
         img.alpha_composite(Image.new("RGBA", (W, H), (10, 16, 50, 110)))    # 夜
         clock(img, "2026年12月9日（水）", "21:00")
     elif n == "end":
-        # 第4話（毎話、事件が起きる形）への橋渡し（カナタに寄る → 申し込む → 2か月後 → #1 → 大きなタイトル）
+        # 第4話「扉が閉まる」への橋渡し（カナタに寄る → 予約画面を閉じる → 活動先が次々に受付終了 → 大きなタイトル）
         def night_face(tt, dur, expr, push):
             k = Q.kanata_bed(expr)
             k.spec = P.KANATA_PHONE
@@ -339,47 +339,51 @@ def frame(s, t):
             im.alpha_composite(Image.new("RGBA", (W, H), (10, 16, 50, 120)))
             im.alpha_composite(Image.new("RGBA", (W, H), (120, 170, 255, 30)))   # スマホの光
             return im
-        if t < 2.4:
-            img = night_face(t, 2.4, "normal", 0.5)
+        if t < 2.6:
+            img = night_face(t, 2.6, "normal", 0.5)
             O.caption(img, "その夜、カナタは——", 1330, t - 0.2, size=92)
-        elif t < 4.8:
-            u = t - 2.4
-            img = night_face(2.4 + u, 4.8, "open", 0.5)
+        elif t < 5.2:
+            u = t - 2.6
+            img = night_face(2.6 + u, 5.2, "normal" if u < 1.3 else "smile", 0.5)
             lay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
             d = ImageDraw.Draw(lay)
-            d.rounded_rectangle([250, 560, 830, 1180], radius=50, fill=(250, 250, 252, 245), outline=(30, 30, 36), width=14)
-            fh, fb = O.F(BLACK, 40), O.F(BLACK, 56)
-            d.text((540 - fh.getlength("春インターン 申込") / 2, 620), "春インターン 申込", font=fh, fill=(40, 40, 50))
-            if u < 0.9:
-                d.rounded_rectangle([320, 860, 760, 980], radius=60, fill=(255, 138, 31))
-                d.text((540 - fb.getlength("申し込む") / 2, 888), "申し込む", font=fb, fill=(255, 255, 255))
-            else:
-                d.ellipse([470, 760, 610, 900], fill=(60, 190, 110))
-                d.line([(500, 830), (530, 862), (585, 800)], fill=(255, 255, 255), width=14)
-                d.text((540 - fb.getlength("申し込みました") / 2, 940), "申し込みました", font=fb, fill=(40, 40, 50))
+            fh, fb, fs = O.F(BLACK, 44), O.F(BLACK, 54), O.F(BLACK, 40)
+            if u < 1.5:
+                d.rounded_rectangle([250, 560, 830, 1180], radius=50, fill=(250, 250, 252, 245), outline=(30, 30, 36), width=14)
+                d.text((540 - fh.getlength("2次選考会 予約") / 2, 630), "2次選考会 予約", font=fh, fill=(40, 40, 50))
+                d.rounded_rectangle([320, 790, 760, 900], radius=55, fill=(255, 138, 31))
+                d.text((540 - fb.getlength("予約する") / 2, 815), "予約する", font=fb, fill=(255, 255, 255))
+                tap = u > 0.9
+                d.rounded_rectangle([370, 950, 710, 1040], radius=45, fill=(120, 124, 140) if tap else (225, 227, 235))
+                d.text((540 - fs.getlength("あとで") / 2, 970), "あとで", font=fs, fill=(255, 255, 255) if tap else (90, 92, 105))
             img.alpha_composite(lay)
-            if u > 0.9:
-                O.caption(img, "申し込んだ。", 1330, u - 0.9, size=150, col=YEL)
-        elif t < 6.8:
-            img = night_face(t - 4.8, 2.0, "smile", 0.35)
-            O.caption(img, "そして、2か月後。", 1330, t - 4.8, size=110)
-        elif t < 10.1:
-            # #1の冒頭：カナタの顔にぐっと寄っていく（3.3秒）
-            import case1
-            u = t - 6.8
-            k = case1.kanata((3.0, 2.2, 0), 0.0, "blank")
-            e = ease(min(1, u / 3.3))
-            cam = Camera((lerp(3.25, 3.1, e), lerp(3.75, 3.3, e), 1.8), (3.0, 2.2, 1.76), 42)
-            img, _ = render(case1.LOBBY + k.boxes() + case1.reception().boxes(), cam, case1.BG_LOBBY)
-            img = img.convert("RGBA")
-            case1.clock(img, "11:50", "1人", case1.RED)
-            im = E.fit_text(["議員さんが、いない。"], 104, 1020, fill=case1.RED, stroke=(8, 10, 24), sw=12)
-            E.paste_center(img, im, 540, 720, E.pop(u))
-            if 0.35 <= u <= 0.35 + case1.L("01") + 0.3:
-                case1.subtitle(img, "01")
+            if u > 1.5:
+                O.caption(img, "…閉じた。", 1330, u - 1.5, size=150, col=YEL)
+        elif t < 7.6:
+            # 扉が閉まっていく：気になっていた活動先が、1つずつ受付終了
+            u = t - 5.2
+            img = Image.new("RGBA", (W, H), (14, 10, 22, 255))
+            d = ImageDraw.Draw(img)
+            O.caption(img, "1週間後——", 500, u, size=80)
+            O.caption(img, "行きたかった活動先", 590, u - 0.1, size=52)
+            f = O.F(BLACK, 52)
+            for k_ in range(3):
+                y = 660 + k_ * 190
+                d.rounded_rectangle([170, y, 910, y + 150], radius=30, fill=(40, 42, 60))
+                d.text((220, y + 45), f"活動先 {'ABC'[k_]}", font=f, fill=(200, 204, 220))
+                if u > 0.5 + k_ * 0.55:
+                    st = Image.new("RGBA", (330, 110), (0, 0, 0, 0))
+                    sd = ImageDraw.Draw(st)
+                    sd.rounded_rectangle([0, 0, 329, 109], radius=18, outline=(235, 60, 70), width=10, fill=(40, 10, 16, 200))
+                    fs2 = O.F(BLACK, 56)
+                    sd.text((165 - fs2.getlength("受付終了") / 2, 20), "受付終了", font=fs2, fill=(235, 60, 70))
+                    st = st.rotate(-8, expand=True)
+                    E.paste_center(img, st, 700, y + 75, E.pop(u - 0.5 - k_ * 0.55))
+            if u > 1.9:
+                O.caption(img, "扉が、閉まっていく。", 1330, u - 1.9, size=88, col=(235, 60, 70))
         else:
             # 次回予告：ガクチカ・ループ 第4話（整理して大きく）
-            u = t - 10.1
+            u = t - 7.6
             img = Image.new("RGBA", (W, H), (12, 14, 30, 255))
             d = ImageDraw.Draw(img)
             def pill(text, y, size, bg, fg=(255, 255, 255), delay=0.0):
@@ -393,8 +397,8 @@ def frame(s, t):
                 E.paste_center(img, bd, 540, y, E.pop(u - delay))
             pill("ガクチカ・ループ", 440, 64, (60, 70, 110), (220, 228, 245))
             O.caption(img, "第4話", 610, u - 0.1, size=120)
-            O.caption(img, "議員さんが、", 790, u - 0.2, size=140)
-            O.caption(img, "いない。", 955, u - 0.35, size=180, col=YEL)
+            O.caption(img, "扉が、", 790, u - 0.2, size=150)
+            O.caption(img, "閉まる。", 955, u - 0.35, size=190, col=YEL)
             pill("明日公開", 1165, 96, (220, 50, 60), delay=0.6)
             if u > 1.0:
                 d.line([(140, 1270), (940, 1270)], fill=(90, 96, 130), width=3)
