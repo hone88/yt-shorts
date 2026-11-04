@@ -1,0 +1,22 @@
+{
+ "title": "もしもスカイツリーから1円玉を落としたら、下の人は死ぬ？",
+ "description": "スカイツリーの展望台から1円玉を落としたら、下の人に当たって死んでしまう？……実は、ほとんど痛くありません。小さなコインがどう落ちるのか、アメリカの実験をもとに考えてみました。\n他に試してほしい「もしも」はコメントで教えてください！\n\n※思考実験です。高い所から物を落とすのは、絶対にやめてください。",
+ "tags": ["もしも", "思考実験", "雑学", "科学", "スカイツリー"],
+ "topic": "もしもスカイツリーから1円玉を落としたら",
+ "scenes": [
+  {"time": "0秒", "caption": "スカイツリーから1円玉", "narration": "もしも、スカイツリーの展望台から1円玉を落としたら？", "image_prompt": "Skytree under bright blue sky, a coin glinting as it drops"},
+  {"time": "0.5秒後", "caption": "死ぬ？→ほぼ痛くない", "narration": "下にいる人に当たったら、死んでしまう？……いいえ、ほとんど痛くありません。", "image_prompt": "Person looking up worried, coin taps head, person relieved"},
+  {"time": "1秒後", "caption": "ひらひら落ちる", "narration": "軽くて平たいコインは、空気にじゃまされて、木の葉のようにひらひら落ちます。", "image_prompt": "Coin fluttering like a leaf"},
+  {"time": "2秒後", "caption": "時速40キロで頭打ち", "narration": "アメリカの実験では、1セント硬貨は時速40キロほどで、それ以上速くなりませんでした。", "image_prompt": "Speed gauge needle rising and stopping"},
+  {"time": "1円玉は", "caption": "もっと遅い", "narration": "1円玉は、それよりずっと軽い1グラム。もっとゆっくり落ちると考えられます。", "image_prompt": "Copper coin and lighter silver coin falling side by side"},
+  {"time": "地上", "caption": "デコピンくらい", "narration": "当たっても、軽いデコピンくらいだそうです。", "image_prompt": "Finger flick on forehead"},
+  {"time": "でも", "caption": "重い物は本当に危険", "narration": "でも、スマホやペンのような重い物は話が別。高い所から物を落とすのは、絶対にやめましょう。", "image_prompt": "Phone and pen falling with warning sign"},
+  {"time": "知ってた？", "caption": "知ってた？", "narration": "1円玉なら平気だって、知ってましたか？他に試してほしい「もしも」は、コメントで教えてください。", "image_prompt": "Smiling person holding a coin, Skytree behind"}
+ ],
+ "factcheck": [
+  {"scene": 2, "problem": "高所から落ちたコインで人が死ぬか", "fix": "Scientific American（Bloomfield教授の風洞・気球実験）：死なない、軽いデコピン程度"},
+  {"scene": 4, "problem": "コインの終端速度", "fix": "1セント硬貨で約時速25マイル（約40km）、約15mで到達"},
+  {"scene": 5, "problem": "1円玉そのものの実験はない", "fix": "1円玉1g・1セント約2.5gの比較から『と考えられます』とした"},
+  {"scene": 7, "problem": "まねの危険", "fix": "重い物は危険、絶対にやめましょうと明記"}
+ ]
+}
