@@ -161,8 +161,20 @@ def kanata_phone_bed(expr="normal"):
     return k
 
 
+BL, BD = hexc("#3a68c8"), hexc("#2f58ae")
+
+
+def blanket():
+    """布団にくるまる（顔だけ出す）"""
+    return [P.slab(1.85, 3.3, 0.5, 1.3, 0.85, 1.05, BL),        # 体（肩まで）
+            P.slab(2.12, 3.5, 1.96, 0.76, 0.6, 0.12, BD),       # 頭の上
+            P.slab(2.12, 3.5, 1.3, 0.12, 0.6, 0.7, BD),         # 左
+            P.slab(2.76, 3.5, 1.3, 0.12, 0.6, 0.7, BD),         # 右
+            P.slab(2.12, 3.98, 1.3, 0.76, 0.12, 0.78, BD)]      # 後ろ
+
+
 def bed_img(t, dur, expr, dark=0.0, extra=(), push=0.25):
-    img = Q.room_img(kanata_phone_bed(expr), Q.face_cam(t, dur, push), extra)
+    img = Q.room_img(kanata_phone_bed(expr), Q.face_cam(t, dur, push), list(extra) + blanket())
     if dark > 0:
         img.alpha_composite(Image.new("RGBA", (W, H), (10, 14, 40, int(170 * dark))))
     return img
@@ -263,7 +275,7 @@ def frame(s, t):
         a, b = (x[0] for x in s.lines)
         tk = Q.tokei_near(t, "angry" if sid == "06" else "eyes", t - 0.2)
         k = kanata_phone_bed("normal" if t < b else "sleep")
-        img = Q.room_img(k, Q.face_cam(t, s.dur, 0.2), tk)
+        img = Q.room_img(k, Q.face_cam(t, s.dur, 0.2), list(tk) + blanket())
         img.alpha_composite(Image.new("RGBA", (W, H), (10, 14, 40, 50)))
         clock(img, "10:20")
     elif n == "bow":
@@ -311,7 +323,7 @@ def frame(s, t):
             Q.big_word(img, "……", t - s.rev + 0.9, (255, 255, 255), y=1060, size=120)
     elif n == "wake":
         a, b, c, d_ = (x[0] for x in s.lines)
-        k = kanata_phone_bed("shock" if t < b else ("normal" if t < c else "smile"))
+        k = kanata_phone_bed("shock" if t < b else ("normal" if t < c else "resolve"))   # 最後は笑わず、決心の顔
         tk = Q.tokei_near(t, "eyes", t - d_ + 0.6, (2.93, 3.2, 1.55)) if t > d_ - 0.6 else []
         img = Q.room_img(k, Q.face_cam(t, s.dur, 0.3), tk)
         O.clock_big(img, "2026年12月5日（土）", "8:00", grade="大学1年")

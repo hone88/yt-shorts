@@ -71,6 +71,7 @@ KANATA_EXPR = {
     "blank": {4: "SWESSEWS", 6: "SSSSSSSS", 5: "SsSSSSsS"},  # 固まる（口なし・汗）
     "smile": {4: "SWESSEWS", 6: "SSMSSMSS", 7: "SSSMMSSS"},
     "sleep": {4: "SssSSssS"},                                 # 目を閉じる（うたた寝）
+    "resolve": {3: "SHHSSHHS", 4: "SWESSEWS", 6: "SSMMMMSS"},   # 決心（眉を下げ、口を結ぶ）
 }
 KANATA_SIDE = ["HHHHHHHH", "HHHHHHHH", "HHHHHHHS", "HHHHHSSS", "HHHHSSSE", "HHHHSSSS", "HHHSSSSS", "HHHSSSSS"]
 KANATA_BACK = ["HHHHHHHH"] * 7 + ["HHSSSSHH"]
