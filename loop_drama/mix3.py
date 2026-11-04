@@ -26,7 +26,7 @@ A.put(fx, A.sfx_heart(0.5), 0.6); A.put(fx, A.sfx_heart(0.55), 1.3)
 A.put(fx, A.sfx_transition(0.5), 2.4 - 0.45)                      # タイトル
 A.put(fx, A.sfx_whoosh(0.5, False, 0.3), 0.5)                     # トケイが降りてくる
 
-# 2) 選考会：やわらかいBGM。「落とす場じゃない」のカードでドン
+# 2) 選考会：やわらかいBGM。「1次選考会」のカードでドン
 A.put(fx, A.sfx_transition(0.6), it.start - 0.45)
 room_len = ni.start - it.start
 A.put(music, A.amb_room(room_len, 0.05), it.start)
@@ -46,7 +46,7 @@ A.put(music, A.fade(A.bgm_morning(bd.dur + nx.dur, bright=True), 0.4, 0.4), bd.s
 for i in range(3):
     A.put(fx, A.sfx_pop(0.32), bd.start + bd.b0 - 0.2 + i * 0.7)
 
-# 5) 「選ぶのは…こっち側？」：声の前に間を置き、明かす瞬間に一番大きいドン
+# 5) 「受け入れ先の人と…直接？」：声の前に間を置き、明かす瞬間に一番大きいドン
 A.put(fx, A.sfx_riser(0.8, 0.4), nx.start + nx.lines[1][0] - 0.8)
 A.put(fx, A.sfx_boom(0.95, 2.6), nx.start + nx.rev)
 A.put(fx, A.sfx_ding(0.35), nx.start + nx.rev)
@@ -58,19 +58,18 @@ A.put(music, A.fade(A.bgm_dark(ni.dur), 0.6, 0.4), ni.start)
 A.put(fx, A.sfx_stopwatch(ni.dur - 0.5, 0.5, 0.18), ni.start + 0.3)
 A.put(fx, A.sfx_boom(0.6, 2.2), ni.start + ni.lines[2][0] + V.L("13") * 0.6)
 
-# 7) 第4話「扉が閉まる」への橋渡し：夜のカナタ → 予約画面を「あとで」で閉じる → 受付終了が3つ（ドン×3）→ 大きなタイトル
+# 7) 第4話への橋渡し：夜のカナタ → 2次選考会のリマインド → スマホを伏せる（ドン）→ 次の日10時、まだ布団 → 大きなタイトル
 A.put(fx, A.sfx_transition(0.55), en.start - 0.45)
 A.put(music, A.amb_room(5.2, 0.04), en.start)
 A.put(music, A.fade(A.bgm_sparse(5.3), 0.3, 0.3), en.start)
 A.put(fx, A.sfx_heart(0.4), en.start + 0.6); A.put(fx, A.sfx_heart(0.45), en.start + 1.5)
-A.put(fx, A.sfx_pop(0.35), en.start + 2.65)
-A.put(fx, A.sfx_pop(0.3), en.start + 2.6 + 0.9)          # 「あとで」
-A.put(fx, A.sfx_boom(0.6, 1.8), en.start + 2.6 + 1.5)    # …閉じた。
+A.put(fx, A.sfx_notify(0.4), en.start + 2.65)            # リマインド
+A.put(fx, A.sfx_boom(0.6, 1.8), en.start + 2.6 + 1.5)    # …スマホを、伏せた。
 A.put(fx, A.sfx_stopwatch(1.6, 0.3, 0.2), en.start + 4.3)
 A.put(fx, A.sfx_transition(0.6), en.start + 5.2 - 0.45)
 A.put(music, A.fade(A.bgm_dark(3.6)[:int(2.4 * A.SR)], 0.05, 0.2), en.start + 5.2)
-for k in range(3):
-    A.put(fx, A.sfx_boom(0.75 + k * 0.08, 2.2), en.start + 5.2 + 0.5 + k * 0.55)
+A.put(fx, A.sfx_boom(0.8, 2.2), en.start + 5.5)          # 10:00
+A.put(fx, A.sfx_boom(0.85, 2.0), en.start + 6.4)         # まだ布団の中
 A.put(fx, A.sfx_riser(0.7, 0.35), en.start + 6.9)
 A.put(fx, A.sfx_transition(0.75), en.start + 7.6 - 0.45)
 A.put(fx, A.sfx_boom(0.95, 2.4), en.start + 7.6)
