@@ -54,6 +54,10 @@ TEXT = {
     "12": ("K", "みんな、|[来てくれてた]のに…。"),
     "13": ("K", "次は、[布団から出る]。"),
     "14": ("T", "残りは、[2回]なのだ。"),
+    "15": ("K", "え、えっと…|[サークル]は、入ってなくて…。"),
+    "16": ("K", "[アルバイト]も…|とくに…。"),
+    "17": ("I", "…何か、[1つ]でも|構いませんよ。"),
+    "18": ("K", "（…ない。|[何も、ない]…！）"),
 }
 
 
@@ -98,8 +102,8 @@ def plan():
     S.append(O.Shot("bow", t + 1.4, ln))
     ln, t = seq(["09"], 4.2)                                    # 早回しのあと「時間切れ」
     S.append(O.Shot("ff", t + 0.5, ln))
-    ln, t = seq(["10"], 0.5)
-    s = O.Shot("iv", t + 3.4, ln); s.rev = t + 0.7; S.append(s)
+    ln, t = seq(["10", "15", "16", "17", "18"], 0.6, extra={"15": 0.5, "16": 0.4, "17": 0.6, "18": 0.9})   # 答えられない間を長めに
+    s = O.Shot("iv", t + 3.6, ln); s.rev = t + 0.8; S.append(s)
     ln, t = seq(["11", "12", "13", "14"], 0.8, extra={"13": 0.4, "14": 0.2})
     S.append(O.Shot("wake", t + 0.5, ln))
     S.append(O.Shot("end", 6.0))
@@ -173,8 +177,14 @@ def blanket():
             P.slab(2.12, 3.98, 1.3, 0.76, 0.12, 0.78, BD)]      # 後ろ
 
 
+def bed_cam(t, dur, push=0.25):
+    """布団の顔。時計にかからないよう少し上から"""
+    u = ease(t / max(dur, 0.01))
+    return Camera((lerp(2.9, 2.85, u), lerp(1.1, 1.1 + push, u), 1.8), (2.55, 3.75, 1.62), 46)
+
+
 def bed_img(t, dur, expr, dark=0.0, extra=(), push=0.25):
-    img = Q.room_img(kanata_phone_bed(expr), Q.face_cam(t, dur, push), list(extra) + blanket())
+    img = Q.room_img(kanata_phone_bed(expr), bed_cam(t, dur, push), list(extra) + blanket())
     if dark > 0:
         img.alpha_composite(Image.new("RGBA", (W, H), (10, 14, 40, int(170 * dark))))
     return img
@@ -226,10 +236,10 @@ def msg_card(img, u, head, lines, y0=700):
 def hook(img, t):
     if t < 2.4:
         im = E.fit_text(["2次選考会の時間。", "ぼくは、布団の中。"], 110, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=12, hl={1: RED})
-        E.paste_center(img, im, 540, 1000, E.pop(t))
+        E.paste_center(img, im, 540, 1120, E.pop(t))
     elif t < 4.4:
         im = E.fit_text(["ガクチカ・ループ 第4話", "布団から、出られない。"], 90, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=10, hl={1: YEL})
-        E.paste_center(img, im, 540, 1000, E.pop(t - 2.4))
+        E.paste_center(img, im, 540, 1120, E.pop(t - 2.4))
 
 
 # ---------- 1コマ ----------
@@ -245,7 +255,7 @@ def frame(s, t):
     n = s.name
     sid = speaking(s, t)
     if n == "cold":
-        img = bed_img(t, s.dur, "blank", dark=0.35, push=0.4)
+        img = bed_img(t, s.dur, "blank", dark=0.15, push=0.4)
         if int(t * 6) % 3 == 0:   # スマホが震える光
             img.alpha_composite(Image.new("RGBA", (W, H), (120, 170, 255, 26)))
         clock(img, "10:00")
@@ -266,16 +276,16 @@ def frame(s, t):
         note(img, "※2次選考会は、受け入れ先の方と日程を合わせて行います")
     elif n == "bed":
         a, b = (x[0] for x in s.lines)
-        img = bed_img(t, s.dur, "normal" if t < b else "shock", dark=0.3, push=0.2)
+        img = bed_img(t, s.dur, "normal" if t < b else "shock", dark=0.15, push=0.2)
         clock(img, "10:05")
         if t < b - 0.2:
             msg_card(img, (t - 0.2) / 0.3, "ミオ（昨日 21:30）",
-                     ["2次選考会で話すのは、", "1次選考会でも話した", "興味あること・やりたいこと。", "なぜやりたいのかも、", "そのまま話せばいいんだよ"], y0=640)
+                     ["2次選考会で話すのは、", "1次選考会でも話した", "興味あること・やりたいこと。", "なぜやりたいのかも、", "そのまま話せばいいんだよ"], y0=980)
     elif n == "tokei":
         a, b = (x[0] for x in s.lines)
         tk = Q.tokei_near(t, "angry" if sid == "06" else "eyes", t - 0.2)
         k = kanata_phone_bed("normal" if t < b else "sleep")
-        img = Q.room_img(k, Q.face_cam(t, s.dur, 0.2), list(tk) + blanket())
+        img = Q.room_img(k, bed_cam(t, s.dur, 0.2), list(tk) + blanket())
         img.alpha_composite(Image.new("RGBA", (W, H), (10, 14, 40, 50)))
         clock(img, "10:20")
     elif n == "bow":
@@ -300,27 +310,41 @@ def frame(s, t):
         if t > a - 0.2:
             img.alpha_composite(Image.new("RGBA", (W, H), (0, 0, 0, int(200 * min(1, (t - a + 0.2) / 0.8)))))
     elif n == "iv":
+        # 2029年の面接：答えようとして、答えられない
         iv, k = P.iv_rig(), P.kanata_suit_rig()
-        k.expr = "blank"
-        if sid == "10":
+        a, b, c, d_, e_ = (x[0] for x in s.lines)
+        k.expr = "open" if t < b else ("blank" if t < e_ else "shock")
+        if sid in ("10", "17"):
             iv.set(armL=0.55 + 0.25 * math.sin(t * 7))
-        u = ease(t / s.dur)
-        if t < s.rev - 0.4:
+        if sid in ("15", "16"):
+            k.set(head_yaw=0.12 * math.sin(t * 5), head_pitch=0.08)
+        if t < b - 0.2 or (d_ - 0.2 < t < e_ - 0.4):   # 面接官（カナタの肩越し）
+            u = ease(min(1, t / 3))
             cam = Camera((lerp(3.75, 3.6, u), lerp(0.55, 1.0, u), 1.62), (3.0, 5.5, 1.38), 48)
-        else:
-            cam = Camera((3.4, 4.1, 1.52), (3.0, 2.1, 1.42), 44)
-        img, _ = render(P.OFFICE + iv.boxes() + k.boxes(), cam, P.BG_OFFICE)
+        elif t < d_ - 0.2:                            # 言い訳するカナタ
+            u = ease((t - b) / max(0.1, d_ - b))
+            cam = Camera((lerp(3.42, 3.36, u), lerp(4.25, 4.05, u), 1.52), (3.0, 2.1, 1.42), 44)
+        else:                                         # 「何も、ない」：顔にぐっと寄る
+            u = ease(min(1, (t - e_ + 0.4) / 1.6))
+            cam = Camera((lerp(3.35, 3.2, u), lerp(4.1, 3.65, u), 1.5), (3.0, 2.1, 1.44), lerp(44, 42, u))
+        img, mask = render(P.OFFICE + iv.boxes() + k.boxes(), cam, P.BG_OFFICE, keep={"kanata"})
         img = img.convert("RGBA")
+        if t > e_ - 0.4:                              # 周りが色を失っていく
+            img = O.desat(img, 0.85 * ease(min(1, (t - e_ + 0.4) / 1.2)), mask)
+            if t < s.rev and int(t * 14) % 4 == 0:
+                img = O.glitch(img, 0.25, int(t * 30))
         after = t > s.rev
         if after:
             img.alpha_composite(Image.new("RGBA", (W, H), (20, 0, 10, int(120 * min(1, (t - s.rev) / 0.4)))))
         O.clock_big(img, "2029年6月1日（金）", "10:00", grade="大学4年")
         O.counter(img, 2 if after else 3, 1.0 if after else 0.0)
+        if d_ - 0.9 < t < d_ - 0.15:
+            Q.big_word(img, "……", t - d_ + 1.0, (255, 255, 255), y=1000, size=120)
+        if e_ + L("18") < t < s.rev:
+            Q.big_word(img, "答えられない。", t - e_ - L("18"), RED, y=980, size=120)
         if after:
             im = E.fit_text(["残りループ", "3 → 2"], 140, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=14, hl={1: RED})
             E.paste_center(img, im, 540, 1000, E.pop(t - s.rev))
-        if s.rev - 0.9 < t < s.rev:
-            Q.big_word(img, "……", t - s.rev + 0.9, (255, 255, 255), y=1060, size=120)
     elif n == "wake":
         a, b, c, d_ = (x[0] for x in s.lines)
         k = kanata_phone_bed("shock" if t < b else ("normal" if t < c else "resolve"))   # 最後は笑わず、決心の顔

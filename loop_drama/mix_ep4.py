@@ -61,6 +61,11 @@ for k in range(5):
 A.put(fx, A.sfx_boom(0.9, 2.4), ff.start + ff.lines[0][0] + V.L("09"))
 # 面接：凍る → 残りループ 3→2（一番大きいドン）
 A.put(fx, A.sfx_rewind(), iv.start - 0.5)
+A.put(fx, A.sfx_heart(0.45), iv.start + iv.lines[1][0] - 0.3)
+A.put(fx, A.sfx_heart(0.5), iv.start + iv.lines[2][0] - 0.3)
+A.put(fx, A.sfx_stopwatch(iv.lines[4][0] - iv.lines[1][0], 0.5, 0.2), iv.start + iv.lines[1][0])
+A.put(fx, A.sfx_heart(0.6), iv.start + iv.lines[4][0] - 0.6); A.put(fx, A.sfx_heart(0.65), iv.start + iv.lines[4][0] - 0.1)
+A.put(fx, A.sfx_boom(0.7, 2.0), iv.start + iv.lines[4][0] + V.L("18"))   # 答えられない。
 A.put(fx, A.sfx_freeze(), iv.start + iv.rev - 0.9)
 A.put(fx, A.sfx_riser(0.8, 0.4), iv.start + iv.rev - 0.8)
 A.put(fx, A.sfx_boom(1.0, 2.8), iv.start + iv.rev)
