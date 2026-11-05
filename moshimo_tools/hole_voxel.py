@@ -128,7 +128,7 @@ def frame(k, t):
         if t < jump:
             z = 12 + 20 * (t / jump); y = GY
             person(c, m, HCX, y, int(z), "stand")
-            cam, tgt = (HCX + 16 - 6 * t, GY + 15, z - 30), (HCX, GY + 18.5, z + 8)
+            cam, tgt = (HCX + 16 - 6 * t, GY + 14, z - 30), (HCX, GY + 23, z + 8)
         else:
             f = t - jump
             y = max(18.0, GY + 4 * f - 22 * f * f)
@@ -208,7 +208,7 @@ def frame(k, t):
         up = max(up, 0)
         bob = 0 if t < pop + 1.2 else 1.0 * math.sin((t - pop) * 3)
         person(c, m, 40, int(11 - 14 + up + 6 + bob) if t >= pop else -20, 45, "float" if t < pop + 1.0 else "stand")
-        cam = (40 + 10 * math.sin(0.4 * t), 15 + 2 * p, 45 - 38 + 6 * p); tgt = (40, 25 + 3 * p, 45)
+        cam = (40 + 10 * math.sin(0.4 * t), 15 + 2 * p, 45 - 38 + 6 * p); tgt = (40, 27 + 2 * p, 45)
         img, depth = render(S, c, m, cam, tgt, 62, w, h)
         if t >= pop:
             f = t - pop
