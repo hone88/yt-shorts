@@ -1,0 +1,23 @@
+{
+ "title": "もしも地球の反対側まで穴を掘って飛び込んだら？ブラジルに出る？",
+ "description": "日本から地球の反対側まで、まっすぐ穴を掘って飛び込んだら？ブラジルに出る？……実は、東京の真裏はアルゼンチン沖の海の上。中心のスピード、熱、そして何分で反対側に着くのかを考えてみました。\nあなたなら飛び込んでみたい？コメントで教えてください！\n\n※思考実験です。",
+ "tags": ["もしも", "思考実験", "雑学", "科学", "地球"],
+ "topic": "もしも地球の反対側まで穴を掘って飛び込んだら",
+ "scenes": [
+  {"time": "0秒", "caption": "地球の裏まで穴", "narration": "もしも、日本から地球の反対側まで、まっすぐ穴を掘って飛び込んだら？", "image_prompt": "Blocky character jumps into a deep hole in a bright town"},
+  {"time": "0.5秒後", "caption": "ブラジル？→海の上", "narration": "ブラジルに出る？……いいえ。東京の真裏は、アルゼンチン沖の海の上です。", "image_prompt": "Earth with a straight line through it, red X"},
+  {"time": "1分後", "caption": "どんどん加速", "narration": "落ちるほどスピードが上がり、地層の景色がどんどん流れていきます。", "image_prompt": "Extreme close-up of the falling character, strata streaking"},
+  {"time": "約20分後", "caption": "時速2万8000キロ", "narration": "地球の中心では、時速2万8000キロほど。体は重さを感じない、ふわふわの状態だと考えられています。", "image_prompt": "Earth cross-section, dot racing to the core"},
+  {"time": "中心", "caption": "5000℃以上", "narration": "ただし中心は5000℃以上。本当なら、一瞬で燃えつきてしまいます。", "image_prompt": "Character floating in glowing orange heat"},
+  {"time": "約40分後", "caption": "海の上にポン", "narration": "それでも無事なら、約40分後、反対側の海の上にポンと顔を出します。", "image_prompt": "Character pops out of the ocean with a splash"},
+  {"time": "その後", "caption": "永遠に往復", "narration": "空気がなければ、またすぐに落ちて、日本と海の上を、永遠に行ったり来たりします。", "image_prompt": "Dot bouncing back and forth through Earth"},
+  {"time": "あなたは？", "caption": "飛び込んでみる？", "narration": "あなたなら、飛び込んでみたい？他に試してほしい「もしも」は、コメントで教えてください。", "image_prompt": "Character at the edge of the hole looking down"}
+ ],
+ "factcheck": [
+  {"scene": 2, "problem": "日本の真裏", "fix": "東京の対蹠地は南緯35度・西経40度のアルゼンチン沖の海（ギズモード）"},
+  {"scene": 4, "problem": "中心の速さ", "fix": "密度一様モデルで約7.9km/s≈時速2万8000キロ『ほど』『考えられています』"},
+  {"scene": 5, "problem": "中心の温度", "fix": "約5000℃以上とされる"},
+  {"scene": 6, "problem": "所要時間", "fix": "一様モデル42分・現実的モデル約38分→『約40分』"},
+  {"scene": 7, "problem": "往復", "fix": "空気抵抗なしの条件をつけた"}
+ ]
+}
