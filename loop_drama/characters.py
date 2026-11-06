@@ -234,4 +234,109 @@ def reception_parts(expr="normal"):
 RECEPTION = dict(name="reception", label="受付の人", parts=reception_parts)
 
 
-CAST = [KANATA, KANATA_SUIT, MIO, INTERVIEWER, MORISHITA]
+# ====================================================================
+# 活動先の方（第4・5話の2次選考会。NPO・事務所など受け入れ先の人。名前・団体名は出さない）
+# ※見た目は受付の人と同じ定義を使う。第7話の受付の人は、今後の回で色違いにする
+# ====================================================================
+HOST = dict(name="host", label="活動先の方", parts=reception_parts)
+
+
+def simple_person(pal, face, expr_table, side, body_front, body_all, arm, leg, extras=()):
+    """脇役の共通の作り方（寸法はみんな同じ。色と模様だけ変える）"""
+    def parts(expr="normal"):
+        head = {"front": T(face_rows(face, expr, expr_table), pal), "side": T(side, pal),
+                "back": T([side[0]] * 7 + [side[-1]], pal), "top": T([side[0][:4]] * 4, pal), "bottom": T(["SS"], pal)}
+        body = {"front": T(body_front, pal), "all": T(body_all, pal), "top": T([body_all[0][:2]], pal)}
+        a = {"all": T(arm, pal), "top": T([arm[0][:2]], pal), "bottom": T(["SS"], pal)}
+        l = {"all": T(leg, pal), "bottom": T([leg[-1][:2]], pal)}
+        return humanoid(head, body, a, l, extras)
+    return parts
+
+
+# ====================================================================
+# ハルト（同期のインターン生・NPOインターン。「地元の子どもの居場所をつくりたい」）
+# 目印：緑のTシャツ・短い茶髪・背が高い（ほかの人物の1.1倍）
+# ====================================================================
+HA_PAL = {"H": hexc("#4a3020"), "S": hexc("#e9b98f"), "W": hexc("#ffffff"), "E": hexc("#1e1a18"), "M": hexc("#9a4a40"),
+          "G": hexc("#3f9a5a"), "g": hexc("#2f7a46"), "w": hexc("#f4f4f4"), "J": hexc("#3a4a6a"), "K": hexc("#f2f2f2")}
+HA_FACE = ["HHHHHHHH", "HHHHHHHH", "HSSHSSSH", "SSSSSSSS", "SWESSEWS", "SSSSSSSS", "SSSMMSSS", "SSSSSSSS"]
+HA_EXPR = {"normal": {}, "smile": {6: "SMSSSSMS", 7: "SSMMMMSS"}, "shock": {4: "SWWSSWWS", 5: "SWESSEWS", 6: "SSSMMSSS", 7: "SSSMMSSS"}}
+HARUTO = dict(name="haruto", label="ハルト", scale=1.1, parts=simple_person(
+    HA_PAL, HA_FACE, HA_EXPR, ["HHHHHHHH", "HHHHHHHH", "HHHHHHSS", "HHHHSSSS", "HHHHSSSE", "HHHSSSSS", "HHSSSSSS", "HHSSSSSS"],
+    ["GGwwwwGG", "GGGwwGGG"] + ["GGGGGGGG"] * 8 + ["gggggggg"] * 2, ["GGGGGGGG"] * 10 + ["gggggggg"] * 2,
+    ["GGGG"] * 4 + ["SSSS"] * 8, ["JJJJ"] * 11 + ["KKKK"]))
+
+# ====================================================================
+# 人事の人（第12話の企業訪問。架空の地元の会社。会社名・ロゴは出さない）
+# 目印：明るい灰色のスーツ・白いブラウス・黒髪のボブ（メガネなし＝面接官と分ける）
+# ====================================================================
+HR_PAL = {"h": hexc("#1c1a1e"), "S": hexc("#f0c8a4"), "W": hexc("#ffffff"), "E": hexc("#221a18"), "M": hexc("#b85a5a"),
+          "p": hexc("#eeb0a0"), "J": hexc("#8a8e98"), "j": hexc("#6e727c"), "w": hexc("#fafafa"), "K": hexc("#18181c")}
+HR_FACE = ["hhhhhhhh", "hhhhhhhh", "hSSSSSSh", "hSSSSSSh", "hWESSEWh", "hpSSSSph", "hSSMMSSh", "hhSSSShh"]
+HR_EXPR = {"normal": {}, "smile": {6: "hSMSSMSh", 7: "hhSMMShh"}}
+HR = dict(name="hr", label="人事の人", parts=simple_person(
+    HR_PAL, HR_FACE, HR_EXPR, ["hhhhhhhh", "hhhhhhhh", "hhhhhSSS", "hhhhSSSS", "hhhhSSSE", "hhhhSSSS", "hhhhSSSS", "hhhhhhSS"],
+    ["JJwSSwJJ", "JJwwwwJJ", "JJwwwwJJ"] + ["JJJwwJJJ"] * 3 + ["JJJJJJJJ"] * 4 + ["jjjjjjjj"] * 2, ["JJJJJJJJ"] * 10 + ["jjjjjjjj"] * 2,
+    ["JJJJ"] * 10 + ["SSSS"] * 2, ["JJJJ"] * 11 + ["KKKK"]))
+
+# ====================================================================
+# 地域の人（第16話。公園で子どもを連れている40代の保護者）
+# 目印：くすんだ赤のカーディガン・ベージュのズボン・肩までの茶髪
+# ====================================================================
+LO_PAL = {"h": hexc("#5a3a26"), "S": hexc("#eec4a0"), "W": hexc("#ffffff"), "E": hexc("#2a1c18"), "M": hexc("#a85a54"),
+          "p": hexc("#e8a898"), "C": hexc("#b8645a"), "c": hexc("#964c44"), "w": hexc("#f6f2ea"), "L": hexc("#b8a88a"), "K": hexc("#5a4a3a")}
+LO_FACE = ["hhhhhhhh", "hhhhhhhh", "hhSSSShh", "hSSSSSSh", "hWESSEWh", "hpSSSSph", "hSSMMSSh", "hSSSSSSh"]
+LO_EXPR = {"normal": {}, "smile": {6: "hSMSSMSh", 7: "hSSMMSSh"}}
+LOCAL = dict(name="local", label="地域の人", parts=simple_person(
+    LO_PAL, LO_FACE, LO_EXPR, ["hhhhhhhh"] * 3 + ["hhhhhSSS", "hhhhSSSE", "hhhhSSSS", "hhhhSSSS", "hhhhSSSS"],
+    ["CCwSSwCC"] + ["CCwwwwCC"] * 5 + ["CCCCCCCC"] * 4 + ["cccccccc"] * 2, ["CCCCCCCC"] * 10 + ["cccccccc"] * 2,
+    ["CCCC"] * 10 + ["SSSS"] * 2, ["LLLL"] * 11 + ["KKKK"]))
+
+# ====================================================================
+# 子ども（第16話。地域の人が連れている小学生。背はほかの人物の0.62倍。名前は出さない）
+# 目印：黄色いTシャツ・赤い帽子
+# ====================================================================
+KD_PAL = {"H": hexc("#2b1d16"), "S": hexc("#f2caa2"), "W": hexc("#ffffff"), "E": hexc("#1e1a18"), "M": hexc("#c0605a"),
+          "Y": hexc("#f2c230"), "y": hexc("#d4a420"), "J": hexc("#4a6aa8"), "K": hexc("#f2f2f2"), "R": hexc("#d63e3e")}
+KD_FACE = ["RRRRRRRR", "RRRRRRRR", "HSSSSSSH", "SSSSSSSS", "SWESSEWS", "SSSSSSSS", "SSSMMSSS", "SSSSSSSS"]
+KD_EXPR = {"normal": {}, "smile": {6: "SMSSSSMS", 7: "SSMMMMSS"}}
+KID = dict(name="kid", label="子ども", scale=0.62, parts=simple_person(
+    KD_PAL, KD_FACE, KD_EXPR, ["RRRRRRRR", "RRRRRRRR", "HHHHHHSS", "HHHHSSSS", "HHHHSSSE", "HHHSSSSS", "HHSSSSSS", "HHSSSSSS"],
+    ["YYYYYYYY"] * 10 + ["yyyyyyyy"] * 2, ["YYYYYYYY"] * 10 + ["yyyyyyyy"] * 2,
+    ["YYYY"] * 4 + ["SSSS"] * 8, ["JJJJ"] * 8 + ["SSSS"] * 3 + ["KKKK"],
+    extras=[dict(bone="head", off=(-0.25, 0.25, 0.38), size=(0.5, 0.16, 0.06), color=hexc("#d63e3e"))]))   # 帽子のつば（前）
+
+# ====================================================================
+# 審査員（第15話の地方大会。後ろ姿だけで出す。顔・名前は画面に出さない）
+# 目印：こげ茶のスーツ・白髪
+# ====================================================================
+JD_PAL = {"g": hexc("#d8d8dc"), "S": hexc("#e8bc94"), "W": hexc("#ffffff"), "E": hexc("#1e1e28"), "M": hexc("#8a4a44"),
+          "J": hexc("#4a3a30"), "j": hexc("#3a2c24"), "w": hexc("#f2f2f2"), "b": hexc("#7a5a3a"), "B": hexc("#0c0c10")}
+JD_FACE = ["gggggggg", "gggggggg", "gSSSSSSg", "SSSSSSSS", "SWESSEWS", "SSSSSSSS", "SSSMMSSS", "SSSSSSSS"]
+JUDGE = dict(name="judge", label="審査員", parts=simple_person(
+    JD_PAL, JD_FACE, {"normal": {}}, ["gggggggg", "gggggggg", "ggggggSS", "ggggSSSS", "ggggSSSE", "gggSSSSS", "ggSSSSSS", "ggSSSSSS"],
+    ["JJwSSwJJ", "JJwbbwJJ", "JJwbbwJJ"] + ["JJJbbJJJ"] * 3 + ["JJJJJJJJ"] * 6, ["JJJJJJJJ"] * 12,
+    ["JJJJ"] * 9 + ["wwww"] + ["SSSS"] * 2, ["JJJJ"] * 11 + ["BBBB"]))
+
+# ====================================================================
+# チームメンバー（第13〜15話の未来自治体の同じチーム。カナタ・ハルトと4人）
+# A：紺のカーディガン・長い黒髪 ／ B：黄色いパーカー・メガネ
+# ====================================================================
+TA_PAL = {"h": hexc("#141418"), "S": hexc("#f2cba8"), "W": hexc("#ffffff"), "E": hexc("#221a18"), "M": hexc("#c06a6a"),
+          "p": hexc("#efb0a4"), "N": hexc("#2f4a7a"), "n": hexc("#243a62"), "w": hexc("#f6f6f6"), "L": hexc("#5a5a66"), "K": hexc("#202024")}
+TA_FACE = ["hhhhhhhh", "hhhhhhhh", "hhSSSShh", "hSSSSSSh", "hWESSEWh", "hpSSSSph", "hSSMMSSh", "hSSSSSSh"]
+TEAM_A = dict(name="team_a", label="チームメンバーA", parts=simple_person(
+    TA_PAL, TA_FACE, {"normal": {}, "smile": {6: "hSMSSMSh", 7: "hSSMMSSh"}}, ["hhhhhhhh"] * 3 + ["hhhhhSSS", "hhhhSSSE", "hhhhSSSS", "hhhhSSSS", "hhhhSSSS"],
+    ["NNwSSwNN"] + ["NNwwwwNN"] * 5 + ["NNNNNNNN"] * 4 + ["nnnnnnnn"] * 2, ["NNNNNNNN"] * 10 + ["nnnnnnnn"] * 2,
+    ["NNNN"] * 10 + ["SSSS"] * 2, ["LLLL"] * 11 + ["KKKK"],
+    extras=[dict(bone="head", off=(-0.25, -0.33, -0.3), size=(0.5, 0.1, 0.5), color=hexc("#141418"))]))   # 長い髪（背中側）
+TB_PAL = {"H": hexc("#2b2420"), "S": hexc("#e6b48a"), "W": hexc("#ffffff"), "E": hexc("#1e1a18"), "M": hexc("#9a4a40"),
+          "G": hexc("#101014"), "Y": hexc("#e8b830"), "y": hexc("#c89a20"), "J": hexc("#2c2c34"), "K": hexc("#f2f2f2")}
+TB_FACE = ["HHHHHHHH", "HHHHHHHH", "HSSSSSSH", "GGGSSGGG", "GWEGGEWG", "GGGSSGGG", "SSSMMSSS", "SSSSSSSS"]
+TEAM_B = dict(name="team_b", label="チームメンバーB", parts=simple_person(
+    TB_PAL, TB_FACE, {"normal": {}, "smile": {6: "SMSMMSMS"}}, ["HHHHHHHH", "HHHHHHHH", "HHHHHHSS", "HHHHGGGG", "HHHHSSSS", "HHHSSSSS", "HHSSSSSS", "HHSSSSSS"],
+    ["YYYSSYYY"] + ["YYYYYYYY"] * 9 + ["yyyyyyyy"] * 2, ["YYYYYYYY"] * 10 + ["yyyyyyyy"] * 2,
+    ["YYYY"] * 10 + ["SSSS"] * 2, ["JJJJ"] * 11 + ["KKKK"]))
+
+
+CAST = [KANATA, KANATA_SUIT, MIO, INTERVIEWER, MORISHITA, HOST, HARUTO, HR, LOCAL, KID, JUDGE, TEAM_A, TEAM_B]

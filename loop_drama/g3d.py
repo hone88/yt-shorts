@@ -189,7 +189,7 @@ class Rig:
     """人物モデル。spec は characters.py の定義。pose を変えて boxes() を取る"""
 
     def __init__(self, spec, pos=(0, 0, 0), yaw=0.0, scale=1.0, tag=None):
-        self.spec, self.pos, self.yaw, self.scale = spec, pos, yaw, scale
+        self.spec, self.pos, self.yaw, self.scale = spec, pos, yaw, scale * spec.get("scale", 1.0)   # 背の高さは定義書の scale
         self.tag = tag or spec["name"]
         self.pose = dict(head_yaw=0.0, head_pitch=0.0, armL=0.0, armR=0.0, armL_out=0.0, armR_out=0.0, legL=0.0, legR=0.0, sit=False, bob=0.0, lean=0.0)
         self.expr = "normal"
