@@ -48,7 +48,12 @@ for k in range(2, 8):
     transition(S[k])
 put(sfx, whoosh(3.5, True), S[3] + 0.2, 0.35)          # 加速
 put(sfx, crash(), CAR, 0.6)                           # 車がドン
-put(sfx, splat(), SPLAT, 0.75)                        # グシャッ
+put(sfx, whoosh(1.6, True) * 1.4, SPLAT - 1.6, 0.45)  # ヒューーッと迫る
+put(sfx, boom(4.0), SPLAT, 1.0)                       # ドゴーン（低くて長い）
+put(sfx, boom(2.5), SPLAT + 0.05, 0.6)
+put(sfx, crash(1.2), SPLAT, 0.7)
+put(sfx, splat(), SPLAT + 0.04, 0.6)                  # グシャッ
+t_r = t_(2.5); put(sfx, lp(noise(2.5), 120, 2) * 3.0 * np.exp(-t_r * 1.4), SPLAT, 0.6)  # 地鳴り
 put(sfx, buzz(0.5), S[6] + 0.3, 0.2)
 put(sfx, buzz(0.5), S[6] + 1.0, 0.2)
 put(sfx, sparkle(), S[7], 0.08)

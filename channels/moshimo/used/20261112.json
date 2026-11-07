@@ -1,22 +1,85 @@
 {
  "title": "もしもスカイツリーからすいかを落としたら？1円玉とは別次元だった",
  "description": "1円玉はデコピン、消しゴムはケガのおそれ。じゃあ、すいかなら？重さ5キロのすいかがスカイツリーから落ちたら、どれくらい危ないのかを計算してみました。\n次は何を落としてほしい？コメントで教えてください！\n\n※思考実験です。高い所から物を落とすのは、絶対にやめてください。",
- "tags": ["もしも", "思考実験", "雑学", "科学", "すいか", "リクエスト"],
+ "tags": [
+  "もしも",
+  "思考実験",
+  "雑学",
+  "科学",
+  "すいか",
+  "リクエスト"
+ ],
  "topic": "もしもスカイツリーからすいかを落としたら（コメントのリクエスト）",
  "scenes": [
-  {"time": "0秒", "caption": "スカイツリーからすいか", "narration": "もしも、スカイツリーの展望台から、すいかを落としたら？", "image_prompt": "Watermelon tumbling off a tall white tower, camera diving with it"},
-  {"time": "0.5秒後", "caption": "割れて平気？→危険", "narration": "やわらかいから割れて平気？……いいえ、1円玉とは別次元の危なさです。", "image_prompt": "Person looking up, watermelon above, red X"},
-  {"time": "3秒後", "caption": "1円玉の5000倍", "narration": "すいかは1玉およそ5キロ。1円玉の5000倍の重さです。", "image_prompt": "Coin, eraser and big watermelon side by side"},
-  {"time": "5秒後", "caption": "時速200キロ近く", "narration": "重くて丸いので空気に負けにくく、地面に着くころには時速200キロ近くになると計算できます。", "image_prompt": "Spinning watermelon close-up with speed lines"},
-  {"time": "約10秒後", "caption": "車がぶつかる勢い", "narration": "ぶつかる勢いは、重さ1トンの車が、時速14キロでぶつかるのと同じくらいです。", "image_prompt": "Blocky car bumping into a wall"},
-  {"time": "着地", "caption": "一瞬で粉々", "narration": "すいかは一瞬で粉々。破片も勢いよく飛び散ります。", "image_prompt": "Watermelon bursting on the ground"},
-  {"time": "でも", "caption": "絶対にマネしないで", "narration": "高い所から物を落とすのは、どんなに小さな物でも、絶対にやめましょう。", "image_prompt": "Warning, red tint"},
-  {"time": "次は？", "caption": "次は何を落とす？", "narration": "1円玉、消しゴム、すいか。次は何を落としてほしい？コメントで教えてください。", "image_prompt": "Character holding a watermelon, close-up"}
+  {
+   "time": "0秒",
+   "caption": "スカイツリーからすいか",
+   "narration": "もしも、スカイツリーの展望台から、すいかを落としたら？",
+   "image_prompt": "Watermelon tumbling off a tall white tower, camera diving with it"
+  },
+  {
+   "time": "0.5秒後",
+   "caption": "割れて平気？→危険",
+   "narration": "やわらかいから割れて平気？……いいえ、1円玉とは別次元の危なさです。",
+   "image_prompt": "Person looking up, watermelon above, red X"
+  },
+  {
+   "time": "3秒後",
+   "caption": "1円玉の5000倍",
+   "narration": "すいかは1玉およそ5キロ。1円玉の5000倍の重さです。",
+   "image_prompt": "Coin, eraser and big watermelon side by side"
+  },
+  {
+   "time": "5秒後",
+   "caption": "時速200キロ近く",
+   "narration": "重くて丸いので空気に負けにくく、地面に着くころには時速200キロ近くになると計算できます。",
+   "image_prompt": "Spinning watermelon close-up with speed lines"
+  },
+  {
+   "time": "約10秒後",
+   "caption": "車がぶつかる勢い",
+   "narration": "ぶつかる勢いは、重さ1トンの車が、時速14キロでぶつかるのと同じくらいです。",
+   "image_prompt": "Blocky car bumping into a wall"
+  },
+  {
+   "time": "着地",
+   "caption": "地面にドゴーン",
+   "narration": "ドゴン！地面がへこむほどの勢いで、すいかは一瞬で粉々。破片も四方に飛び散ります。",
+   "image_prompt": "Watermelon falling from high above and slamming into the ground, crater and debris"
+  },
+  {
+   "time": "でも",
+   "caption": "絶対にマネしないで",
+   "narration": "高い所から物を落とすのは、どんなに小さな物でも、絶対にやめましょう。",
+   "image_prompt": "Warning, red tint"
+  },
+  {
+   "time": "次は？",
+   "caption": "次は何を落とす？",
+   "narration": "1円玉、消しゴム、すいか。次は何を落としてほしい？コメントで教えてください。",
+   "image_prompt": "Character holding a watermelon, close-up"
+  }
  ],
  "factcheck": [
-  {"scene": 3, "problem": "すいかの重さ", "fix": "大玉は4〜6kg程度→『およそ5キロ』"},
-  {"scene": 4, "problem": "落下速度", "fix": "直径25cm・5kg・抗力係数0.47で終端速度約時速210km、350mで約時速200km→『200キロ近く』『計算できます』"},
-  {"scene": 5, "problem": "衝撃の比較", "fix": "運動エネルギー約7,600J＝1トンが時速14kmと同等"},
-  {"scene": 7, "problem": "まねの危険", "fix": "絶対にやめましょうと明記"}
+  {
+   "scene": 3,
+   "problem": "すいかの重さ",
+   "fix": "大玉は4〜6kg程度→『およそ5キロ』"
+  },
+  {
+   "scene": 4,
+   "problem": "落下速度",
+   "fix": "直径25cm・5kg・抗力係数0.47で終端速度約時速210km、350mで約時速200km→『200キロ近く』『計算できます』"
+  },
+  {
+   "scene": 5,
+   "problem": "衝撃の比較",
+   "fix": "運動エネルギー約7,600J＝1トンが時速14kmと同等"
+  },
+  {
+   "scene": 7,
+   "problem": "まねの危険",
+   "fix": "絶対にやめましょうと明記"
+  }
  ]
 }

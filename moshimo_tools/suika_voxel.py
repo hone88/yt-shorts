@@ -10,7 +10,8 @@ import hole_voxel as HV
 from elevator_voxel import person, put, draw_x, finish, shake
 
 W, H, FPS, RS = 1080, 1920, 30, 3
-CLIPS = [3.6, 4.4, 3.7, 5.7, 4.9, 3.2, 4.4, 4.9]
+CLIPS = [3.6, 4.4, 3.7, 5.7, 4.9, 5.4, 4.4, 4.9]
+LAND = 1.7     # 6場面目で地面にぶつかる時刻
 XFRAC = 0.42
 R = np.random.default_rng(12)
 GY = HV.GY
@@ -156,7 +157,7 @@ def frame(k, t):
         hitT = T * 0.45
         z = 30 + min(1.0, t / hitT) * 21.5
         car(c, m, 40, GY, z)
-        cam = (40 + 26 - 8 * p, GY + 12, z - 8); tgt = (40, GY + 1.5, z + 3)
+        cam = (24 + 4 * p, GY + 12, 26 + 3 * p); tgt = (40, GY + 3, 52)
         if hitT < t < hitT + 0.6:
             cam, tgt = shake(cam, tgt, 0.6 * (1 - (t - hitT) / 0.6), t)
         img, depth = render(S, c, m, cam, tgt, 62, w, h)
@@ -168,21 +169,61 @@ def frame(k, t):
             ok = pp[:, 1] > GY
             particles(img, depth, cam, tgt, 62, pp[ok], np.tile(C(0.8, 0.78, 0.75), (ok.sum(), 1)), 0.3)
         return finish(img)
-    if k == 5:   # 着地で粉々
-        land = 0.5
-        if t < land:
-            melon(c, m, 40, GY + 6 + 70 * (land - t), 50, 6, rot=t * 8)
-        else:
-            rg = np.random.default_rng(2)
-            for _ in range(40):
-                x = 40 + rg.normal(0, 6); z = 50 + rg.normal(0, 6)
-                put(c, m, x, x + 1.5, GY - 1, GY, z, z + 1.5, (0.85, 0.15, 0.2), 1, 0.1)
-        cam = (40 + 18, GY + 7 + 3 * p, 50 - 18); tgt = (40, GY + 6, 50)
-        if land < t < land + 0.5:
-            cam, tgt = shake(cam, tgt, 0.8 * (1 - (t - land) / 0.5), t)
-        img, depth = render(S, c, m, cam, tgt, 60, w, h)
-        if t >= land:
-            burst(img, depth, cam, tgt, 60, t - land, 40, GY + 3, 50)
+    if k == 5:   # はるか上空から落ちてきて、地面にドゴーンとめり込む
+        cx, cz = 40, 50
+        if t < LAND:
+            # 地面から真上を見上げる。小さな点だったすいかが、どんどん大きく迫ってくる
+            q = t / LAND
+            melon(c, m, cx, 66 - 20 * q ** 4, cz, 0.9 + 4.6 * q ** 4, rot=t * 9)
+            cam = (cx + 3, GY + 1.5, cz - 7); tgt = (cx, 66, cz + 0.5)
+            fov = 40 + 30 * q ** 4
+            cam, tgt = shake(cam, tgt, 0.15 * q, t)
+            img, depth = render(S, c, m, cam, tgt, fov, w, h)
+            rg = np.random.default_rng(6); n = 60
+            sp = np.stack([cx + rg.normal(0, 3, n), (66 - (t * 40 + rg.uniform(0, 30, n)) % 30), cz + rg.normal(0, 3, n)], 1)
+            particles(img, depth, cam, tgt, fov, sp, np.tile(C(1, 1, 1), (n, 1)), 0.08)
+            return finish(img)
+        f = t - LAND
+        # クレーター：地面をおわん形にえぐり、まわりを盛り上げ、赤い汁を飛ばす
+        xs, zs = np.meshgrid(np.arange(cx - 14, cx + 15), np.arange(cz - 14, cz + 15), indexing='ij')
+        rr = np.hypot(xs + 0.5 - cx, zs + 0.5 - cz)
+        grow = min(1.0, f / 0.12)
+        dep = np.clip(5.5 * (1 - (rr / 9.5) ** 2), 0, None) * grow
+        for x, z, d_, r_ in zip(xs.ravel(), zs.ravel(), dep.ravel(), rr.ravel()):
+            if d_ > 0.5:
+                top = GY - int(round(d_))
+                m[x, top:GY, z] = 0
+                c[x, top - 1, z] = C(0.45, 0.3, 0.18) if (hash((x, z)) % 4) else C(0.85, 0.12, 0.18)
+            elif 9 <= r_ < 11.5 and grow >= 1:
+                put(c, m, x, x + 1, GY, GY + 1 + (hash((x, z)) % 2), z, z + 1, (0.42, 0.3, 0.18), 1, 0.1)
+            elif 11.5 <= r_ < 14 and grow >= 1 and hash((x, z, 7)) % 3 == 0:
+                c[x, GY - 1, z] = C(0.85, 0.12, 0.18)
+        a = 0.6 + 0.5 * min(1.0, f / 3.0)
+        cam = (cx + 24 * math.sin(a), GY + 15 + 6 * min(1.0, f / 3.0), cz - 24 * math.cos(a)); tgt = (cx, GY - 6, cz)
+        if f < 1.0:
+            cam, tgt = shake(cam, tgt, 1.6 * (1 - f), t)
+        fov = 62
+        img, depth = render(S, c, m, cam, tgt, fov, w, h)
+        if f < 0.12:  # ぶつかった瞬間の白い光
+            img = img * (1 - 0.7 * (1 - f / 0.12)) + 1.6 * 0.7 * (1 - f / 0.12)
+        rg = np.random.default_rng(4); n = 700
+        v = rg.normal(0, 1, (n, 3)); v[:, 1] = np.abs(v[:, 1]) * 1.6 + 0.5
+        sp = rg.uniform(10, 34, n)[:, None]
+        pp = np.array([cx, GY + 1, cz]) + v * sp * f + np.array([0, -20, 0]) * f * f
+        pp[:, 1] = np.maximum(pp[:, 1], GY + 0.2)
+        kind = rg.random(n)
+        col = np.where((kind < 0.45)[:, None], C(1.3, 0.2, 0.25), np.where((kind < 0.6)[:, None], C(0.25, 0.65, 0.2), C(0.5, 0.36, 0.22)))
+        particles(img, depth, cam, tgt, fov, pp, col, 0.6)
+        ring = np.linspace(0, 2 * np.pi, 160)  # 地面を走る衝撃の輪
+        R_ = 4 + 38 * f
+        if f < 1.2:
+            rp = np.stack([cx + R_ * np.cos(ring), np.full_like(ring, GY + 0.6), cz + R_ * np.sin(ring)], 1)
+            particles(img, depth, cam, tgt, fov, rp, np.tile(C(1.5, 1.5, 1.5) * (1 - f / 1.2), (len(ring), 1)), 0.9)
+        if f < 1.6:  # 土けむり（明るい色のまま小さくなって消える）
+            nd = 70
+            dv = rg.normal(0, 1, (nd, 3)); dv[:, 1] = np.abs(dv[:, 1]) * 0.6
+            dp = np.array([cx, GY + 1.5, cz]) + dv * (5 + 9 * f)
+            particles(img, depth, cam, tgt, fov, dp, np.tile(C(0.85, 0.78, 0.66), (nd, 1)), 1.3 * (1 - f / 1.6))
         return finish(img)
     if k == 6:   # 注意：首をふる人（赤っぽく）
         person(c, m, 40, GY, 52, "stand", look=int(round(math.sin(t * 7) * 1.4)))
