@@ -239,6 +239,9 @@ def sfx_boom(vol=0.9, sec=2.4):
     return y * vol
 
 
+TRANSITION_GAIN = 0.8   # 場面転換の音は全体に少し大きかったので80%に（11/7）
+
+
 def sfx_transition(vol=0.8):
     """場面転換の決まった音：シュッ（0.45秒）→ドン＋余韻。シリーズ全話で同じ音を使う"""
     out = np.zeros(int(2.4 * SR))
@@ -257,7 +260,7 @@ def sfx_transition(vol=0.8):
     put(out, hit, sw)
     tail = lowpass(noise(1.8, 33), 0.25) * np.exp(-t_(1.8) * 2.2) * 0.25
     put(out, tail, sw)
-    return out * vol
+    return out * vol * TRANSITION_GAIN
 
 
 def sfx_stopwatch(sec, interval=0.5, vol=0.2):
