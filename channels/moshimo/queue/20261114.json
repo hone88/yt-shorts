@@ -1,0 +1,22 @@
+{
+ "title": "もしもスカイツリーから車を落としたら？すいかの400倍だった",
+ "description": "コメントでもらった「車」に答えました！1円玉、消しゴム、すいか……じゃあ、重さ1.3トンの車なら？スカイツリーから落ちたら、どれくらいの勢いになるのかを計算してみました。\n次は何を落としてほしい？コメントで教えてください！\n\n※思考実験です。高い所から物を落とすのは、絶対にやめてください。",
+ "tags": ["もしも", "思考実験", "雑学", "科学", "車", "リクエスト"],
+ "topic": "もしもスカイツリーから車を落としたら（コメントのリクエスト）",
+ "scenes": [
+  {"time": "0秒", "caption": "スカイツリーから車", "narration": "もしも、スカイツリーの展望台から、車を落としたら？", "image_prompt": "Car tipping off the Skytree deck, camera diving with it"},
+  {"time": "0.5秒後", "caption": "すいかと同じ？→桁違い", "narration": "すいかと同じくらい？……いいえ、まったく桁が違います。", "image_prompt": "Person looking up at a falling car, red X"},
+  {"time": "3秒後", "caption": "すいか260個分", "narration": "車の重さは、およそ1.3トン。すいか260個分です。", "image_prompt": "Car on a scale next to a pile of watermelons"},
+  {"time": "9秒後", "caption": "時速250キロ", "narration": "空気にじゃまされても、地面に着くまでおよそ9秒。そのときのスピードは、時速250キロほどと計算できます。", "image_prompt": "Car falling fast past the tower, speed lines"},
+  {"time": "着地", "caption": "地面にドガーン", "narration": "ドガーン！地面は大きくえぐれ、車はぺしゃんこにつぶれます。", "image_prompt": "Car slamming into the ground, huge crater"},
+  {"time": "その勢い", "caption": "すいかの400倍", "narration": "ぶつかる勢いは、すいかのおよそ400倍。まわりに大きな被害が出てしまいます。", "image_prompt": "Wide shot of crater and scattered debris"},
+  {"time": "でも", "caption": "絶対にマネしないで", "narration": "高い所から物を落とすのは、どんなに小さな物でも、絶対にやめましょう。", "image_prompt": "Warning, red tint"},
+  {"time": "次は？", "caption": "次は何を落とす？", "narration": "鉄のかたまり、木、アリ。次は何を落としてほしい？コメントで教えてください。", "image_prompt": "Close-up of the character"}
+ ],
+ "factcheck": [
+  {"scene": 3, "problem": "車の重さ", "fix": "普通車はおよそ1〜1.5トン→『およそ1.3トン』、すいか5kgで260個"},
+  {"scene": 4, "problem": "落下時間と速度", "fix": "1.3t・正面2.5㎡・抗力係数1.0で数値計算：350mで約9秒・時速約250km（終端速度は時速約330km）→『ほどと計算できます』"},
+  {"scene": 6, "problem": "エネルギー比較", "fix": "車 約300万J、すいか約7,600J → 約400倍"},
+  {"scene": 7, "problem": "まねの危険", "fix": "絶対にやめましょうと明記"}
+ ]
+}
