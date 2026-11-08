@@ -1,0 +1,22 @@
+{
+ "title": "もしも世界から摩擦が10秒だけ消えたら？ツルツル滑るだけじゃなかった",
+ "description": "コメントでもらった「摩擦ゼロならば…」に答えました！氷の上みたいに滑るだけ？……実は、歩くことも、止まることも、物を留めておくこともできなくなります。\n摩擦が消える10秒間、あなたならどこにいたい？コメントで教えてください！\n\n※思考実験です。",
+ "tags": ["もしも", "思考実験", "雑学", "科学", "摩擦", "リクエスト"],
+ "topic": "もしも世界から摩擦が10秒だけ消えたら（コメントのリクエスト）",
+ "scenes": [
+  {"time": "0秒", "caption": "摩擦が10秒ゼロ", "narration": "もしも、世界から摩擦が10秒だけ消えたら？", "image_prompt": "Person walking, ground turns icy, slips"},
+  {"time": "0.5秒後", "caption": "滑るだけ？→もっと大変", "narration": "氷の上みたいに滑るだけ？……いいえ、もっと大変なことになります。", "image_prompt": "Person flailing on glossy ground, red X"},
+  {"time": "1秒後", "caption": "一歩も進めない", "narration": "歩くときは、足が地面を後ろに押す摩擦で進んでいます。摩擦がなければ、足が空回りして一歩も進めません。", "image_prompt": "Feet spinning in place"},
+  {"time": "2秒後", "caption": "結び目がほどける", "narration": "結び目も、摩擦で止まっています。ひもの結び目は、するするとほどけてしまうと考えられています。", "image_prompt": "Rope knot unravelling"},
+  {"time": "3秒後", "caption": "車が止まれない", "narration": "ブレーキも摩擦。走っていた車は、止まることも曲がることもできず、まっすぐ滑り続けます。", "image_prompt": "Car sliding straight past a corner"},
+  {"time": "5秒後", "caption": "ネジが抜ける", "narration": "ネジやくぎも、摩擦で留まっています。棚や家具は、バラバラになってしまうかもしれません。", "image_prompt": "Shelf falling apart, screws popping out"},
+  {"time": "10秒後", "caption": "急にガツン", "narration": "10秒後、摩擦が戻ると、滑っていた人や車は、急にガツンと止まります。", "image_prompt": "Sliding car and person stop abruptly"},
+  {"time": "あなたは？", "caption": "どこにいたい？", "narration": "摩擦が消える10秒間、あなたならどこにいたい？他に試してほしい「もしも」は、コメントで教えてください。", "image_prompt": "Close-up of the character"}
+ ],
+ "factcheck": [
+  {"scene": 3, "problem": "歩行と摩擦", "fix": "歩行は足と地面の静止摩擦力で前に進む（物理の基本）"},
+  {"scene": 4, "problem": "結び目", "fix": "結び目は糸同士の摩擦で保たれる→『と考えられています』"},
+  {"scene": 5, "problem": "車", "fix": "ブレーキもタイヤのグリップも摩擦。慣性で直進し続ける"},
+  {"scene": 6, "problem": "ネジ・くぎ", "fix": "ネジのゆるみ止めやくぎの保持力は摩擦による→『かもしれません』"}
+ ]
+}
