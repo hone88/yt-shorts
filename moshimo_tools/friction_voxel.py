@@ -10,7 +10,7 @@ from elevator_voxel import person, put, draw_x, finish, shake
 
 W, H, FPS, RS = 1080, 1920, 30, 3
 CLIPS = [2.8, 4.2, 6.3, 5.9, 5.5, 5.5, 4.4, 6.5]
-XFRAC = 0.5
+XFRAC = 0.73
 GY = SV.GY
 ICE = (0.72, 0.88, 1.05)
 
@@ -65,7 +65,7 @@ def frame(k, t):
         icy(c, m, 1.0)
         person(c, m, 40, GY, 52, "float" if int(t * 6) % 2 else "jump", look=int(round(math.sin(t * 5))))
         a = 0.5 + 1.4 * t
-        cam = (40 + 34 * math.sin(a), GY + 16, 52 - 34 * math.cos(a)); tgt = (40, GY + 20, 52)
+        cam = (40 + 34 * math.sin(a), GY + 16, 52 - 34 * math.cos(a)); tgt = (40, GY + 25, 52)
         img, depth = render(S, c, m, cam, tgt, 60, w, h)
         sparkles(img, depth, cam, tgt, 60, t)
         out = finish(img)
@@ -77,7 +77,7 @@ def frame(k, t):
         pose = ("stand", "float", "crouch", "jump")[int(t * 8) % 4]
         person(c, m, 40, GY, 52, pose, look=int(round(math.sin(t * 6))))
         up = smooth(0, T * 0.8, t)
-        cam = (40 + 5 - 3 * up, GY + 3 + 14 * up, 52 - 12 - 16 * up); tgt = (40, GY + 3 + 18 * up, 52)
+        cam = (40 + 5 - 3 * up, GY + 3 + 14 * up, 52 - 12 - 16 * up); tgt = (40, GY + 1 + 22 * up, 52)
         img, depth = render(S, c, m, cam, tgt, 58, w, h)
         rg = np.random.default_rng(int(t * 8)); n = 40  # 足もとで空回りする細かい光
         fp = np.stack([40 + rg.normal(0, 2, n), GY + rg.uniform(0, 1.5, n), 52 + rg.normal(0, 2, n)], 1)
@@ -129,7 +129,7 @@ def frame(k, t):
                 bh = 3 + (b % 2)
                 col = [(0.85, 0.2, 0.2), (0.2, 0.5, 0.9), (0.95, 0.75, 0.2), (0.3, 0.7, 0.35), (0.6, 0.3, 0.75)][(b + j) % 5]
                 put(c, m, bx, bx + 2, by - d + 1, by - d + 1 + (bh if not d else 1.5), z0 + 1, z0 + 3, col, 1, 0.03)
-        cam = (x0 + 8 + 6 * math.sin(0.4 * t), GY + 12, z0 - 26 + 4 * p); tgt = (x0 + 8, GY + 12, z0)
+        cam = (x0 + 8 + 6 * math.sin(0.4 * t), GY + 11, z0 - 32 + 4 * p); tgt = (x0 + 8, GY + 7, z0)
         if 1.4 < t < 2.4:
             cam, tgt = shake(cam, tgt, 0.7, t)
         img, depth = render(S, c, m, cam, tgt, 60, w, h)
@@ -160,7 +160,7 @@ def frame(k, t):
         return finish(img)
     if k == 7:   # 顔にゆっくり寄る
         person(c, m, 40, GY, 52, "stand", look=int(round(math.sin(t * 1.2))))
-        cam = (40, GY + 19, 52 - 26 + 9 * p); tgt = (40, GY + 18.5, 52)
+        cam = (40, GY + 19, 52 - 26 + 9 * p); tgt = (40, GY + 22, 52)
         img, depth = render(S, c, m, cam, tgt, 54, w, h)
         return finish(img)
 
