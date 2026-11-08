@@ -56,10 +56,14 @@ TEXT = {
     "10": ("K", "…うるさい。"),
     "11": ("Mo", "今日、[どうだった]？"),
     "12": ("K", "…最初、|めちゃくちゃ[緊張]しました。"),
-    "13": ("Mo", "最初は、みんなそうだよ。|[5か所目]の名刺、良かったぞ。"),
+    "13": ("Mo", "初日にしては、[よくやってた]よ。|[5か所目]の名刺、良かったぞ。"),
     "14": ("K", "名刺交換、5か所。|…これで、[面接で話せる]な。"),
     "15": ("T", "…それで、|[何を話す]のだ？"),
     "16": ("K", "え？…|[名刺を、渡した]って。"),
+    "17": ("K", "…いよいよ今日から、|[議員インターン]だ。"),
+    "18": ("Mo", "最初は、[緊張する]ものだよ。|気にせず、[次、行こう]。"),
+    "19": ("K", "…はい。"),
+    "20": ("T", "布団から、|[ちゃんと出てきた]のだ。"),
 }
 
 
@@ -94,12 +98,14 @@ def plan():
     S = []
     ln, t = seq(["01"], 0.35)
     S.append(O.Shot("cold", max(t + 0.3, 4.5), ln))                        # つかみ → 2.4秒でタイトル
+    ln, t = seq(["17", "20"], 0.5, extra={"20": 0.3})
+    S.append(O.Shot("morning", t + 0.3, ln))                               # 初日の朝、事務所の前
     ln, t = seq(["02", "03"], 0.5, extra={"03": 0.2})
     s = O.Shot("office", t + 0.4, ln); s.card = ln[0][0] + 0.4; S.append(s)
     ln, t = seq(["04", "05", "06", "07", "08"], 0.4, extra={"05": 0.2, "06": 0.3, "07": 0.5})
     s = O.Shot("visit", t + 0.4, ln); S.append(s)
-    ln, t = seq(["09", "10"], 0.7, extra={"10": 0.15})
-    S.append(O.Shot("walk", t + 0.3, ln))
+    ln, t = seq(["09", "10", "18", "19"], 0.7, extra={"10": 0.15, "18": 0.5, "19": 0.3})
+    S.append(O.Shot("car", t + 0.5, ln))                                   # 次の訪問先へ：森下議員の運転する車
     S.append(O.Shot("ff", 6.3))                                             # 3〜5か所目
     ln, t = seq(["11", "12", "13"], 0.5, extra={"13": 0.2})
     S.append(O.Shot("back", t + 0.6, ln))
@@ -166,12 +172,59 @@ def checks(img, n, u):
         ImageDraw.Draw(img).text((540 - w / 2 + 36, y + 6), txt, font=f, fill=(255, 255, 255) if ok else (150, 156, 175))
 
 
+# ---------- ほかのインターン生・車 ----------
+def other_char():
+    """同じ事務所のインターン生（1つの事務所に2〜3名）。カナタの体に色ちがいのスーツ"""
+    pal = dict(C.KANATA_PAL)
+    pal["H"], pal["J"], pal["T"] = hexc("#6a4428"), hexc("#2e3036"), hexc("#3a6ac8")
+
+    def parts(e="normal"):
+        old = C.KANATA_PAL
+        C.KANATA_PAL = pal
+        try:
+            return C.kanata_parts("open", "suit")
+        finally:
+            C.KANATA_PAL = old
+    return dict(name="other", label="インターン生", parts=parts)
+
+
+OTHER = other_char()
+
+
+def other(pos, yaw, **pose):
+    r = Rig(OTHER, pos, yaw, tag="other")
+    r.set(armL=0.05, armR=0.05)
+    r.set(**pose)
+    return r
+
+
+def car_set():
+    """車の中（前から見る）。運転席に森下議員、助手席にカナタ、後ろにインターン生"""
+    S = []
+    S.append(P.slab(1.6, 1.9, 0.0, 2.8, 3.4, 0.35, hexc("#3a3a40")))           # 床
+    for x in (1.95, 3.05):                                                       # 前の座席の背もたれ
+        S.append(P.slab(x, 3.05, 0.35, 0.8, 0.25, 1.15, hexc("#4a4a52")))
+        S.append(P.slab(x + 0.15, 3.0, 1.5, 0.5, 0.2, 0.3, hexc("#4a4a52")))
+    S.append(P.slab(1.8, 4.45, 0.35, 2.4, 0.25, 1.1, hexc("#4a4a52")))          # 後ろの座席
+    S.append(P.slab(1.6, 1.85, 0.75, 2.8, 0.45, 0.45, hexc("#2a2a30")))         # ダッシュボード
+    S.append(P.slab(2.12, 2.25, 0.85, 0.5, 0.08, 0.32, hexc("#1a1a1e")))          # ハンドル（顔にかからない高さ）
+    S.append(P.slab(1.55, 1.9, 2.15, 2.9, 3.4, 0.12, hexc("#d8d8dc")))          # 天井
+    for x in (1.5, 4.4):                                                         # 横の窓（外の光）
+        S.append(P.slab(x, 2.2, 1.25, 0.06, 2.4, 0.75, hexc("#a8d0f0"), glow=True))
+        S.append(P.slab(x, 2.0, 0.35, 0.06, 2.8, 0.9, hexc("#e6e6ea")))
+    return S
+
+
+CAR = car_set()
+
+
 # ---------- 1コマ ----------
 def visit_img(t, dur, mode, kexpr="normal", vexpr="normal", talk_v=False, talk_mo=False, card=True, both=False):
     """訪問先の受付。森下議員の隣にカナタ"""
     k = K1.kanata((3.0, 2.2, 0), 0.0, kexpr, card, armR=1.25 if card else 0.05, armL=1.25 if both else 0.05)
     mo = K1.morishita((2.05, 2.5, 0), 0.15, "normal", armL=0.2 + (0.25 * math.sin(t * 6) if talk_mo else 0))
     rc = K1.reception(("smile" if int(t * 7) % 2 else "normal") if talk_v else vexpr)
+    ot = other((1.35, 2.35, 0), 0.25)
     u = ease(t / max(dur, 0.01))
     if mode == "over":        # カナタの背中越しに訪問先の方
         cam = Camera((lerp(3.55, 3.5, u), lerp(0.7, 1.0, u), 1.8), (2.9, 5.4, 1.45), 46)
@@ -179,7 +232,7 @@ def visit_img(t, dur, mode, kexpr="normal", vexpr="normal", talk_v=False, talk_m
         cam = Camera((lerp(3.5, 3.45, u), lerp(4.1, 3.85, u), 1.72), (3.0, 2.2, 1.55), 46)
     else:                     # 森下議員とカナタ（2人）
         cam = Camera((lerp(2.9, 2.85, u), lerp(5.0, 4.8, u), 1.75), (2.5, 2.3, 1.45), 56)
-    img, _ = render(K1.LOBBY + k.boxes() + mo.boxes() + rc.boxes(), cam, K1.BG_LOBBY)
+    img, _ = render(K1.LOBBY + k.boxes() + mo.boxes() + rc.boxes() + ot.boxes(), cam, K1.BG_LOBBY)
     return img.convert("RGBA")
 
 
@@ -233,16 +286,36 @@ def frame(s, t):
         else:
             img = visit_img(t - e_, s.dur - e_, "over", "normal", vexpr="smile", talk_v=sid == "08", both=True)
         clock(img, clock_t, "1か所目")
-    elif n == "walk":
-        a, b = (x[0] for x in s.lines)
+    elif n == "car":
+        a, b, c, d_ = (x[0] for x in s.lines)
+        bob = 0.012 * math.sin(t * 13)
+        mo = K1.morishita((2.35, 2.95, 0), math.pi, "normal", sit=True, armL=1.2, armR=1.2,
+                          head_yaw=0.35 if sid in ("18",) else 0.0)
+        k = K1.kanata((3.45, 2.95, 0), math.pi, "blank" if t < c else ("normal" if t < d_ + 0.3 else "smile"), sit=True,
+                      armL=0.5, armR=0.5, head_yaw=-0.25 if sid == "10" else (-0.35 if c - 0.1 < t < d_ + 0.6 else 0.0))
+        ot = other((2.9, 4.35, 0), math.pi, sit=True, armL=0.5, armR=0.5)
+        tk = C.tokei_boxes((3.9, 2.55, lerp(1.9, 1.4, ease(min(1, t / 0.5)))), t, "eyes", 0.45, math.pi - 0.3, tag="tokei") if t < c - 0.2 else []
         u = ease(t / s.dur)
-        mo = K1.morishita((lerp(2.0, 2.6, u), 1.2, 0), math.pi * 1.5, "normal")
-        k = K1.kanata((lerp(2.9, 3.5, u), 1.75, 0), math.pi * 1.5, "normal" if t < b else "blank", head_yaw=-0.5 if t > a else 0.0)
-        tk = C.tokei_boxes((lerp(3.35, 3.95, u), 1.4, lerp(2.6, 1.85, ease(min(1, t / 0.5)))), t, "eyes", 0.5, math.pi + 0.4, tag="tokei")
-        cam = Camera((lerp(3.4, 4.0, u), -0.6, 1.75), (lerp(3.0, 3.6, u), 1.7, 1.6), 46)
-        img, _ = render(K1.STREET + mo.boxes() + k.boxes() + tk, cam, K1.BG_SKY)
+        if t < c - 0.15:          # 助手席のカナタとトケイ
+            cam = Camera((lerp(3.75, 3.7, u), 0.75 + bob, 1.6), (3.6, 3.0, 1.45), 48)
+        else:                     # 運転する森下議員と、助手席のカナタ（後ろにインターン生）
+            cam = Camera((2.9, 0.35 + bob, 1.7), (2.9, 3.4, 1.35), 60)
+        img, _ = render(CAR + mo.boxes() + k.boxes() + ot.boxes() + tk, cam, K1.BG_SKY)
         img = img.convert("RGBA")
-        clock(img, "10:50")
+        clock(img, "10:50", "移動中")
+        if sid == "10":
+            F_ = O.F(BOLD, 34)
+            ImageDraw.Draw(img).text((540 - F_.getlength("（小声）") / 2, 1180), "（小声）", font=F_, fill=(230, 232, 240))
+    elif n == "morning":
+        a, b = (x[0] for x in s.lines)
+        k = K1.kanata((2.5, 3.6, 0), math.pi, "normal" if t < b else "blank")
+        k.set(head_pitch=-0.05)
+        u = ease(t / s.dur)
+        cam = Camera((lerp(2.95, 2.9, u), lerp(0.2, 0.7, u), 1.6), (2.6, 4.2, 1.6), 50)
+        tk = Q.tokei_near(t, "eyes", t - b + 0.5, (3.25, 3.3, 1.75)) if t > b - 0.5 else []
+        img, _ = render(R.OUTSIDE + k.boxes() + tk, cam, R.BG_SKY)
+        img = img.convert("RGBA")
+        clock(img, "9:30", "インターン初日")
     elif n == "ff":
         # 3〜5か所目：11:00 → 13:00 → 15:30。チェックが1つずつ増える
         seg = min(2, int(t / 2.1))
