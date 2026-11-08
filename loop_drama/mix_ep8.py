@@ -14,7 +14,7 @@ music = np.zeros_like(voice)
 for s in SH:
     for (t0, sid) in s.lines:
         A.put(voice, V.vo(sid), s.start + t0)
-co, cn, n1, ev, n2, mn, iv, fz, rw, en = (S[k] for k in ("cold", "council", "notice1", "event", "notice2", "midnight", "iv", "freeze", "rewind", "end"))
+co, cn, c1, ev, of, c2, dy, d3, mn, iv, fz, rw, en = (S[k] for k in ("cold", "council", "chat1", "event", "office", "chat2", "days", "d331", "midnight", "iv", "freeze", "rewind", "end"))
 
 
 def dark(sec):
@@ -27,21 +27,30 @@ A.put(fx, A.sfx_pop(0.35), 0.05)
 A.put(music, A.fade(dark(co.dur + 0.3), 0.05, 0.4), 0)
 A.put(fx, A.sfx_heart(0.55), 0.8); A.put(fx, A.sfx_heart(0.6), 1.5)
 A.put(fx, A.sfx_transition(0.6), 2.4 - 0.45)
-# 2月〜3月の早回し：ストップウォッチがずっと鳴る
+# 2月〜3月31日の早回し：ストップウォッチがずっと鳴る
 mont = mn.start - cn.start
 A.put(fx, A.sfx_rewind(), cn.start - 0.4)
 A.put(fx, A.sfx_stopwatch(mont, 0.35, 0.18), cn.start)
 A.put(music, A.fade(A.bgm_sparse(mont + 0.2), 0.3, 0.5), cn.start)
-A.put(music, A.amb_crowd(cn.dur + 0.3, 0.08), cn.start)
 A.put(music, A.amb_room(mont, 0.05), cn.start)
-for j in range(3):
-    A.put(fx, A.sfx_pop(0.3), cn.start + 0.2 + j * 0.3)
-for s_, rd in ((n1, 1.4), (n2, 0.8)):
+A.put(music, A.amb_crowd(cn.dur + 0.3, 0.08), cn.start)
+for j_ in range(3):
+    A.put(fx, A.sfx_pop(0.3), cn.start + 0.2 + j_ * 0.3)
+for s_ in (c1, c2):
     A.put(fx, A.sfx_transition(0.45), s_.start - 0.4)
-    A.put(fx, A.sfx_notify(0.35), s_.start + 0.2)
-    A.put(fx, A.sfx_tick(0.3), s_.start + rd)              # 既読
-A.put(fx, A.sfx_transition(0.45), ev.start - 0.4)
+    A.put(fx, A.sfx_notify(0.4), s_.start + 0.3); A.put(fx, A.sfx_notify(0.35), s_.start + 0.8)
+    A.put(fx, A.sfx_tick(0.35), s_.start + 1.45)          # 既読
+    A.put(fx, A.sfx_whoosh(0.4, True, 0.2), s_.start + 1.8)   # パッと閉じる
+    A.put(fx, A.sfx_boom(0.6, 1.8), s_.start + 2.15)      # 既読、だけ。
+for s_ in (ev, of):
+    A.put(fx, A.sfx_transition(0.45), s_.start - 0.4)
+    A.put(fx, A.sfx_pop(0.35), s_.start + 0.1)
 A.put(music, A.amb_crowd(ev.dur, 0.12), ev.start)
+A.put(fx, A.sfx_whoosh(0.6, True, 0.3), dy.start)
+for j_ in range(3):
+    A.put(fx, A.sfx_tick(0.3), dy.start + j_ * 0.75)
+A.put(fx, A.sfx_transition(0.5), d3.start - 0.45)
+A.put(fx, A.sfx_boom(0.8, 2.2), d3.start + 0.05)          # 3月31日
 # 3月31日 23:59 → 0:00：秒針 → 盛り上げ → ドン
 A.put(fx, A.sfx_transition(0.5), mn.start - 0.45)
 A.put(fx, A.sfx_stopwatch(mn.zero, 0.5, 0.3), mn.start)
@@ -52,8 +61,9 @@ A.put(music, A.fade(dark(mn.dur - mn.zero + iv.dur), 0.1, 0.4), mn.start + mn.ze
 A.put(fx, A.sfx_transition(0.55), iv.start - 0.45)
 A.put(fx, A.sfx_stopwatch(iv.tf, 0.5, 0.2), iv.start)
 A.put(fx, A.sfx_heart(0.5), iv.start + iv.lines[2][0] - 0.3)
-A.put(fx, A.sfx_heart(0.6), iv.start + iv.lines[3][0] + V.L("01") + 0.2)
-A.put(fx, A.sfx_heart(0.7), iv.start + iv.lines[3][0] + V.L("01") + 0.75)
+for k_ in range(4):
+    A.put(fx, A.sfx_heart(0.55 + 0.05 * k_), iv.start + iv.lines[4][0] + k_ * 0.9)
+A.put(fx, A.sfx_boom(0.5, 1.8), iv.start + iv.lines[4][0] - 0.1)
 A.put(fx, A.sfx_freeze(), iv.start + iv.tf)
 A.put(fx, A.sfx_boom(1.0, 2.8), iv.start + iv.tf)
 # 世界が止まる：0.6秒の無音 → 暗い持続音。残りループ 2→1
