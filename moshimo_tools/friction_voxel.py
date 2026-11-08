@@ -10,7 +10,7 @@ from elevator_voxel import person, put, draw_x, finish, shake
 
 W, H, FPS, RS = 1080, 1920, 30, 3
 CLIPS = [2.8, 4.2, 6.3, 5.9, 5.5, 5.5, 4.4, 6.5]
-XFRAC = 0.73
+XFRAC = 0.42
 GY = SV.GY
 ICE = (0.72, 0.88, 1.05)
 
