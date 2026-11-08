@@ -75,8 +75,9 @@ def frame(k, t):
         S, c, m = ground()
         person(c, m, 40, GY, 52, "stand", look=0)
         k2 = smooth(0, T, t)
-        car_s(c, m, 40, GY + 25 - 3 * k2, 34 + 5 * k2, 4.5 * 1.2, rot=t * 5)
         z = snap(t, 0.9, 0.45)
+        if z < 0.3:  # 顔へ寄るときは車を画面の外へ（カメラと顔のあいだに入らないように）
+            car_s(c, m, 40, GY + 25 - 3 * k2, 34 + 5 * k2, 4.5 * 1.2, rot=t * 5)
         cam = lerp((40 + 8 * math.sin(t * 0.6), GY + 6, 18), (40, GY + 22, 33), z)
         tgt = lerp((40, GY + 31, 52), (40, GY + 23.5, 52), z)
         fov = 70 - 30 * z
