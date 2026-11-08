@@ -15,6 +15,11 @@ def font(size):
 def wrap(draw, text, f, max_w):
     lines, line = [], ""
     for ch in text:
+        if ch == "\n":   # 台本の改行（話者が変わるところ）はそのまま改行にする
+            if line:
+                lines.append(line)
+            line = ""
+            continue
         if draw.textlength(line + ch, font=f) > max_w:
             lines.append(line); line = ch
         else:
