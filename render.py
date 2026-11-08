@@ -171,7 +171,7 @@ def main():
 
 {tags}
 
-{style['voice_credit']}
+{script.get('voice_credit', style['voice_credit'])}
 
 【メモ（投稿しない）】
 チャンネル: {style['channel_name']}
