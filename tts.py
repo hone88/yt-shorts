@@ -28,6 +28,16 @@ def silent(text: str, path: pathlib.Path) -> None:
         w.writeframes(struct.pack("<h", 0) * int(secs * rate))
 
 
+def join_wavs(parts, out):
+    data = b""; params = None
+    for q in parts:
+        with wave.open(str(q)) as w:
+            params = w.getparams(); data += w.readframes(w.getnframes())
+            data += b"\x00\x00" * int(w.getframerate() * 0.12) * w.getnchannels()
+    with wave.open(str(out), "wb") as w:
+        w.setparams(params); w.writeframes(data)
+
+
 def engine_up() -> bool:
     try:
         urllib.request.urlopen(f"{VOICEVOX_URL}/version", timeout=5)
@@ -48,9 +58,21 @@ def main():
     use_vv = engine_up()
     if not use_vv:
         print("VOICEVOX エンジンに接続できないので、無音のプレビュー音声を作ります")
+    base = SPEAKER
     for i, s in enumerate(script["scenes"]):
         p = out_dir / f"{i:02d}.wav"
-        (voicevox if use_vv else silent)(s["narration"], p)
+        if use_vv and s.get("lines"):
+            # セリフごとに声を変える：lines = [{"speaker": 2, "text": "..."}, ...] をつなげて1本にする
+            parts = []
+            for j, ln in enumerate(s["lines"]):
+                SPEAKER = int(ln.get("speaker", base))
+                q = out_dir / f"{i:02d}_{j}.wav"
+                voicevox(ln["text"], q)
+                parts.append(q)
+            SPEAKER = base
+            join_wavs(parts, p)
+        else:
+            (voicevox if use_vv else silent)(s["narration"], p)
     script["voiced"] = use_vv
     script_path.write_text(json.dumps(script, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"音声 {len(script['scenes'])} 本を作成（VOICEVOX: {'あり' if use_vv else 'なし'}）")
