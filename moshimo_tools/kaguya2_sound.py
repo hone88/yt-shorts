@@ -30,7 +30,9 @@ def pop():
 
 
 def ping():   # スマホの通知
-    return tone(1320, 1320, 0.15) * 0.6 + np.pad(tone(1760, 1760, 0.25), (int(0.12 * SR), 0))[:int(0.25 * SR)] * 0.6
+    out = np.zeros(int(0.4 * SR)); a = tone(1320, 1320, 0.15); b = tone(1760, 1760, 0.25)
+    out[:len(a)] += a * 0.6; i = int(0.12 * SR); out[i:i + len(b)] += b[:len(out) - i] * 0.6
+    return out
 
 
 def don(d=1.6):
@@ -38,7 +40,9 @@ def don(d=1.6):
 
 
 def door():   # バタン
-    return lp(noise(0.25), 1500) * np.exp(-t_(0.25) * 18) * 2.0 + boom(0.9) * 0.8
+    out = boom(0.9) * 0.8; x = lp(noise(0.25), 1500) * np.exp(-t_(0.25) * 18) * 2.0
+    out[:len(x)] += x[:len(out)]
+    return out
 
 
 lofi(bgm, 0.0, DUR, 0.9)
