@@ -75,7 +75,7 @@ def subtitle(img, sid):
 
 
 # ---------- 割り付け ----------
-def seq(ids, start=0.4, gap=0.22, extra=None):
+def seq(ids, start=0.4, gap=0.32, extra=None):
     out, t = [], start
     for i in ids:
         t += (extra or {}).get(i, 0)
@@ -87,26 +87,26 @@ def seq(ids, start=0.4, gap=0.22, extra=None):
 def plan():
     S = []
     ln, t = seq(["01"], 0.35)
-    S.append(O.Shot("cold", max(t + 0.3, 4.5), ln))                      # つかみ → 2.4秒でタイトル
-    ln, t = seq(["10"], 1.0)
-    S.append(O.Shot("council", t + 0.3, ln))                             # 2月10日 議会傍聴（上から見下ろす）
-    S.append(O.Shot("chat1", 3.2))                                       # オープンチャットの案内 → 既読だけ
-    S.append(O.Shot("event", 2.8))                                       # 3月6日 地域のイベント（引きの画）
-    S.append(O.Shot("office", 2.4))                                      # 3月12日 事務所でもスマホ
-    S.append(O.Shot("chat2", 3.0))                                       # また既読だけ
-    S.append(O.Shot("days", 2.2))                                        # 3/20 → 3/25 → 3/31 の早回し
-    ln, t = seq(["02"], 1.5)
-    S.append(O.Shot("d331", t + 0.4, ln))                                # 3月31日の夜「これで答えられる」
-    ln, t = seq(["03"], 3.4)
-    s = O.Shot("midnight", t + 0.8, ln); s.zero = 1.4; S.append(s)        # 23:59 → 0:00、ルール④
+    S.append(O.Shot("cold", max(t + 0.5, 5.0), ln))                      # つかみ → 2.4秒でタイトル
+    ln, t = seq(["10"], 1.8)
+    S.append(O.Shot("council", t + 1.2, ln))                             # 2月10日 議会傍聴（上から見下ろす）
+    S.append(O.Shot("chat1", 4.4))                                       # オープンチャットの案内 → 既読だけ
+    S.append(O.Shot("event", 3.8))                                       # 3月6日 地域のイベント（引きの画）
+    S.append(O.Shot("office", 3.4))                                      # 3月12日 事務所でもスマホ
+    S.append(O.Shot("chat2", 4.2))                                       # また既読だけ
+    S.append(O.Shot("days", 3.3))                                        # 3/20 → 3/25 → 3/31 の早回し
+    ln, t = seq(["02"], 2.0)
+    S.append(O.Shot("d331", t + 1.2, ln))                                # 3月31日の夜「これで答えられる」
+    ln, t = seq(["03"], 4.0)
+    s = O.Shot("midnight", t + 1.2, ln); s.zero = 2.0; S.append(s)        # 23:59 → 0:00、ルール④
     ln, t = seq(["04", "05", "06", "01", "11", "12", "13"], 0.5,
-                extra={"05": 0.2, "06": 0.2, "01": 0.5, "11": 0.9, "12": 0.5, "13": 0.6})
-    s = O.Shot("iv", t + 1.0 + 0.6, ln); s.tf = t + 1.0; S.append(s)      # どもる → 1秒止めて → 世界が止まる
-    ln, t = seq(["08"], 1.4)
-    s = O.Shot("freeze", t + 0.8, ln); S.append(s)                        # 残りループ 2→1、トケイ
-    ln, t = seq(["09"], 0.3)
-    s = O.Shot("rewind", t + 2.2, ln); s.t0 = t; S.append(s)              # 2029 → 2026
-    S.append(O.Shot("end", 5.0))
+                extra={"05": 0.2, "06": 0.2, "01": 0.5, "11": 1.0, "12": 1.0, "13": 1.3})
+    s = O.Shot("iv", t + 2.0 + 0.8, ln); s.tf = t + 2.0; S.append(s)   # どもりの終わりは長めの沈黙      # どもる → 1秒止めて → 世界が止まる
+    ln, t = seq(["08"], 1.8)
+    s = O.Shot("freeze", t + 1.4, ln); S.append(s)                        # 残りループ 2→1、トケイ
+    ln, t = seq(["09"], 0.5)
+    s = O.Shot("rewind", t + 2.8, ln); s.t0 = t; S.append(s)              # 2029 → 2026
+    S.append(O.Shot("end", 6.0))
     t = 0
     for s in S:
         n = int(round(s.dur * FPS)); s.start, s.dur = t, n / FPS; t += s.dur
@@ -275,7 +275,7 @@ def phone_chat(t, msgs, read, close):
     d.text((x0 + 50, y0 + 92), "オープンチャット", font=fs, fill=(230, 255, 236))
     fm, fm2, fn = O.F(BLACK, 46), O.F(BOLD, 36), O.F(BOLD, 32)
     for j, (m1, m2) in enumerate(msgs):
-        tt = t - 0.3 - j * 0.5
+        tt = t - 0.4 - j * 0.7
         if tt <= 0:
             continue
         e = ease(min(1, tt / 0.25))
@@ -362,13 +362,13 @@ def frame(s, t):
         msgs = ([("2/24（水）企業訪問を行います！", "参加は自由です。申し込みはこちら"), ("3/3（水）公開討論会があります！", "大学生が登壇します")]
                 if first else [("3/22（月）議員交流会を行います！", "参加は自由です"), ("3/26（金）公開討論会 第2回", "ぜひ来てください！")])
         date, tm = ("2027年2月19日（金）", "21:00") if first else ("2027年3月18日（木）", "22:00")
-        if t < 2.1:
-            img = phone_chat(t, msgs, read=t > 1.45, close=max(0, (t - 1.8) / 0.3))
+        if t < 2.8:
+            img = phone_chat(t, msgs, read=t > 2.0, close=max(0, (t - 2.45) / 0.3))
         else:
             k = F.kanata_phone_bed("blank")
-            img = Q.room_img(k, F.bed_cam(t - 2.1, s.dur - 2.1, 0.25))
+            img = Q.room_img(k, F.bed_cam(t - 2.8, s.dur - 2.8, 0.25))
             img.alpha_composite(Image.new("RGBA", (W, H), (10, 14, 50, 80)))
-            O.caption(img, "既読、だけ。", 1100, t - 2.15, size=120, col=RED)
+            O.caption(img, "既読、だけ。", 1100, t - 2.85, size=120, col=RED)
         clock(img, date, tm)
     elif n == "event":
         u = ease(t / s.dur)
@@ -392,7 +392,7 @@ def frame(s, t):
             O.caption(img, "いつも、スマホ。", 1300, t - 0.6, size=96, col=YEL)
     elif n == "days":
         # 3/20 → 3/25 → 3/31 の早回し
-        seg = min(2, int(t / 0.75))
+        seg = min(2, int(t / 1.1))
         dd = [("2027年3月20日（土）", "8:00"), ("2027年3月25日（木）", "12:00"), ("2027年3月31日（水）", "18:00")][seg]
         src = [shot("office"), shot("event"), shot("council")][seg]
         img = O.glitch(frame_raw(src, 1.2), 0.25, int(t * 30))

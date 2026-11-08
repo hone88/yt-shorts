@@ -52,17 +52,17 @@ for j_ in range(3):
     A.put(fx, A.sfx_pop(0.3), cn.start + 0.2 + j_ * 0.3)
 for s_ in (c1, c2):
     A.put(fx, TR(0.45), s_.start - 0.4)
-    A.put(fx, A.sfx_notify(0.4), s_.start + 0.3); A.put(fx, A.sfx_notify(0.35), s_.start + 0.8)
-    A.put(fx, A.sfx_tick(0.35), s_.start + 1.45)          # 既読
-    A.put(fx, A.sfx_whoosh(0.4, True, 0.2), s_.start + 1.8)   # パッと閉じる
-    A.put(fx, A.sfx_boom(0.6, 1.8), s_.start + 2.15)      # 既読、だけ。
+    A.put(fx, A.sfx_notify(0.4), s_.start + 0.4); A.put(fx, A.sfx_notify(0.35), s_.start + 1.1)
+    A.put(fx, A.sfx_tick(0.35), s_.start + 2.0)           # 既読
+    A.put(fx, A.sfx_whoosh(0.4, True, 0.2), s_.start + 2.45)  # パッと閉じる
+    A.put(fx, A.sfx_boom(0.6, 1.8), s_.start + 2.85)      # 既読、だけ。
 for s_ in (ev, of):
     A.put(fx, TR(0.45), s_.start - 0.4)
     A.put(fx, A.sfx_pop(0.35), s_.start + 0.1)
 A.put(music, AMB_C(ev.dur, 0.12), ev.start)
 A.put(fx, A.sfx_whoosh(0.6, True, 0.3), dy.start)
 for j_ in range(3):
-    A.put(fx, A.sfx_tick(0.3), dy.start + j_ * 0.75)
+    A.put(fx, A.sfx_tick(0.3), dy.start + j_ * 1.1)
 A.put(fx, TR(0.5), d3.start - 0.45)
 A.put(fx, A.sfx_boom(0.8, 2.2), d3.start + 0.05)          # 3月31日
 # 3月31日 23:59 → 0:00：秒針 → 盛り上げ → ドン
