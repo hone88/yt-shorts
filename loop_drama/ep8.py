@@ -52,7 +52,7 @@ TEXT = {
     "09": ("K", "待って…|[まだ]…！"),
     "10": ("K", "（…よく分からんけど、|[まあ、いっか]。）"),
     "11": ("K", "ど、どんなふうに、|[考えたか]…？"),
-    "12": ("K", "[えっと]…えっと……。"),
+    "12": ("K", "[えっと]……。"),
     "13": ("K", "議会は…[むずかしくて]…|それで……。"),
 }
 
@@ -161,6 +161,9 @@ def council_set():
     # 傍聴席（右の壁ぎわ、高いところ）
     S.append(P.slab(7.0, -1.0, 2.6, 2.2, 11.0, 0.25, hexc("#5a4a3a")))       # 床
     S.append(P.slab(7.0, -1.0, 2.85, 0.15, 11.0, 0.75, hexc("#3a2c22")))     # 手すり
+    for y in (3.0, 4.8, 6.6):                                          # 傍聴席のいす
+        S.append(P.slab(7.55, y - 0.3, 2.85, 0.55, 0.6, 0.45, hexc("#4a4a52")))
+        S.append(P.slab(8.1, y - 0.3, 2.85, 0.12, 0.6, 1.1, hexc("#4a4a52")))
     S += P.blocks(9, 10, -1, 11, 0, 6, hexc("#d8ccb8"), 0.02, 85)
     return S
 
@@ -341,11 +344,11 @@ def frame(s, t):
         hook(img, t)
     elif n == "council":
         u = ease(t / s.dur)
-        k = kanata_phone((7.8, 3.0, 2.85), -math.pi / 2 - 0.3, "blank" if sid else "normal", sit=True)
+        k = kanata_phone((7.8, 3.0, 2.85), math.pi / 2 + 0.3, "blank" if sid else "normal", sit=True)   # 議場（左）のほうを向いて座る
         if t < 1.3:   # 傍聴席から議場を見下ろす
             cam = Camera((lerp(9.6, 9.5, u), lerp(5.6, 5.3, u), 5.6), (1.6, 4.4, 0.2), 60)
         else:         # 傍聴席のカナタ：議会はそっちのけでスマホ
-            cam = Camera((8.8, lerp(0.0, 0.3, u), 4.5), (7.2, 3.4, 3.2), 60)
+            cam = Camera((lerp(7.95, 7.9, u), lerp(-0.4, -0.1, u), 4.75), (7.6, 3.0, 4.05), 54)   # 横から：左（議場）を向いて座るカナタ
         img, _ = render(COUNCIL + members(t) + k.boxes(), cam, BG_COUNCIL)
         img = img.convert("RGBA")
         clock(img, "2027年2月10日（水）", "10:30")
