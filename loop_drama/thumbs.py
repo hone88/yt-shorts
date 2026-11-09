@@ -36,7 +36,7 @@ def scene(n):
     if n == 3:    # 1次選考会。緊張するカナタ
         return R.meet_img(R.cam_kanata(1.0, 2.0), kexpr="blank")
     if n == 4:    # 布団から出られない
-        return F.bed_img(1.0, 2.0, "blank", dark=0.25)
+        return F.bed_img(1.0, 2.0, "blank", dark=0.0)
     if n == 5:    # 自己PR欄が空白
         return Q.room_img(V5.kanata_pc("blank"), V5.bed_cam(1.0, 2.0, 0.2))
     if n == 6:    # キックオフ：同じ班のハルトとハイタッチ
@@ -75,11 +75,6 @@ def title(img, n, name):
 def make(n):
     name, loop = EP[n]
     img = scene(n).convert("RGBA")
-    shade = Image.new("RGBA", (W, H), (0, 0, 0, 0))     # 下だけ少し暗くして文字を読みやすく
-    for y in range(1100, H):
-        a = int(150 * min(1, (y - 1100) / 500))
-        shade.paste((0, 0, 0, a), (0, y, W, y + 1))
-    img.alpha_composite(shade)
     O.clock_big(img, "2026年12月5日（土）", "20:00", grade="大学1年")
     O.counter(img, loop)
     title(img, n, name)
