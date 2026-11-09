@@ -129,13 +129,13 @@ def frame(k, t):
         tip = 1.3
         f = max(0.0, t - tip)
         drop = 6 * f * f if f < 1 else 6 + 12 * (f - 1)        # すぐに一定の遅い速さになる
-        ax = 18 + min(t, tip) * 3.0
-        ay = 25 + 1.45 * 2.4 + 0.3
+        ax = 8 + min(t, tip) * 4.0
+        ay = 25 + 1.45 * 4.4 + 0.3
         k2 = snap(t, tip, 1.6)
         a = 0.9 + 0.7 * k2
-        d = 34 + 26 * k2
-        cam = (30 + d * math.sin(a), 30 + 12 + 4 * k2, 30 - d * math.cos(a)); tgt = (27, 28 - 4 * k2, 30)
-        kw = dict(cx=ax if t < tip else 30, cy=ay if t < tip else 30, cz=30, r=2.4, yaw=0.0, phase=t * 4,
+        d = 58 + 26 * k2
+        cam = (30 + d * math.sin(a), 30 + 18 + 4 * k2, 30 - d * math.cos(a)); tgt = (24, 33 - 4 * k2, 30)
+        kw = dict(cx=ax if t < tip else 30, cy=ay if t < tip else 30, cz=30, r=4.4, yaw=0.0, phase=t * 4,
                   pose="walk" if t < tip else "fall", pitch=-0.5 * min(1, f * 2))
         return sky(t, drop, cam, tgt, 40 + 32 * k2, kw, deck_up=int(min(60, drop)) if t >= tip else 0, lines=min(1, f) * 0.4)
     if k == 1:   # 「車みたいにぺしゃんこ？」→ ×  →「いいえ、平気」草の上で触角を動かすアリ
@@ -146,18 +146,18 @@ def frame(k, t):
             return out
         u = (t - T * 0.58) / (T * 0.42)
         S, c, m = ground()
-        ant(c, m, 40, GY + 1.45 * 2.4 + 0.2, 52, 2.4, yaw=-1.9, phase=t * 3, pose="walk")
+        ant(c, m, 40, GY + 1.45 * 4.4 + 0.2, 52, 4.4, yaw=-1.9, phase=t * 3, pose="walk")
         z = ease(u)
-        cam = lerp((40 - 8, GY + 14, 52 - 30), (40 - 12, GY + 18, 52 - 40), z); tgt = (40, GY + 3, 52)
+        cam = lerp((40 - 14, GY + 24, 52 - 52), (40 - 20, GY + 30, 52 - 68), z); tgt = (40, GY + 5, 52)
         img, depth = render(S, c, m, cam, tgt, 44, w, h)
         return finish(img, grade=(1.05, 1.05, 1.0))
     if k == 2:   # 車はすぐ横をビューンと落ちていく → アリのまわりをカメラが回る（アリはまだ空の上）
         drop = 20 + 4 * t
         a = 0.6 + 0.55 * t
-        d = 40 - 8 * ease(t / T)
-        cam = (30 + d * math.sin(a), 40, 30 - d * math.cos(a)); tgt = (30, 29, 30)
+        d = 66 - 12 * ease(t / T)
+        cam = (30 + d * math.sin(a), 46, 30 - d * math.cos(a)); tgt = (30, 34, 30)
         car_y = 80 - 75 * max(0, t - 0.5) if t < 2.2 else None
-        kw = dict(cx=30, cy=30, cz=30, r=2.4, yaw=t * 0.7, phase=t * 3, pose="fall", pitch=0.15 * math.sin(t * 2))
+        kw = dict(cx=30, cy=30, cz=30, r=4.4, yaw=t * 0.7, phase=t * 3, pose="fall", pitch=0.15 * math.sin(t * 2))
         if car_y is not None and car_y < 60:
             cam, tgt = shake(cam, tgt, 0.4, t)
         return sky(t, drop, cam, tgt, 54, kw, lines=0.25, car_y=car_y)
@@ -166,10 +166,10 @@ def frame(k, t):
         bob = abs(math.sin(t * 7)) * 1.2
         person(c, m, 34, GY + int(round(bob)), 52, "stand", look=0)
         ay = GY + 26 - 20 * (t / T)
-        ant(c, m, 45, ay, 55, 2.0, yaw=-1.57, phase=t * 3, pose="fall", pitch=0.2 * math.sin(t * 1.7))
+        ant(c, m, 47, ay, 56, 3.4, yaw=-1.57, phase=t * 3, pose="fall", pitch=0.2 * math.sin(t * 1.7))
         a = -0.15 + 0.3 * ease(t / T)
-        d = 44 - 2 * ease(t / T)
-        cam = (40 + d * math.sin(a), GY + 20, 52 - d * math.cos(a)); tgt = (40, GY + 23 + (ay - GY - 16) * 0.2, 53)
+        d = 60 - 2 * ease(t / T)
+        cam = (41 + d * math.sin(a), GY + 22, 52 - d * math.cos(a)); tgt = (41, GY + 25 + (ay - GY - 16) * 0.2, 53)
         cam, tgt = shake(cam, tgt, 0.12, t)
         img, depth = render(S, c, m, cam, tgt, 56, w, h)
         rg = np.random.default_rng(4); n = 40                                         # 走る横線（風）
@@ -180,39 +180,39 @@ def frame(k, t):
     if k == 4:   # 2分以上・風で流される：アリから一気に遠くへ引く。白い風の線が横に流れる
         drop = 40 + 5 * t
         z = snap(t, 0.6, 2.2)
-        d = 38 + 26 * z
+        d = 62 + 30 * z
         a = 1.3 - 0.5 * z
         drift = 3 * math.sin(t * 0.8)
-        cam = (30 + d * math.sin(a), 38 + 8 * z, 30 - d * math.cos(a)); tgt = (30 - 4 * z, 29, 30)
-        kw = dict(cx=30, cy=30, cz=30 + drift, r=2.4, yaw=t * 1.2, phase=t * 3, pose="fall", pitch=0.4 * math.sin(t * 2.3))
+        cam = (30 + d * math.sin(a), 44 + 8 * z, 30 - d * math.cos(a)); tgt = (30 - 4 * z, 34, 30)
+        kw = dict(cx=30, cy=30, cz=30 + drift, r=4.4, yaw=t * 1.2, phase=t * 3, pose="fall", pitch=0.4 * math.sin(t * 2.3))
         return sky(t, drop, cam, tgt, 50 + 20 * z, kw, wind=0.8)
     if k == 5:   # 着地：上から落ちてきてポン → 小さくはねて、そのまま歩きだす
         S, c, m = ground()
         L = 1.1
         if t < L:
-            ay = GY + 3.7 + 24 * (1 - t / L)
+            ay = GY + 6.6 + 26 * (1 - t / L)
         else:
             u = t - L
-            ay = GY + 3.7 + max(0, 3 * math.sin(min(u, 0.35) / 0.35 * math.pi)) if u < 0.35 else GY + 3.7
+            ay = GY + 6.6 + max(0, 4 * math.sin(min(u, 0.35) / 0.35 * math.pi)) if u < 0.35 else GY + 6.6
         walk = max(0, t - L - 0.6)
-        ax = 40 - 4.5 * walk
-        ant(c, m, ax, ay, 52, 2.4, yaw=math.pi if t > L + 0.4 else 0.4 * t, phase=t * (6 if walk > 0 else 2), pose="walk" if t > L else "fall")
+        ax = 44 - 7 * walk
+        ant(c, m, ax, ay, 52, 4.4, yaw=math.pi if t > L + 0.4 else 0.4 * t, phase=t * (6 if walk > 0 else 2), pose="walk" if t > L else "fall")
         z = ease(min(1, t / (L + 0.3)))
-        cam = lerp((40, GY + 28, 52 - 38), (40 - 4, GY + 12, 52 - 36), z); tgt = lerp((40, GY + 12, 52), (ax - 2, GY + 3, 52), z)
+        cam = lerp((40, GY + 44, 52 - 58), (40 - 4, GY + 20, 52 - 56), z); tgt = lerp((40, GY + 16, 52), (ax - 4, GY + 6, 52), z)
         if L <= t < L + 0.3:
             cam, tgt = shake(cam, tgt, 0.5, t)
         img, depth = render(S, c, m, cam, tgt, 48, w, h)
         if t >= L:
-            dust(img, depth, cam, tgt, 48, min(1, (t - L) / 0.8), 40, GY, 52)
+            dust(img, depth, cam, tgt, 48, min(1, (t - L) / 0.8), 44, GY, 52)
         return finish(img)
     if k == 6:   # おまけ：中南米の森。落ちながら向きを変えて、おしりから木の幹へ滑空
         S, c, m = ground()
         tree(c, m, 30, 48)
         u = ease(min(1, t / (T * 0.75)))
-        ax, ay, az = 66 - 22 * u, GY + 26 - 12 * u, 52
-        yaw = 0.0 if t < 0.8 else math.pi * min(1, (t - 0.8) / 0.8)               # くるっと向きを変える（おしりが幹へ）
-        ant(c, m, ax, ay, az, 2.2, yaw=yaw, phase=t * 3, pose="fall", pitch=-0.3)
-        cam = lerp((74, GY + 17, 18), (62, GY + 15, 14), u); tgt = (ax - 6, ay - 1, az)
+        ax, ay, az = 70 - 18 * u, GY + 28 - 10 * u, 52
+        yaw = math.pi if t < 0.8 else math.pi * (1 - min(1, (t - 0.8) / 0.8))     # くるっと向きを変える（おしりが幹へ）
+        ant(c, m, ax, ay, az, 3.8, yaw=yaw, phase=t * 3, pose="fall", pitch=-0.3)
+        cam = lerp((84, GY + 20, 8), (72, GY + 18, 6), u); tgt = (ax - 9, ay - 1, az)
         img, depth = render(S, c, m, cam, tgt, 54, w, h)
         return finish(img, grade=(0.92, 1.08, 0.92))
     if k == 7:   # 最後：僕の顔から一気に引くと、まわりに次の候補（木・野球ボール・鉄のかたまり）
@@ -260,11 +260,11 @@ def sheet(out="sheet_ant.png"):
         d.rounded_rectangle([1350, y, 1393, y + 42], 6, fill=tuple(int(min(1, v) * 255) for v in cc), outline=(200, 200, 210))
         d.text((1410, y + 3), nm, font=F(28), fill=(30, 30, 40)); d.text((1640, y + 6), hexs(cc), font=F(26), fill=(90, 95, 110))
     d.text((1350, 445), "寸法（r＝大きさ）", font=F(40), fill=(20, 20, 30))
-    for i_, s_ in enumerate(["全長 約5.5r（ふだん r=2.4で約13マス）", "おなか 2.6r×2r（段々の丸）", "むね 1.7r の箱／前が少し高い", "頭 1.4r の角の丸い箱・前にあご",
+    for i_, s_ in enumerate(["全長 約5.5r（動画では r=4.4で約24マス）", "おなか 2.6r×2r（段々の丸）", "むね 1.7r の箱／前が少し高い", "頭 1.4r の角の丸い箱・前にあご",
                              "触角 くの字×2（長い）／脚 6本・ひざが高い", "足の先は体の中心から1.45r下"]):
         d.text((1350, 500 + i_ * 40), s_, font=F(26), fill=(60, 65, 80))
     d.text((1350, 760), "撮り方", font=F(40), fill=(20, 20, 30))
-    for i_, s_ in enumerate(["画面の幅の4〜7割に収める", "脚が見えるよう斜め上か真横から", "黒いので明るい背景（空・草）の前で", "寄りすぎると塊に見える"]):
+    for i_, s_ in enumerate(["脚が1マスにならないよう r=3.4以上で", "脚が見えるよう斜め上か真横から", "黒いので明るい背景（空・草）の前で", "寄りすぎると塊に見える"]):
         d.text((1350, 815 + i_ * 40), s_, font=F(26), fill=(60, 65, 80))
     d.text((50, 1010), "目印：黒い体／ひざの高い長い6本脚／長いくの字の触角／前にあご／段々の大きなおなか。", font=F(36), fill=(200, 50, 50))
     d.text((50, 1065), "道具：ant_voxel.py の ant(c, m, x, y, z, r, yaw, phase, pose, pitch)。pose は walk（脚が下）／fall（脚を横に広げる）。", font=F(28), fill=(90, 95, 110))
