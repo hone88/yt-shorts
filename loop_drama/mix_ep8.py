@@ -7,16 +7,16 @@ import ep8 as V
 OUT = V.OUT
 
 
-def TR(*a):     # 画面切り替えの「ふっ」は8割の大きさ
-    return A.sfx_transition(*a) * 0.8
+def TR(*a):     # 画面切り替えの「ふっ」は6割の大きさ（11/9）
+    return A.sfx_transition(*a) * 0.6
 
 
-def AMB_R(*a):  # 環境音も8割
-    return A.amb_room(*a) * 0.8
+def AMB_R(*a):  # 環境音も6割
+    return A.amb_room(*a) * 0.6
 
 
 def AMB_C(*a):
-    return A.amb_crowd(*a) * 0.8
+    return A.amb_crowd(*a) * 0.6
 
 
 SH = V.SH
