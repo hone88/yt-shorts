@@ -41,6 +41,7 @@ yt-shorts/
 - 書き出し（2本同時、run_in_background）：`python3 x.py 0,2,4 > r1.log 2>&1 & python3 x.py 1,3,5 > r2.log 2>&1 & wait`
 - 作り直し（台本が used にあるとき）：`gh api -X POST repos/hone88/yt-shorts/actions/workflows/moshimo.yml/dispatches -f ref=main -f "inputs[script_id]=<台本ID>"`
 - 完成待ち：最新リリースの **tag_name が変わるまで** 20秒おきに確認（created_at で判定しない）。失敗したら `actions/runs` → `jobs/<id>/logs` でエラーを見る。最後の push だけ失敗することがある（もう一度 dispatch）。
+- クリップを**差しかえた**（同じ名前で上書き）ときは自動の組み立てが動かない（追加・名前変更だけ拾う）。上の dispatch で台本IDを指定して作り直す【11/9 確認】。
 - ダウンロード：`gh api -H "Accept: application/octet-stream" repos/hone88/yt-shorts/releases/assets/<id> > short.mp4`
 - シーン開始時刻：上の進捗の点（y≈215〜245px、黄色の大きい点の位置）か、見出しの変化を測る。
 - 音：`python3 <回>_sound.py taiyou_sound.py <動画の長さ> <S0,S1,...>` → `python3 mix.py short.mp4 bgm.wav sfx.wav 完成.mp4 12`
