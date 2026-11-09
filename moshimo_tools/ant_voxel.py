@@ -162,8 +162,8 @@ def frame(k, t):
         ay = GY + 26 - 20 * (t / T)
         ant(c, m, 45, ay, 55, 2.0, yaw=-1.57, phase=t * 3, pose="fall", pitch=0.2 * math.sin(t * 1.7))
         a = -0.15 + 0.3 * ease(t / T)
-        d = 42 - 6 * ease(t / T)
-        cam = (40 + d * math.sin(a), GY + 16, 52 - d * math.cos(a)); tgt = (40, GY + 12 + (ay - GY - 16) * 0.3, 53)
+        d = 44 - 2 * ease(t / T)
+        cam = (40 + d * math.sin(a), GY + 20, 52 - d * math.cos(a)); tgt = (40, GY + 23 + (ay - GY - 16) * 0.2, 53)
         cam, tgt = shake(cam, tgt, 0.12, t)
         img, depth = render(S, c, m, cam, tgt, 56, w, h)
         rg = np.random.default_rng(4); n = 40                                         # 走る横線（風）
