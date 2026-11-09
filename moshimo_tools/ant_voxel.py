@@ -226,6 +226,45 @@ def frame(k, t):
         return finish(img)
 
 
+# ---------------------------------------------------------------- デザイン定義シート
+def sheet(out="sheet_ant.png"):
+    from kaguya2_voxel import studio, sheet_base, hexs, F
+    im, d = sheet_base("アリ", "16本目からのレギュラー・マイクラ調")
+    cx, cy, cz, r = 55, 10, 55, 5.0
+    draw = lambda pose="walk", yaw=0.0, pitch=0.0, ph=0.6: (lambda c, m: ant(c, m, cx, cy, cz, r, yaw=yaw, phase=ph, pose=pose, pitch=pitch))
+    tgt = (cx - 1, cy + 1, cz)
+    views = [("横（基本）", (cx - 1, cy + 30, cz - 115)), ("斜め上", (cx + 70, cy + 70, cz - 70)), ("上から", (cx - 1, cy + 120, cz - 2)), ("正面", (cx + 120, cy + 6, cz))]
+    for i_, (nm, cam) in enumerate(views):
+        v = studio(draw(), cam, tgt, 23, 300, 330, (0.94, 0.95, 0.98))
+        x = 50 + i_ * 317; im.paste(v, (x, 142))
+        d.text((x + 150, 500), nm, font=F(30), fill=(40, 45, 60), anchor="mm")
+    d.text((50, 560), "ポーズ", font=F(40), fill=(20, 20, 30))
+    poses = [("歩く", draw("walk", -0.6, 0.0, 1.2), (cx + 50, cy + 40, cz - 60)),
+             ("落ちる（脚を広げる）", draw("fall", 0.4, -0.3), (cx + 40, cy + 60, cz - 60)),
+             ("滑空（おしりから）", draw("fall", math.pi, -0.3), (cx - 60, cy + 30, cz - 60)),
+             ("着地して歩きだす", draw("walk", math.pi * 0.8, 0.0, 2.0), (cx - 40, cy + 45, cz - 70))]
+    for i_, (nm, f, cam) in enumerate(poses):
+        v = studio(f, cam, tgt, 27, 300, 300, (0.94, 0.95, 0.98))
+        x = 50 + i_ * 317; im.paste(v, (x, 615))
+        d.text((x + 150, 940), nm, font=F(28), fill=(40, 45, 60), anchor="mm")
+    d.text((1350, 150), "色", font=F(40), fill=(20, 20, 30))
+    cols = {"体": BODY, "脚・触角": LEG, "目": (0.02, 0.02, 0.03), "目の光": (0.9, 0.9, 0.95)}
+    for i_, (nm, cc) in enumerate(cols.items()):
+        y = 205 + i_ * 52
+        d.rounded_rectangle([1350, y, 1393, y + 42], 6, fill=tuple(int(min(1, v) * 255) for v in cc), outline=(200, 200, 210))
+        d.text((1410, y + 3), nm, font=F(28), fill=(30, 30, 40)); d.text((1640, y + 6), hexs(cc), font=F(26), fill=(90, 95, 110))
+    d.text((1350, 445), "寸法（r＝大きさ）", font=F(40), fill=(20, 20, 30))
+    for i_, s_ in enumerate(["全長 約4.5r（ふだん r=2.4で約11マス）", "おなか 2.4r×1.9r（いちばん大きい）", "むね 1.5r／くびれ 0.6r", "頭 1.3r・目は左右に1つずつ",
+                             "触角 くの字×2／脚 6本（2節）", "体の向き：頭が＋x"]):
+        d.text((1350, 500 + i_ * 40), s_, font=F(26), fill=(60, 65, 80))
+    d.text((1350, 760), "撮り方", font=F(40), fill=(20, 20, 30))
+    for i_, s_ in enumerate(["画面の幅の4〜7割に収める", "脚が見えるよう斜め上から", "寄りすぎると塊に見える", "顔は見出しと字幕の間（43〜68%）"]):
+        d.text((1350, 815 + i_ * 40), s_, font=F(26), fill=(60, 65, 80))
+    d.text((50, 1010), "目印：赤茶の体／くの字の触角／目に白い光1つ／おなかがいちばん大きい。", font=F(36), fill=(200, 50, 50))
+    d.text((50, 1065), "道具：ant_voxel.py の ant(c, m, x, y, z, r, yaw, phase, pose, pitch)。pose は walk（脚が下）／fall（脚を横に広げる）。", font=F(28), fill=(90, 95, 110))
+    im.save(out)
+
+
 def render_clip(k, out):
     n = int(round(CLIPS[k] * FPS))
     tmp = out[:-4] + '.part.mp4'
@@ -240,7 +279,9 @@ def render_clip(k, out):
 
 
 if __name__ == '__main__':
-    if sys.argv[1] == 'stills':
+    if sys.argv[1] == 'sheet':
+        sheet()
+    elif sys.argv[1] == 'stills':
         spec = sys.argv[2]
         ims = []
         for s_ in spec.split(','):
