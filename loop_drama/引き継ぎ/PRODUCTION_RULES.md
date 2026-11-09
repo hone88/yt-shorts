@@ -49,7 +49,7 @@
 ## 4. 音【確定】
 - 最初の0.5秒以内に低い「ドン」（`sfx_boom`）。声は0.35秒から。
 - 最初から最後まで途切れさせない（BGMか環境音）。0.1秒ごとに測って **-45dB未満がないこと**（最後のフェード以外）。無音は「世界が止まる」演出の0.5〜1秒だけ。
-- 場面転換は共通の `sfx_transition`（シュッ→ドン）を切り替えの0.45秒前から。**転換音と環境音（amb_room/amb_crowd）の大きさ：第1〜7話は1.0倍、第8・9話は0.8倍、第10話以降は0.6倍**（ゆうきさんの指示。11月9日に確定）。`audio.py` は変えず、`mix_epN.py` の `TR()`・`AMB_R()`・`AMB_C()` で掛ける（`mix_ep8.py` の見本の 0.8 を 0.6 に）。
+- 場面転換は共通の `sfx_transition`（シュッ→ドン）を切り替えの0.45秒前から。**転換音と環境音（amb_room/amb_crowd）の大きさ：第1〜7話は1.0倍、第8話は0.8倍、第9話以降は0.6倍**（ゆうきさんの指示。11月9日に確定）。`audio.py` は変えず、`mix_epN.py` の `TR()`・`AMB_R()`・`AMB_C()` で掛ける（`mix_ep8.py` の見本の 0.8 を 0.6 に）。
 - 答え・山場の直前は声を0.8〜1秒止めて `sfx_riser` → 一番大きいドン。
 - 場面の空気でBGMを替える：明るい（`bgm_morning`、締めは `bright=True`）／静か（`bgm_sparse`）／暗い（`bgm_dark`）／重い（`bgm_heavy`）。`bgm_dark`・`bgm_heavy` は3秒未満を作れないので `A.bgm_dark(3.6)[:int(n*A.SR)]` のように切って使う。
 - 時間の場面は `sfx_stopwatch` / `sfx_tick`、面接は秒針と心臓（`sfx_heart`）。世界が止まる `sfx_freeze`、巻き戻し `sfx_glass`→`sfx_rewind`→`sfx_reverse_swell`。
