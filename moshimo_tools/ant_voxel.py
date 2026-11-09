@@ -15,64 +15,70 @@ W, H, FPS, RS = 1080, 1920, 30, 3
 CLIPS = [4.4, 4.4, 5.6, 8.4, 5.7, 5.3, 6.7, 5.1]
 GY = SV.GY
 lerp, snap, ground = C2.lerp, C2.snap, C2.ground
-BODY = (0.42, 0.2, 0.12)      # アリの体（赤茶）
-LEG = (0.24, 0.12, 0.08)
+BODY = (0.15, 0.15, 0.18)     # アリの体（黒・少し青みのグレー）
+LEG = (0.12, 0.12, 0.15)
+EYE = (0.02, 0.02, 0.03)
+FOOT = 1.45                   # 足の先は体の中心から 1.45r 下（ひざが高い）
 
 
-def _set(c, m, X, Y, Z, col, var=0.06):
+def _set(c, m, X, Y, Z, col, var=0.12):
     ok = (X >= 0) & (Y >= 0) & (Z >= 0) & (X < c.shape[0]) & (Y < c.shape[1]) & (Z < c.shape[2])
     X, Y, Z = X[ok], Y[ok], Z[ok]
     c[X, Y, Z] = (C(*col) * (1 - var + 2 * var * np.random.default_rng(len(X)).random((len(X), 1)))).astype(f32); m[X, Y, Z] = 1
 
 
 def ant(c, m, cx, cy, cz, r, yaw=0.0, phase=0.0, pose="walk", pitch=0.0):
-    """アリ。体の向きはローカルのx（頭が+x）。r=大きさ（全長は約4.5r）。pose: walk（脚が下）/ fall（脚を横に広げる）"""
+    """黒いブロックのアリ（参考画像の形）。頭が+x。cy は体の中心（足の先は cy-1.45r）。
+    pose: walk（6本脚で立つ）/ fall（脚を横に広げる）"""
     ca, sa = math.cos(yaw), math.sin(yaw)
     cp, sp = math.cos(pitch), math.sin(pitch)
 
-    def W_(lx, ly, lz):            # ローカル→ワールド（pitch はxy面の傾き、yaw はy軸まわり）
+    def W_(lx, ly, lz):
         lx, ly = lx * cp - ly * sp, lx * sp + ly * cp
         return cx + lx * ca - lz * sa, cy + ly, cz + lx * sa + lz * ca
 
-    def ell(ox, oy, oz, rx, ry, rz, col):
-        R_ = max(rx, ry, rz) + 1
+    def blob(ox, oy, oz, rx, ry, rz, col, pw=2.0):
+        """pw=2 で楕円、4 で角の丸い箱"""
+        R_ = max(rx, ry, rz) * 1.2 + 1
         px, py, pz = W_(ox, oy, oz)
         xs, ys, zs = np.meshgrid(np.arange(int(px - R_), int(px + R_) + 2), np.arange(int(py - R_), int(py + R_) + 2),
                                  np.arange(int(pz - R_), int(pz + R_) + 2), indexing='ij')
         dx, dy, dz = xs + 0.5 - px, ys + 0.5 - py, zs + 0.5 - pz
         lx = dx * ca + dz * sa; lz = -dx * sa + dz * ca; ly = dy
         lx, ly = lx * cp + ly * sp, -lx * sp + ly * cp
-        ins = (lx / rx) ** 2 + (ly / ry) ** 2 + (lz / rz) ** 2 < 1
+        ins = np.abs(lx / rx) ** pw + np.abs(ly / ry) ** pw + np.abs(lz / rz) ** pw < 1
         _set(c, m, xs[ins], ys[ins], zs[ins], col)
 
-    def line(p0, p1, col, th):
-        n = int(max(2, math.dist(p0, p1) * 2))
-        for i in range(n + 1):
-            k = i / n
-            x, y, z = W_(*[a + (b - a) * k for a, b in zip(p0, p1)])
-            h = max(0.5, th / 2)
-            X, Y, Z = np.meshgrid(np.arange(int(x - h + 0.5), int(x + h + 0.5) + 1), np.arange(int(y - h + 0.5), int(y + h + 0.5) + 1),
-                                  np.arange(int(z - h + 0.5), int(z + h + 0.5) + 1), indexing='ij')
-            _set(c, m, X.ravel(), Y.ravel(), Z.ravel(), col, 0.03)
+    def line(pts, col, th):
+        for p0, p1 in zip(pts[:-1], pts[1:]):
+            n = int(max(2, math.dist(p0, p1) * 2))
+            for i in range(n + 1):
+                k = i / n
+                x, y, z = W_(*[a + (b - a) * k for a, b in zip(p0, p1)])
+                h = max(0.5, th / 2)
+                X, Y, Z = np.meshgrid(np.arange(int(x - h + 0.5), int(x + h + 0.5) + 1), np.arange(int(y - h + 0.5), int(y + h + 0.5) + 1),
+                                      np.arange(int(z - h + 0.5), int(z + h + 0.5) + 1), indexing='ij')
+                _set(c, m, X.ravel(), Y.ravel(), Z.ravel(), col, 0.08)
 
-    ell(-2.15 * r, 0.25 * r, 0, 1.2 * r, 0.95 * r, 0.95 * r, BODY)         # おなか
-    ell(-0.7 * r, 0.05 * r, 0, 0.3 * r, 0.32 * r, 0.25 * r, BODY)          # くびれ
-    ell(0.25 * r, 0.05 * r, 0, 0.75 * r, 0.42 * r, 0.42 * r, BODY)         # むね
-    ell(1.75 * r, 0.35 * r, 0, 0.65 * r, 0.62 * r, 0.68 * r, BODY)         # 頭
+    blob(-2.05 * r, 0.25 * r, 0, 1.3 * r, 1.0 * r, 1.05 * r, BODY, 2.2)         # おなか（段々の大きな丸）
+    blob(-0.75 * r, 0.05 * r, 0, 0.3 * r, 0.42 * r, 0.28 * r, BODY, 3.0)         # くびれのこぶ
+    blob(0.35 * r, 0.05 * r, 0, 0.85 * r, 0.42 * r, 0.42 * r, BODY, 4.0)         # むね（箱）
+    blob(0.85 * r, 0.25 * r, 0, 0.4 * r, 0.42 * r, 0.44 * r, BODY, 4.0)          # むねの前の盛り上がり
+    blob(1.95 * r, 0.15 * r, 0, 0.7 * r, 0.62 * r, 0.68 * r, BODY, 4.0)          # 頭（角の丸い箱）
     for s in (-1, 1):
-        ell(2.05 * r, 0.55 * r, s * 0.5 * r, 0.2 * r, 0.22 * r, 0.14 * r, (0.02, 0.02, 0.03))     # 目
-        ell(2.1 * r, 0.68 * r, s * 0.45 * r, 0.07 * r, 0.07 * r, 0.07 * r, (0.9, 0.9, 0.95))     # 目のハイライト
-        wig = 0.25 * r * math.sin(phase * 3 + s)
-        line((1.9 * r, 0.9 * r, s * 0.25 * r), (1.9 * r, 2.0 * r + wig, s * 0.7 * r), LEG, 0.28 * r)   # 触角（くの字）
-        line((1.9 * r, 2.0 * r + wig, s * 0.7 * r), (3.0 * r, 2.3 * r, s * 1.0 * r + wig), LEG, 0.26 * r)
-        for j, ox in enumerate((0.75, 0.3, -0.15)):
-            sw = 0.35 * r * math.sin(phase * 6 + j * 2.1 + (0 if s > 0 else math.pi))
+        blob(2.15 * r, 0.3 * r, s * 0.62 * r, 0.2 * r, 0.18 * r, 0.1 * r, EYE, 4.0)    # 目（小さな四角）
+        line([(2.55 * r, -0.25 * r, s * 0.32 * r), (3.15 * r, -0.4 * r, s * 0.32 * r), (3.25 * r, -0.4 * r, s * 0.05 * r)], LEG, 0.24 * r)  # あご
+        wig = 0.2 * r * math.sin(phase * 3 + s)
+        line([(2.35 * r, 0.65 * r, s * 0.3 * r), (2.2 * r, 1.75 * r, s * 0.45 * r),                               # 触角（くの字・長い）
+              (3.3 * r, 2.05 * r + wig, s * 0.75 * r), (4.0 * r, 1.65 * r + wig, s * 0.95 * r)], LEG, 0.22 * r)
+        for j, (ox, fx, tx) in enumerate(((0.95, 0.5, 1.5), (0.45, 0.0, 0.1), (-0.05, -0.5, -1.7))):
+            sw = 0.3 * r * math.sin(phase * 6 + j * 2.1 + (0 if s > 0 else math.pi))
             if pose == "fall":
-                knee = (ox * r + sw * 0.3, 0.4 * r, s * 1.4 * r); foot = (ox * r + (j - 1) * 0.9 * r, 0.1 * r, s * 2.5 * r)
+                knee = ((ox + fx) * r, 0.45 * r, s * 1.4 * r); foot = ((ox + tx) * r, 0.15 * r, s * 2.9 * r)
             else:
-                knee = (ox * r + sw * 0.5, 0.6 * r, s * 1.1 * r); foot = (ox * r + (j - 1) * 0.8 * r + sw, -1.0 * r, s * 1.9 * r)
-            line((ox * r, 0.0, s * 0.3 * r), knee, LEG, 0.24 * r)
-            line(knee, foot, LEG, 0.2 * r)
+                knee = ((ox + fx) * r + sw * 0.4, 0.55 * r, s * 1.25 * r); foot = ((ox + tx) * r + sw, -FOOT * r, s * 2.3 * r)
+            tip = (foot[0] + 0.25 * r * (1 if tx >= 0 else -1), foot[1], foot[2] + s * 0.25 * r)
+            line([(ox * r, -0.25 * r, s * 0.3 * r), knee, foot, tip], LEG, 0.22 * r)
 
 
 # ---------------------------------------------------------------- 空の場面
@@ -124,7 +130,7 @@ def frame(k, t):
         f = max(0.0, t - tip)
         drop = 6 * f * f if f < 1 else 6 + 12 * (f - 1)        # すぐに一定の遅い速さになる
         ax = 18 + min(t, tip) * 3.0
-        ay = 28.5
+        ay = 25 + 1.45 * 2.4 + 0.3
         k2 = snap(t, tip, 1.6)
         a = 0.9 + 0.7 * k2
         d = 34 + 26 * k2
@@ -140,7 +146,7 @@ def frame(k, t):
             return out
         u = (t - T * 0.58) / (T * 0.42)
         S, c, m = ground()
-        ant(c, m, 40, GY + 2.8, 52, 2.4, yaw=-1.9, phase=t * 3, pose="walk")
+        ant(c, m, 40, GY + 1.45 * 2.4 + 0.2, 52, 2.4, yaw=-1.9, phase=t * 3, pose="walk")
         z = ease(u)
         cam = lerp((40 - 8, GY + 14, 52 - 30), (40 - 12, GY + 18, 52 - 40), z); tgt = (40, GY + 3, 52)
         img, depth = render(S, c, m, cam, tgt, 44, w, h)
@@ -184,10 +190,10 @@ def frame(k, t):
         S, c, m = ground()
         L = 1.1
         if t < L:
-            ay = GY + 2.8 + 24 * (1 - t / L)
+            ay = GY + 3.7 + 24 * (1 - t / L)
         else:
             u = t - L
-            ay = GY + 2.8 + max(0, 3 * math.sin(min(u, 0.35) / 0.35 * math.pi)) if u < 0.35 else GY + 2.8
+            ay = GY + 3.7 + max(0, 3 * math.sin(min(u, 0.35) / 0.35 * math.pi)) if u < 0.35 else GY + 3.7
         walk = max(0, t - L - 0.6)
         ax = 40 - 4.5 * walk
         ant(c, m, ax, ay, 52, 2.4, yaw=math.pi if t > L + 0.4 else 0.4 * t, phase=t * (6 if walk > 0 else 2), pose="walk" if t > L else "fall")
@@ -229,13 +235,13 @@ def frame(k, t):
 # ---------------------------------------------------------------- デザイン定義シート
 def sheet(out="sheet_ant.png"):
     from kaguya2_voxel import studio, sheet_base, hexs, F
-    im, d = sheet_base("アリ", "16本目からのレギュラー・マイクラ調")
+    im, d = sheet_base("アリ", "16本目からのレギュラー・黒いブロックのアリ")
     cx, cy, cz, r = 55, 10, 55, 5.0
     draw = lambda pose="walk", yaw=0.0, pitch=0.0, ph=0.6: (lambda c, m: ant(c, m, cx, cy, cz, r, yaw=yaw, phase=ph, pose=pose, pitch=pitch))
-    tgt = (cx - 1, cy + 1, cz)
-    views = [("横（基本）", (cx - 1, cy + 30, cz - 115)), ("斜め上", (cx + 70, cy + 70, cz - 70)), ("上から", (cx - 1, cy + 120, cz - 2)), ("正面", (cx + 120, cy + 6, cz))]
+    tgt = (cx + 1, cy + 1, cz)
+    views = [("横（基本）", (cx + 1, cy + 30, cz - 115)), ("斜め上", (cx + 70, cy + 70, cz - 70)), ("上から", (cx - 1, cy + 120, cz - 2)), ("正面", (cx + 120, cy + 6, cz))]
     for i_, (nm, cam) in enumerate(views):
-        v = studio(draw(), cam, tgt, 23, 300, 330, (0.94, 0.95, 0.98))
+        v = studio(draw(), cam, tgt, 26, 300, 330, (0.94, 0.95, 0.98))
         x = 50 + i_ * 317; im.paste(v, (x, 142))
         d.text((x + 150, 500), nm, font=F(30), fill=(40, 45, 60), anchor="mm")
     d.text((50, 560), "ポーズ", font=F(40), fill=(20, 20, 30))
@@ -248,19 +254,19 @@ def sheet(out="sheet_ant.png"):
         x = 50 + i_ * 317; im.paste(v, (x, 615))
         d.text((x + 150, 940), nm, font=F(28), fill=(40, 45, 60), anchor="mm")
     d.text((1350, 150), "色", font=F(40), fill=(20, 20, 30))
-    cols = {"体": BODY, "脚・触角": LEG, "目": (0.02, 0.02, 0.03), "目の光": (0.9, 0.9, 0.95)}
+    cols = {"体": BODY, "脚・触角": LEG, "目": EYE}
     for i_, (nm, cc) in enumerate(cols.items()):
         y = 205 + i_ * 52
         d.rounded_rectangle([1350, y, 1393, y + 42], 6, fill=tuple(int(min(1, v) * 255) for v in cc), outline=(200, 200, 210))
         d.text((1410, y + 3), nm, font=F(28), fill=(30, 30, 40)); d.text((1640, y + 6), hexs(cc), font=F(26), fill=(90, 95, 110))
     d.text((1350, 445), "寸法（r＝大きさ）", font=F(40), fill=(20, 20, 30))
-    for i_, s_ in enumerate(["全長 約4.5r（ふだん r=2.4で約11マス）", "おなか 2.4r×1.9r（いちばん大きい）", "むね 1.5r／くびれ 0.6r", "頭 1.3r・目は左右に1つずつ",
-                             "触角 くの字×2／脚 6本（2節）", "体の向き：頭が＋x"]):
+    for i_, s_ in enumerate(["全長 約5.5r（ふだん r=2.4で約13マス）", "おなか 2.6r×2r（段々の丸）", "むね 1.7r の箱／前が少し高い", "頭 1.4r の角の丸い箱・前にあご",
+                             "触角 くの字×2（長い）／脚 6本・ひざが高い", "足の先は体の中心から1.45r下"]):
         d.text((1350, 500 + i_ * 40), s_, font=F(26), fill=(60, 65, 80))
     d.text((1350, 760), "撮り方", font=F(40), fill=(20, 20, 30))
-    for i_, s_ in enumerate(["画面の幅の4〜7割に収める", "脚が見えるよう斜め上から", "寄りすぎると塊に見える", "顔は見出しと字幕の間（43〜68%）"]):
+    for i_, s_ in enumerate(["画面の幅の4〜7割に収める", "脚が見えるよう斜め上か真横から", "黒いので明るい背景（空・草）の前で", "寄りすぎると塊に見える"]):
         d.text((1350, 815 + i_ * 40), s_, font=F(26), fill=(60, 65, 80))
-    d.text((50, 1010), "目印：赤茶の体／くの字の触角／目に白い光1つ／おなかがいちばん大きい。", font=F(36), fill=(200, 50, 50))
+    d.text((50, 1010), "目印：黒い体／ひざの高い長い6本脚／長いくの字の触角／前にあご／段々の大きなおなか。", font=F(36), fill=(200, 50, 50))
     d.text((50, 1065), "道具：ant_voxel.py の ant(c, m, x, y, z, r, yaw, phase, pose, pitch)。pose は walk（脚が下）／fall（脚を横に広げる）。", font=F(28), fill=(90, 95, 110))
     im.save(out)
 
