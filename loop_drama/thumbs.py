@@ -23,7 +23,7 @@ W, H = 1080, 1920
 EP = {   # 話: (タイトル, 残りループ)
     1: ("ガクチカ、ゼロ", 3), 2: ("説明会", 3), 3: ("何、聞かれるんだ", 3), 4: ("布団から、出られない。", 3),
     5: ("自己PRが、空欄。", 2), 6: ("キックオフ", 2), 7: ("名刺の渡し方", 2), 8: ("それで、何を考えましたか？", 2),
-    9: ("全部、消えた。", 1), 10: ("今度は、こっちから", 1),
+    9: ("全部、消えた。", 1), 10: ("今度は、こっちから", 1), 11: ("議会、むずかしすぎる", 1),
 }
 
 
@@ -54,6 +54,13 @@ def scene(n):
         h = S9.haruto(S9.HB, math.pi + 0.5, "normal", sit=True, head_yaw=-0.35)
         k = S9.kanata(S9.KB, -math.pi / 2 + 0.25, "shock")
         img, _ = S9.campus_img(h.boxes() + k.boxes(), S9.cam_k_face(0.5))
+        return img
+    if n == 11:   # 傍聴席で「？」だらけのカナタ
+        k = S8.kanata_phone((7.8, 3.0, 2.85), math.pi / 2 + 0.3, "blank", sit=True)
+        img, _ = render(S8.COUNCIL + S8.members(0.5) + k.boxes(), Camera((7.95, -0.5, 5.0), (7.6, 3.0, 4.5), 54), S8.BG_COUNCIL)
+        img = img.convert("RGBA")
+        for w, x, y in (("補正予算？", 300, 820), ("付託？", 820, 900), ("採決？", 250, 1010)):
+            E.paste_center(img, E.fit_text([w], 70, 600, fill=(255, 255, 255), stroke=(8, 10, 24), sw=8), x, y, 1.0)
         return img
     if n == 10:   # カナタから、ハルトを誘う
         h = S9.haruto(S9.HB, math.pi + 0.5, "normal", sit=True, head_yaw=-0.35, head_pitch=0.08)
