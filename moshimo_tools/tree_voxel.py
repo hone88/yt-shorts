@@ -14,7 +14,7 @@ from ant_voxel import _set, dust
 
 W, H, FPS, RS = 1080, 1920, 30, 3
 _est = [3.7, 5.3, 3.6, 4.6, 5.9, 3.6, 3.3, 4.7]
-CLIPS = [round(x * 1.27, 1) for x in _est]
+CLIPS = [round(x * 1.27 * 1.15, 1) for x in _est]   # 声より少し長く作る（足りないと組み立てでゆっくり再生になり、コマが重なってカクつく）
 GY = SV.GY
 lerp, snap, ground = C2.lerp, C2.snap, C2.ground
 BARK = (0.42, 0.28, 0.16)
@@ -104,13 +104,14 @@ def frame(k, t):
     if k == 0:   # 展望台のふちの木に寄る → 横に倒れて落ちる → 一気に引いて高さを見せる
         tip = 1.6
         f = max(0.0, t - tip)
-        drop = 5 * f * f if f < 1.2 else 7.2 + 12 * (f - 1.2)
+        n = round(f * FPS)
+        drop = round(12.5 * f * f) if f < 1.2 else 18 + (n - 36)     # 加速して、毎秒30マス（1コマ1マス）に
         tl = 0.0 if t < tip - 0.5 else min(math.pi / 2, (t - tip + 0.5) * 1.6)
         k2 = snap(t, tip, 1.8)
         d = 46 + 22 * k2; a = 0.9 + 0.5 * k2
         cam = (30 + d * math.sin(a), 38 + 6 * k2, 30 - d * math.cos(a)); tgt = (24 + 6 * k2, 34 - 2 * k2, 30)
-        cy = 25 + 7 if t < tip else 32
-        cxx = 20 if t < tip else 30
+        cy = 32
+        cxx = 20 + 10 * snap(t, tip - 0.4, 0.9)          # ふちから外へ、なめらかに動く（瞬間移動しない）
         return sky(t, drop, cam, tgt, 46 + 12 * k2, [T(cx=cxx, cy=cy, cz=30, s=0.9, tilt=tl)], deck_up=0 if t < tip else int(min(60, drop)),
                    lines=min(1, f) * 0.4)
     if k == 1:   # 重さ：地面で車と木が並ぶ。カメラが回り込む
@@ -124,23 +125,23 @@ def frame(k, t):
     if k == 2:   # くるっと回る：横倒し → 根が下へ（少し行き過ぎてもどる）
         u = t / Tn
         tl = math.pi / 2 * (1 - ease(min(1, u * 1.3))) + 0.25 * math.sin(min(1, u * 1.3) * math.pi) * (1 - u)
-        drop = 20 + 6 * t
+        drop = 20 + round(t * FPS)
         a = 0.4 + 0.9 * u; d = 72
         cam = (30 + d * math.sin(a), 34, 30 - d * math.cos(a)); tgt = (30, 34, 30)
         return sky(t, drop, cam, tgt, 52, [T(cx=30, cy=30, cz=30, s=0.9, tilt=tl, yaw=0.4 * u)], lines=0.3)
     if k == 3:   # バドミントンの羽根：木と羽根を並べて、同じ姿勢で落ちる
-        drop = 40 + 8 * t
+        drop = 40 + round(t * FPS)
         a = 1.2 - 0.25 * ease(t / Tn); d = 80
         cam = (30 + d * math.sin(a), 32, 30 - d * math.cos(a)); tgt = (30, 32, 28)
         sw = 0.08 * math.sin(t * 3)
         return sky(t, drop, cam, tgt, 54, [T(cx=24, cy=28, cz=20, s=0.85, tilt=sw), lambda c, m: shuttle(c, m, 34, 24, 38, s=1.3)], lines=0.4)
     if k == 4:   # 葉っぱがブレーキ：真下から見上げる → 横へ回り込む。風の線
-        drop = 60 + 10 * t
+        drop = 60 + round(t * FPS)
         u = ease(t / Tn)
         cam = lerp((30.5, -26, 30), (30 + 70 * math.sin(1.1), 30, 30 - 70 * math.cos(1.1)), u); tgt = (30, 34, 30)
         return sky(t, drop, cam, tgt, 58 - 6 * u, [T(cx=30, cy=26, cz=30, s=0.9, tilt=0.05 * math.sin(t * 2))], lines=0.8)
     if k == 5:   # 葉っぱが飛び散る：葉が減っていく。葉の粒が上へ飛ぶ
-        drop = 90 + 12 * t
+        drop = 90 + round(t * FPS)
         u = t / Tn
         lv = 1 - 0.6 * u
         a = 0.6 + 0.6 * u; d = 74 - 10 * u

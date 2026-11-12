@@ -11,7 +11,7 @@ TAIL = 2.6
 DUR = VID + TAIL
 N = int(SR * DUR)
 bgm = np.zeros((N, 2)); sfx = np.zeros((N, 2))
-CLIPS = [4.7, 6.7, 4.6, 5.8, 7.5, 4.6, 4.2, 6.0]
+CLIPS = [5.4, 7.7, 5.3, 6.7, 8.6, 5.3, 4.8, 6.9]
 
 
 def at(k, sec):
