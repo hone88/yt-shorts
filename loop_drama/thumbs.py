@@ -23,7 +23,7 @@ W, H = 1080, 1920
 EP = {   # 話: (タイトル, 残りループ)
     1: ("ガクチカ、ゼロ", 3), 2: ("説明会", 3), 3: ("何、聞かれるんだ", 3), 4: ("布団から、出られない。", 3),
     5: ("自己PRが、空欄。", 2), 6: ("キックオフ", 2), 7: ("名刺の渡し方", 2), 8: ("それで、何を考えましたか？", 2),
-    9: ("全部、消えた。", 1),
+    9: ("全部、消えた。", 1), 10: ("今度は、こっちから", 1),
 }
 
 
@@ -54,6 +54,11 @@ def scene(n):
         h = S9.haruto(S9.HB, math.pi + 0.5, "normal", sit=True, head_yaw=-0.35)
         k = S9.kanata(S9.KB, -math.pi / 2 + 0.25, "shock")
         img, _ = S9.campus_img(h.boxes() + k.boxes(), S9.cam_k_face(0.5))
+        return img
+    if n == 10:   # カナタから、ハルトを誘う
+        h = S9.haruto(S9.HB, math.pi + 0.5, "normal", sit=True, head_yaw=-0.35, head_pitch=0.08)
+        k = S9.kanata(S9.KB, -math.pi / 2 + 0.25, "open", armR=0.5)
+        img, _ = S9.campus_img(h.boxes() + k.boxes(), Camera((2.7, -1.4, 2.05), (2.6, 3.7, 1.3), 40))
         return img
 
 
