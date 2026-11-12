@@ -284,8 +284,10 @@ def frame(s, t):
         if t < b - 0.15:                                       # 「ハルト！」笑顔でかけよる
             v = ease(min(1, t / 1.2))
             k = walk(kanata((lerp(0.2, KB[0], v), lerp(2.2, KB[1], v), 0), -math.pi / 2 + 0.25, "smile", ), t, 1 - v)
-            k.set(armR=-1.6 if a - 0.1 < t < a + 0.9 else 0.05)
-            h = haruto(HB, math.pi, "normal", sit=True, head_pitch=0.25 if t < a + 0.3 else 0.0, head_yaw=0.0 if t < a + 0.3 else -0.4)
+            up = ease(min(1, max(0, (t - a + 0.1) / 0.25))) * (1 - ease(min(1, max(0, (t - a - 0.9) / 0.3))))   # 手を上げ下げ（なめらかに）
+            k.set(armR=0.05 - 1.65 * up)
+            v2 = ease(min(1, max(0, (t - a - 0.3) / 0.3)))                                                # ハルトが顔を上げる
+            h = haruto(HB, math.pi, "normal", sit=True, head_pitch=0.25 * (1 - v2), head_yaw=-0.4 * v2)
             img, _ = campus_img(h.boxes() + k.boxes(), cam_two(u))
         elif t < b + L("01") + 0.1:                           # 「…えっと、誰？」
             h = haruto(HB, math.pi + 0.5, "normal", sit=True, head_yaw=-0.35, head_pitch=-0.05)

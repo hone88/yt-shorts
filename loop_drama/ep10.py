@@ -211,16 +211,16 @@ def frame(s, t):
                           armL=0.6 * abs(math.sin(t * 5 + 1)) if t7 < t < t8 else 0.05)
             hshot = who == "H" or (sid is None and (t5 - 0.3 < t < t6 - 0.2 or s.hit - 0.2 < t < s.hit + 0.1 or t8 - 0.3 < t < t10 - 0.2))
             if hshot:
-                img, _ = S9.campus_img(h.boxes() + k.boxes(), S9.cam_over_k(ease(((t - t4) % 4) / 4), 1.75))
+                img, _ = S9.campus_img(h.boxes() + k.boxes(), S9.cam_over_k(ease((t - 1.1) / (s.dur - 1.1)), 1.75))
             else:
-                img, _ = S9.campus_img(h.boxes() + k.boxes(), S9.cam_k_face(ease(((t - t4) % 4) / 4)))
+                img, _ = S9.campus_img(h.boxes() + k.boxes(), S9.cam_k_face(ease((t - 1.1) / (s.dur - 1.1))))
             if s.hit < t < t7 - 0.1:
                 Q.big_word(img, "しまった", t - s.hit - 0.1, RED, y=1180, size=140)
         clock(img, "2026年12月8日（火）", "12:25")
         badge(img, "大学の中庭", (40, 150, 90))
     elif n == "first":
         a, b, c = (x[0] for x in s.lines)
-        if sid in ("11", "13") or t < a - 0.1 or b + L("12") < t < c - 0.1:
+        if t < b - 0.1 or b + L("12") + 0.2 <= t < c + L("13") + 0.3:     # ミオの画（切り替えは1回ずつ。数コマだけの切り替えをしない）
             img = R.meet_img(R.cam_mio(t, s.dur), mexpr="smile" if t > c - 0.1 else "normal", kexpr="normal",
                              talk="M" if sid in ("11", "13") else None, t=t)
         else:
