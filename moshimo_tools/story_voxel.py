@@ -364,10 +364,14 @@ def tags(img, cam, tgt, fov, items):
     """items: [(3D位置, 文字, 濃さ0〜1, 大きさ倍率, 色)]"""
     im = Image.fromarray((np.clip(img, 0, 1) * 255).astype(np.uint8)).convert("RGBA")
     lay = Image.new("RGBA", im.size, (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
-    for p, text, a, k, col in items:
+    cam_, fw_, rt_, up_, th_c = camera(cam, tgt, fov)
+    for it in items:
+        p, text, a, k, col = it[:5]
+        side = len(it) > 5 and it[5]
         if a <= 0.01:
             continue
-        pr = project(cam, tgt, fov, (p[0], p[1] + 3, p[2]))
+        q = (p[0], p[1] - 2, p[2]) if side else (p[0], p[1] + 3, p[2])
+        pr = project(cam, tgt, fov, q)
         if pr is None:
             continue
         x, y, z = pr
@@ -376,6 +380,8 @@ def tags(img, cam, tgt, fov, items):
         bb = d.textbbox((0, 0), text, font=f, anchor="mm")
         tw, th_ = bb[2] - bb[0], bb[3] - bb[1]
         pad = sz * 0.28
+        if side:
+            x = min(x + W * 0.3, W - tw / 2 - pad - 40)
         d.rounded_rectangle([x - tw / 2 - pad, y - th_ / 2 - pad * 0.8, x + tw / 2 + pad, y + th_ / 2 + pad * 0.8], radius=int(sz * 0.4),
                             fill=(15, 23, 42, int(170 * a)), outline=col + (int(255 * a),), width=max(2, sz // 14))
         d.text((x, y), text, font=f, fill=col + (int(255 * a),), anchor="mm")
@@ -488,7 +494,7 @@ def frame(k, t):
         c1, t1, _ = aim(h, -1, 60, 0.0, 6, 46, 0.4)
         c2, t2, _ = aim(h, -1, 24, 0.0, 6, 46, 0.42)
         return shoot("street", lerp(c1, c2, z), lerp(t1, t2, z), 46, [H_(cx=60, fy=FY, cz=60, P=P)], t=t,
-                     tg=[(tagp(h), "?", 1.0, 1.0, GOLD)])
+                     tg=[(tagp(h), "?", 1.0, 1.0, GOLD, True)])
     if k == 3:   # 友だち：1200（2人の引き → 友だちのアップ）
         fr = H_(cx=54, fy=FY, cz=60, P=P_FRIEND, face="笑顔", arms="wave", spiky=True)
         me = H_(cx=68, fy=FY, cz=64, P=P_BOKU, face="笑顔", f=-1)
@@ -498,7 +504,7 @@ def frame(k, t):
             cam, tgt, fov = aim((61, FY + 28, 62), -1, 52 - 4 * uu, 0.3, 4, 50, 0.32)
         else:
             cam, tgt, fov = aim(hf, -1, 26 - 2 * uu, -0.3, 2, 46, 0.3)
-        return shoot("street", cam, tgt, fov, [fr, me], t=t, tg=[(tagp(hf), "1200", 1.0, 1.0, GOLD)])
+        return shoot("street", cam, tgt, fov, [fr, me], t=t, tg=[(tagp(hf), "1200", 1.0, 1.0, GOLD, True)])
     if k == 4:   # 店員さん：3（店の中の引き → 顔）
         cl = H_(cx=58, fy=FY, cz=76, P=P_CLERK, face="笑顔", f=-1, stripe=True, cap=True)
         h = HEAD(58, FY, 76)
@@ -507,7 +513,7 @@ def frame(k, t):
             cam, tgt, fov = aim(h, -1, 56, 0.5, 8, 52, 0.3)
         else:
             cam, tgt, fov = aim(h, -1, 26 - 2 * uu, -0.15, 2, 46, 0.3)
-        return shoot("konbini", cam, tgt, fov, [cl], t=t, tg=[(tagp(h), "3", 1.0, 1.0, GOLD)])
+        return shoot("konbini", cam, tgt, fov, [cl], t=t, tg=[(tagp(h), "3", 1.0, 1.0, GOLD, True)])
     if k == 5:   # みんな気にしない：真上から → 横から
         dr, hd = crowd(22, 3, 30, 90, 0, 140, t)
         c_, uu = cut(t, T, [0.5])
@@ -545,18 +551,18 @@ def frame(k, t):
         return shoot("home", cam, tgt, fov, [MOM()], t=t)
     if k == 9:   # 母さんの頭の上に「60」がふわっと出る
         z = ease(u)
-        c1, t1, _ = aim(mom_h, -1, 40, 0.0, 2, 46, 0.36)
-        c2, t2, _ = aim(mom_h, -1, 28, 0.0, 2, 46, 0.4)
+        c1, t1, _ = aim(mom_h, -1, 30, 0.0, 2, 46, 0.36)
+        c2, t2, _ = aim(mom_h, -1, 24, 0.0, 2, 46, 0.4)
         a = min(1, t / 0.6)
-        return shoot("home", lerp(c1, c2, z), lerp(t1, t2, z), 46, [MOM()], t=t, tg=[(tagp(mom_h), "60", a, 1.0, PINK)])
+        return shoot("home", lerp(c1, c2, z), lerp(t1, t2, z), 46, [MOM()], t=t, tg=[(tagp(mom_h), "60", a, 1.0, PINK, True)])
     if k == 10:  # 計算：僕の顔（驚き）→ 数字ごしに母さん
         me = H_(cx=54, fy=FY, cz=ME_Z, face="驚き", f=1, **BK)
         c_, uu = cut(t, T, [0.5])
         if c_ == 0:
             cam, tgt, fov = aim(HEAD(54, FY, ME_Z), 1, 22 - 3 * uu, 0.1, 2, 46, 0.26)
             return shoot("home", cam, tgt, fov, [me], t=t, vign=0.5)
-        cam = (64, FY + 33, ME_Z - 14); tgt = (50, FY + 28, MOMZ)
-        return shoot("home", cam, tgt, 42, [me, MOM()], t=t, vign=0.5, tg=[(tagp(mom_h), "60", 1.0, 1.0, PINK)])
+        cam = (72, FY + 33, ME_Z - 14); tgt = (50, FY + 28, MOMZ)
+        return shoot("home", cam, tgt, 42, [me, MOM()], t=t, vign=0.5, tg=[(tagp(mom_h), "60", 1.0, 1.0, PINK, True)])
     if k == 11:  # むかし：小さな僕と母さん、手をつないで歩く（セピア）
         zz = int(40 + 4 * t)
         mom = H_(cx=54, fy=FY, cz=zz, P=P_MOM, face="笑顔", f=1, bun=True, step=t * 1.2)
@@ -621,7 +627,7 @@ def frame(k, t):
         cam, tgt, fov = aim(mom_h, -1, 30 - 2 * uu, 0.0, 2, 46, 0.4)
         v = 60 + int(300 * ease(min(1, max(0, (uu - 0.15) / 0.55))))
         return shoot("home", cam, tgt, fov, [MOM()], t=t,
-                     tg=[(tagp(mom_h), str(v), 1.0, 1.0 + 0.15 * (v == 360), GOLD if v == 360 else PINK)])
+                     tg=[(tagp(mom_h), str(v), 1.0, 1.0 + 0.15 * (v == 360), GOLD if v == 360 else PINK, True)])
     if k == 18:  # 数字は、変えられる：夜の通りで空を見上げる僕（下から）
         me = H_(cx=60, fy=FY, cz=60, face="笑顔", f=-1, **BK)
         z = ease(u)
