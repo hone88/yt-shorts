@@ -372,10 +372,13 @@ def frame(k, t):
                 m[x, gy - 2:gy, z] = 0
         bz = int(LZ - 34 + 20 * ease(min(1, u * 1.3)))
         walker = H_(cx=LX - 4, fy=ground_y(bz), cz=bz, P=P_BAT, face="笑顔", f=1, cap=True, stripe=True, step=t * 1.3)
+        def helmet(c, m, x=LX - 4, y=ground_y(bz) + 24, z=bz):
+            put(c, m, x - 4, x + 4, y + 7, y + 10, z - 4, z + 4, NAVY, 1, 0.02)
+            put(c, m, x - 4, x + 4, y + 7, y + 8, z + 4, z + 7, NAVY, 1, 0.02)
         fx = lambda img, dp, cm, tg_, fv: ballp(img, dp, cm, tg_, fv, (LX, gy - 0.5, LZ), col=(1.3, 1.35, 1.45), size=1.4)
         z = ease(u)
         cam = lerp((LX + 10, gy + 24, LZ + 22), (LX + 30, gy + 60, LZ + 70), z); tgt = lerp((LX - 2, gy + 6, LZ - 8), (LX, gy, LZ - 10), z)
-        return shoot("lemon", cam, tgt, 52 + 8 * z, [crater, walker], t=t, fx=fx)
+        return shoot("lemon", cam, tgt, 52 + 8 * z, [crater, walker, helmet], t=t, fx=fx)
 
 
 def render_clip(k, out):
