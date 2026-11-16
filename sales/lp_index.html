@@ -1,0 +1,183 @@
+<title>もしもで勝手にPR</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&family=Noto+Sans+JP:wght@400;600&display=swap">
+<style>
+/* 縦長スマホで読む1枚。上に動画、下に「型・料金・流れ・連絡先」を一列に積む。紺×レモンの黄色（広島のレモン畑の回から） */
+:root {
+  --bg: #f6f7fb;
+  --panel: #ffffff;
+  --ink: #16203a;
+  --muted: #5b6480;
+  --line: #dde1ec;
+  --accent: #f2c31b;
+  --accent-ink: #16203a;
+  --navy: #1f2d5c;
+  --display: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Noto Sans JP", sans-serif;
+  --body: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1426; --panel: #161e36; --ink: #eef1f8; --muted: #a3abc4; --line: #2a3454;
+    --accent: #f5cd3a; --accent-ink: #16203a; --navy: #9fb3ff; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1426; --panel: #161e36; --ink: #eef1f8; --muted: #a3abc4; --line: #2a3454;
+  --accent: #f5cd3a; --accent-ink: #16203a; --navy: #9fb3ff; color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.75;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 640px; margin: 0 auto; padding-block: 32px 64px; display: flex; flex-direction: column; gap: 40px; }
+h1, h2 { font-family: var(--display); font-weight: 800; text-wrap: balance; margin: 0; line-height: 1.35; }
+h1 { font-size: clamp(28px, 7vw, 40px); }
+h2 { font-size: 22px; }
+p { margin: 0; }
+.eyebrow { font-size: 13px; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+.lead { color: var(--muted); }
+.mark { background: linear-gradient(transparent 60%, var(--accent) 60%); color: inherit; padding: 0 2px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+.video { display: flex; justify-content: center; }
+video { width: 100%; max-width: 340px; aspect-ratio: 9 / 16; border-radius: 18px; background: #000; display: block; }
+.cap { text-align: center; font-size: 13px; color: var(--muted); margin-top: 8px; }
+section { display: flex; flex-direction: column; gap: 16px; }
+.timeline { display: grid; gap: 0; border-left: 3px solid var(--line); margin-left: 6px; }
+.step { position: relative; padding: 0 0 18px 20px; }
+.step::before { content: ""; position: absolute; left: -9px; top: 6px; width: 15px; height: 15px; border-radius: 50%; background: var(--accent); border: 3px solid var(--bg); }
+.step b { font-family: var(--display); }
+.sec { font-variant-numeric: tabular-nums; font-size: 13px; color: var(--muted); margin-left: 6px; }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.stat .n { font-family: var(--display); font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.stat .l { font-size: 13px; color: var(--muted); }
+.note { font-size: 12px; color: var(--muted); }
+.plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.plan { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.plan.pick { border: 2px solid var(--accent); }
+.plan .tag { align-self: flex-start; font-size: 12px; font-weight: 600; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 2px 10px; }
+.plan .price { font-family: var(--display); font-size: 30px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.plan .price small { font-size: 14px; font-weight: 500; color: var(--muted); }
+.plan ul { margin: 0; padding-left: 1.1em; font-size: 14px; }
+.flow { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
+.flow li::marker { font-family: var(--display); font-weight: 800; color: var(--navy); }
+.contact { background: var(--navy); color: #fff; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+:root:not([data-theme="light"]) .contact { color: #fff; }
+.contact h2 { color: #fff; }
+.contact .handle { font-family: var(--display); font-size: 22px; font-weight: 800; user-select: all; word-break: break-all; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { font: 600 15px var(--body); border-radius: 999px; padding: 10px 18px; border: 0; cursor: pointer; text-decoration: none; background: var(--accent); color: var(--accent-ink); }
+.btn.ghost { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.6); }
+.btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .contact { background: #1f2d5c; } }
+:root[data-theme="dark"] .contact { background: #1f2d5c; }
+ul.fine { margin: 0; padding-left: 1.1em; font-size: 14px; color: var(--muted); display: grid; gap: 4px; }
+footer { font-size: 12px; color: var(--muted); }
+@media (max-width: 460px) { .plans { grid-template-columns: minmax(0, 1fr); } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">AIでつくる ショート動画の制作</span>
+    <h1>あなたの町やお店を、<br><span class="mark">「もしも」</span>で勝手にPRします。</h1>
+    <p class="lead">「もし〇〇だったら？」の思考実験で最後まで見せて、最後に着地する先が、あなたの紹介したい場所。そんなショート動画を、AIでまるごと作ります。</p>
+  </header>
+
+  <div>
+    <div class="video">
+      <video id="sample" src="sample.mp4" poster="poster.jpg" controls playsinline preload="metadata"></video>
+    </div>
+    <p class="cap">見本：「もし、世界一のバッターのスイングが100倍だったら？」（49秒・#勝手に広島PR）</p>
+  </div>
+
+  <section>
+    <h2>動画の型</h2>
+    <div class="timeline">
+      <div class="step"><b>もしもで引きこむ</b><span class="sec">0〜35秒</span><br>ありえない「もしも」を、数字で一つずつ検証。見る人は「どうなる？」と最後まで追いかけます。</div>
+      <div class="step"><b>着地する</b><span class="sec">35秒</span><br>たどり着く先が、紹介したい場所。「そこに落ちるの？」という意外さが残ります。</div>
+      <div class="step"><b>勝手にPR</b><span class="sec">35〜49秒</span><br>名物、魅力、使い方などを短く紹介。宣伝なのに、最後まで見てもらえる作りです。</div>
+    </div>
+    <p class="note">お店、学生団体、イベント、施設、地域など、どんな相手でも同じ型で作れます。</p>
+  </section>
+
+  <section>
+    <h2>作っている人と、これまでの数字</h2>
+    <p>広島の大学生「ゆうき」が、AIで動画をつくるチャンネル「もしもの続き」を毎日更新しています。企画・3Dの映像・ナレーション・BGMまで、AIと一緒に作っています。</p>
+    <div class="stats">
+      <div class="stat"><div class="n">3.5万回</div><div class="l">YouTube 累計の視聴</div></div>
+      <div class="stat"><div class="n">34,012回</div><div class="l">Instagram 過去30日の閲覧</div></div>
+    </div>
+    <p class="note">2026年11月15日時点。</p>
+  </section>
+
+  <section>
+    <h2>料金</h2>
+    <div class="plans">
+      <div class="plan pick">
+        <span class="tag">先着3件</span>
+        <strong>モニター価格</strong>
+        <div class="price">5,000円<small>／1本</small></div>
+        <ul>
+          <li>30〜60秒の縦型動画</li>
+          <li>直しは1回まで</li>
+          <li>感想を一言と、実績として紹介する許可をお願いします</li>
+        </ul>
+      </div>
+      <div class="plan">
+        <strong>通常</strong>
+        <div class="price">15,000円<small>／1本</small></div>
+        <ul>
+          <li>30〜60秒の縦型動画</li>
+          <li>直しは2回まで</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">どちらも、企画・台本・3Dの映像・ナレーション・BGMまで含みます。撮影はありません。</p>
+  </section>
+
+  <section>
+    <h2>頼むときの流れ</h2>
+    <ol class="flow">
+      <li>Instagramのメッセージで、紹介したい場所やお店を教えてください</li>
+      <li>伝えたいこと・入れたい名物などを聞かせてください</li>
+      <li>「もしも」の台本の案をお送りします</li>
+      <li>台本がよければ、動画を作ります</li>
+      <li>見てもらって、直したいところを直します</li>
+      <li>縦型の動画（1080×1920・mp4）でお渡しします</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>お願いと注意</h2>
+    <ul class="fine">
+      <li>実在の人物やキャラクター、会社のロゴは、権利の都合で映像にできません。オリジナルの人物で表現します</li>
+      <li>数字や事実は調べて確かめてから入れます。確かめられないことは言いません</li>
+      <li>一度に受けられるのは、週に1〜2本までです</li>
+    </ul>
+  </section>
+
+  <section class="contact" aria-labelledby="c-h">
+    <h2 id="c-h">相談・依頼はInstagramのメッセージへ</h2>
+    <div class="handle" id="handle">@moshimono_tsuzuki</div>
+    <div class="row">
+      <a class="btn" href="https://www.instagram.com/moshimono_tsuzuki/" target="_blank" rel="noopener">Instagramを開く</a>
+      <button class="btn ghost" id="copy" type="button">IDをコピー</button>
+    </div>
+    <p style="font-size:13px;opacity:.85">「動画の相談です」と一言送ってもらえれば大丈夫です。</p>
+  </section>
+
+  <footer>もしもの続き／制作：ゆうき（広島）</footer>
+</div>
+
+<script>
+document.getElementById('copy').addEventListener('click', async (e) => {
+  const b = e.currentTarget, t = '@moshimono_tsuzuki';
+  try { await navigator.clipboard.writeText(t); b.textContent = 'コピーしました'; }
+  catch (_) {
+    const r = document.createRange(); r.selectNodeContents(document.getElementById('handle'));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = '選択しました';
+  }
+  setTimeout(() => { b.textContent = 'IDをコピー'; }, 2000);
+});
+</script>
