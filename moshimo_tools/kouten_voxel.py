@@ -10,7 +10,7 @@ import earth_voxel as EV
 from earth_voxel import earth, town, hstreaks, GY, get, lerp, snap
 
 W, H, FPS, RS = 1080, 1920, 30, 3
-_est = [6.8, 3.7, 5.8, 4.9, 2.3, 8.1, 4.8, 3.1]
+_est = [6.8, 3.7, 5.8, 4.9, 2.9, 8.1, 4.8, 3.1]
 CLIPS = [round(x * 1.27 * 1.15, 1) for x in _est]
 
 
