@@ -47,6 +47,9 @@ A.put(fx, A.sfx_ding(0.3), ca.start + 0.1)
 A.put(fx, A.sfx_pop(0.4), ca.start + 0.2)
 A.put(music, A.fade(heavy(ca.dur + ff.dur + 0.3) * 0.8, 0.3, 0.4), ca.start + 2.6)
 A.put(music, A.fade(A.bgm_sparse(2.9), 0.2, 0.3), ca.start)
+A.put(fx, A.sfx_boom(0.8, 2.4), ca.start + ca.h13 - 0.05)          # ハルト「ゆずれない」：低いドン
+t16 = ca.start + [x for x, i in ca.lines if i == "16"][0]
+A.put(fx, A.sfx_heart(0.45), t16 - 1.0); A.put(fx, A.sfx_heart(0.5), t16 - 0.3)
 
 # 早送り：吹き出しごとにポン、ストップウォッチ
 A.put(fx, A.sfx_whoosh(0.5, True, 0.3), ff.start)

@@ -43,14 +43,20 @@ def L(i):
 
 
 TEXT = {
-    "01": ("A", "やっぱり、[交通]でしょ。"),
-    "02": ("B", "いや、[子育て]だって。"),
+    "01": ("A", "やっぱり、[交通]でしょ。|バスが減ったら、30年後、|どこにも行けなくなる。"),
+    "02": ("B", "いや、[子育て]だって。|子どもが減ったら、|町そのものが[続かない]。"),
+    "11": ("A", "でも、移動できなかったら、|子育ても無理じゃん。"),
+    "12": ("B", "それは、そうだけど…！"),
+    "13": ("H", "…[俺は]、子どもの[居場所]を|入れたい。|ここだけは、[ゆずれない]。"),
+    "14": ("A", "居場所って、|ちょっと[ふわっと]してない？"),
+    "15": ("H", "ふわっとしてても、俺は、|[これがやりたい]んだ。"),
+    "16": ("K", "（…みんな、ちゃんと|『[やりたい]』がある。）"),
     "03": ("H", "…一回、[整理]しよう。"),
     "04": ("K", "通学のこと調べてて、|思ったんだけど…"),
     "05": ("H", "…カナタ、[ミュート]に|なってる。"),
     "06": ("K", "[えっ]"),
     "07": ("K", "子どもが、[子どもだけで]|遊び場まで行ける街。"),
-    "07b": ("K", "…それなら、|[交通も子育ても]入る。"),
+    "07b": ("K", "…それなら、[交通も]、[子育ても]、|[ハルトの居場所]も、入る。"),
     "08": ("H", "…[それだ]。"),
     "09": ("T", "ハルトのやりたいことと、|カナタの[調べたこと]が、|つながったのだ。"),
     "10": ("K", "…うん。"),
@@ -63,7 +69,7 @@ def subtitle(img, sid):
     lines = text.split("|")
     d = ImageDraw.Draw(img)
     f, fn = O.F(BLACK, 72), O.F(BLACK, 40)
-    y = 1560 - (len(lines) - 1) * 80
+    y = 1560 - (len(lines) - 1) * 55
     nw = fn.getlength(name) + 40
     d.rounded_rectangle([540 - nw / 2, y - 78, 540 + nw / 2, y - 18], radius=30, fill=col)
     d.text((540 - nw / 2 + 20, y - 74), name, font=fn, fill=(20, 20, 30))
@@ -86,10 +92,10 @@ def seq(ids, start=0.4, gap=0.32, extra=None):
 def plan():
     S = []
     S.append(O.Shot("cold", 5.0, []))                                                   # つかみ（ミュート）→ 2.4秒でタイトル
-    a = 2.8
-    ln = [(a, "01"), (a + L("01") * 0.7, "02")]                                          # 声が重なる
-    t = ln[1][0] + L("02") + 0.6
-    S.append(O.Shot("call", t, ln))                                                      # 19:00 意見がまとまらない
+    ln, t = seq(["01", "02", "11"], 2.8, gap=0.25)
+    ln.append((ln[-1][0] + L("11") * 0.75, "12"))                                         # 声が重なる
+    ln2, t = seq(["13", "14", "15", "16"], ln[-1][0] + L("12") + 0.7, extra={"14": 0.3, "15": 0.2, "16": 1.3})
+    s = O.Shot("call", t + 0.8, ln + ln2); s.h13 = ln2[0][0]; S.append(s)               # 19:00 それぞれの「やりたい」がぶつかる
     S.append(O.Shot("ff", 3.4))                                                          # 早送り → 21:30
     ln, t = seq(["03", "04", "05", "06"], 0.5, extra={"04": 0.5, "05": 0.9, "06": 0.2})
     s = O.Shot("mute", t + 0.8, ln); s.unmute = ln[3][0] + 0.1; S.append(s)             # ミュート
@@ -111,7 +117,7 @@ def speaking(s, t):
     for (t0, sid) in s.lines:
         if t0 <= t <= t0 + L(sid) + 0.15:
             cur = sid
-    if cur == "07" and t - next(a for a, b in s.lines if b == "07") > L("07") * 0.58:
+    if cur == "07" and t - next(a for a, b in s.lines if b == "07") > L("07") * 0.42:
         cur = "07b"
     return cur
 
@@ -238,8 +244,19 @@ def frame(s, t):
         hook(img, t)
     elif n == "call":
         talk = {TEXT[x][0] for (a, x) in s.lines if a <= t <= a + L(x) + 0.1}
-        img = grid(t, talk, expr={"A": "normal", "B": "normal"})
-        clock(img, "19:00")
+        last = None                                          # 話し手が変わるまで同じ画（数コマだけの切り替えをしない）
+        for (t0, i) in sorted(s.lines):
+            if t >= t0 - 0.1:
+                last = i
+        if last in ("13", "15"):                             # ハルト：ゆずれない
+            img = speaker(t, "H", talk="H" in talk, expr="resolve" if "resolve" in C.HA_EXPR else "normal")
+        elif last == "16" or (last == "15" and False):
+            img = speaker(t, "K", talk=False, muted=True, expr="blank")
+        else:
+            img = grid(t, talk, expr={"A": "normal", "B": "normal"})
+        if last == "15" and t > [a for a, b in s.lines if b == "15"][0] + L("15") + 0.4:
+            img = speaker(t, "K", talk=False, muted=True, expr="blank")   # 沈黙：何も言えないカナタ
+        clock(img, f"19:{int(40 * t / s.dur):02d}")
         if t < s.lines[0][0] - 0.1:
             card(img, (t - 0.2) / 0.3)
         else:
@@ -248,7 +265,7 @@ def frame(s, t):
         u = t / s.dur
         talk = {("A", "B", "H", "K")[int(t * 4) % 4]}
         img = O.glitch(grid(t, talk), 0.15, int(t * 30))
-        hh, mm = divmod(int(19 * 60 + 150 * u), 60)
+        hh, mm = divmod(int(19 * 60 + 40 + 110 * u), 60)
         clock(img, f"{hh}:{mm:02d}")
         for j, (w, x, y) in enumerate(BUBBLES):
             if t > 0.3 + j * 0.45:
