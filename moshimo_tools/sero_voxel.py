@@ -1,5 +1,6 @@
-"""個人用の実験「スクロールのたびに、セロトニンが2倍になったら？」（11/18）。投稿しない。
-参考動画（ドーパミン×2のリール）と同じ型：スクロールのたびに ×2、上に数値の表示、明朝体のひとこと、最後に ×0 で虚無。
+"""個人用の実験「深呼吸するたびに、セロトニンが2倍になったら？」（11/18）。投稿しない。
+参考動画（ドーパミン×2のリール）と同じ型：深呼吸のたびに ×2、上に数値の表示、明朝体のひとこと、最後に ×0 で虚無。
+声は tools/voice/sero_breath.json（VOICEVOX）。長さは環境変数 SERO_VDIR の dur.json から読み、場面の長さを声に合わせる。
 使い方: python3 sero_voxel.py stills t1,t2,... out.png / python3 sero_voxel.py render a b out.mp4（a〜b秒）"""
 import sys, os, math, subprocess
 import numpy as np
@@ -32,31 +33,48 @@ P_MAN = {"髪": (0.1, 0.08, 0.07), "服": (0.85, 0.35, 0.25), "服2": (0.75, 0.3
 MX, MZ = 40, 48
 
 # ------------------------------------------------------------------ 台本（タイムライン）
-LV = [  # (倍率, 状態, ひとこと×2, 状態チップの色)
-    (1, "日常のストレス", ["締め切りまで 3時間", "課題は まだ0文字"], (120, 120, 130)),
-    (2, "ちょい安心", ["猫の動画で", "深呼吸1回分"], (230, 170, 40)),
-    (4, "ちょい安心", ["もう 温泉超え", "まだ締め切りは 3時間"], (230, 170, 40)),
-    (8, "ほっこり", ["もう マッサージ90分超え", "教授に怒られた ありがとうございます"], (240, 120, 160)),
-    (16, "聖人モード", ["締め切り？", "地球46億年から見れば 0秒"], (150, 110, 240)),
-    (32, "聖人モード", ["ハトと和解した", "そもそも ケンカしてない"], (150, 110, 240)),
-    (64, "聖人モード", ["これで まだ6回目", "全員の悪口が 褒め言葉に聞こえる"], (150, 110, 240)),
-    (128, "悟りかけ", ["レジ袋のゆらぎに 宇宙の真理がある", "お坊さんの修行60年分 2分で終わった"], (60, 190, 120)),
-    (256, "重力より上", ["イスから浮いた", "締め切りは 地球に置いてきた"], (60, 140, 240)),
-    (512, "宇宙とワンネス", ["全宇宙と ひとつになった", "宇宙の方からも 「わかる」と言われた"], (40, 200, 220)),
-    (1024, "欲の完全消滅", ["オーム……", "もう何も欲しくない Wi-Fiすらいらない"], (255, 90, 200)),
+LV = [  # (倍率, 状態, ひとこと×2（声の字幕）, 状態チップの色)
+    (1, "日常のストレス", ["締め切りやばい！ 課題終わらない！", "イライラ するーー！"], (120, 120, 130)),
+    (2, "ちょい安心", ["……あれ？", "ちょっと 落ち着いたかも"], (230, 170, 40)),
+    (4, "ちょい安心", ["なんか 肩が軽い", "温泉 入った？"], (230, 170, 40)),
+    (8, "ほっこり", ["教授に怒られたの", "ありがたい 気がしてきた"], (240, 120, 160)),
+    (16, "聖人モード", ["締め切り？", "地球46億年から見たら 0秒じゃん"], (150, 110, 240)),
+    (32, "聖人モード", ["ハトさん こんにちは", "そもそも ケンカしてなかったね"], (150, 110, 240)),
+    (64, "聖人モード", ["みんな違って", "みんないい……"], (150, 110, 240)),
+    (128, "悟りかけ", ["見える……", "レジ袋のゆらぎに 宇宙の真理が……"], (60, 190, 120)),
+    (256, "重力より上", ["あ、浮いてる", "締め切りは 地球に置いてきた"], (60, 140, 240)),
+    (512, "宇宙とワンネス", ["私は……", "全宇宙と ひとつになった……"], (40, 200, 220)),
+    (1024, "欲の完全消滅", ["もう 何も欲しくない……", "オーーーム……"], (255, 90, 200)),
 ]
-ZERO = ["……お腹も空かない", "……連絡も返さない", "……生きる意味も 特にない", "……すばらしい"]
+ZERO = ["……お腹も 空かない", "……連絡も 返さない", "……生きている意味も 特にない", "……すばらしい"]
 
-INTRO, L0, SCR, LVD, GL, ZD, ND = 3.0, 4.5, 1.0, 5.2, 1.4, 7.2, 4.5
+import json as _json
+_VD = os.path.join(os.environ.get("SERO_VDIR", "."), "dur.json")
+VO = _json.load(open(_VD)) if os.path.exists(_VD) else {}
+def vd(k, d=2.5):
+    return VO.get(k, d)
+
+INTRO = max(3.0, vd("00") + 0.7)
+L0 = vd("01") + 1.0
+GL, ND = 1.4, 4.5
 SEG = [("intro", 0, INTRO), ("lv", 0, L0)]
+VOICE = [(0.3, "00"), (INTRO + 0.25, "01")]
 for i in range(1, 11):
-    SEG += [("scroll", i, SCR), ("lv", i, LVD)]
-SEG += [("glitch", 0, GL), ("zero", 0, ZD), ("notif", 0, ND)]
+    SEG += [("scroll", i, vd("br", 3.0) + 0.4), ("lv", i, max(4.2, vd(f"{i + 1:02d}") + 1.4))]
+SEG += [("glitch", 0, GL)]
+for k in range(4):
+    SEG += [("zero", k, vd(f"z{k + 1}") + 1.0)]
+SEG += [("notif", 0, ND)]
 STARTS = []
 _t = 0.0
-for s in SEG:
-    STARTS.append(_t); _t += s[2]
+for s_ in SEG:
+    STARTS.append(_t); _t += s_[2]
 DUR = _t
+for (kind, i, d), s0 in zip(SEG, STARTS):
+    if kind == "scroll": VOICE.append((s0 + 0.1, "br"))
+    if kind == "lv" and i > 0: VOICE.append((s0 + 0.3, f"{i + 1:02d}"))
+    if kind == "zero": VOICE.append((s0 + 0.35, f"z{i + 1}"))
+FACE_OVR = [None]
 
 
 def seg_at(t):
@@ -130,6 +148,7 @@ def chair(c, m):
 
 
 def man(c, m, fy, face, arms="front", phone=True, scr=(0.4, 0.8, 1.6), cz=MZ, cx=MX):
+    face = FACE_OVR[0] or face
     hito(c, m, cx, fy, cz, P_MAN, face=face, arms=arms, f=-1, sit=True)
     if phone and arms == "front":
         put(c, m, cx - 3, cx + 3, fy + 11, fy + 17, cz - 11, cz - 10, (0.1, 0.1, 0.12), 1, 0.0)
@@ -270,9 +289,9 @@ def hud(d, val, scroll, status, scol, a=1.0, big=None):
     A = int(255 * a)
     d.text((W / 2, 118), "セロトニン", font=ft(SANS, 30), fill=(255, 255, 255, A), anchor="mm")
     d.text((W / 2, 196), big or num(val), font=ft(SERIF, 118), fill=(255, 255, 255, A), anchor="mm", stroke_width=3, stroke_fill=(0, 0, 0, int(A * 0.5)))
-    d.text((W / 2, 272), f"スクロール {scroll}回目", font=ft(SANS, 26), fill=(255, 255, 255, A), anchor="mm")
+    d.text((W / 2, 272), f"深呼吸 {scroll}回目", font=ft(SANS, 26), fill=(255, 255, 255, A), anchor="mm")
     f = ft(SANS, 24)
-    t1, t2 = "スクロールごとに×2", status
+    t1, t2 = "深呼吸ごとに×2", status
     w1 = d.textlength(t1, font=f) + 24; w2 = d.textlength(t2, font=f) + 24
     x0 = W / 2 - (w1 + w2 + 10) / 2
     d.rectangle([x0, 296, x0 + w1, 330], fill=(10, 10, 14, int(A * 0.85)))
@@ -311,6 +330,7 @@ def from_img(im):
 
 
 SKY = [None]
+LASTVIEW = [None]
 
 
 def scene3d(set_, cam, tgt, fov, draws, bg=None, fx=None):
@@ -326,6 +346,7 @@ def scene3d(set_, cam, tgt, fov, draws, bg=None, fx=None):
         img = np.where(sky[..., None], bg, img)
         SKY[0] = np.repeat(np.repeat(sky, RS, 0), RS, 1).astype(f32)
     img = np.repeat(np.repeat(img, RS, 0), RS, 1)
+    LASTVIEW[0] = (cam, tgt, fov)
     return img.astype(f32), (cam, tgt, fov)
 
 
@@ -338,7 +359,7 @@ def camf(dist, yaw=0.0, h=36, ty=27, cx=MX, cz=MZ, fy=FY):
     return (cx + dist * math.sin(yaw), fy + h, cz - dist * math.cos(yaw)), (cx, fy + ty, cz), 46
 
 
-def lvl_frame(i, t, u, T):
+def lvl_frame(i, t, u, T, text=True):
     """i 段目（0〜10）。t は段の中の秒、u=t/T"""
     val, st, lines, scol = LV[i]
     hd = HEAD(MX, FY, MZ, sit=True)
@@ -392,7 +413,7 @@ def lvl_frame(i, t, u, T):
         sparkles(lay, t, 0.8)
     else:        # 9: ワンネス（あぐらで合掌、曼荼羅）、10: 欲の完全消滅（口から光、全部ミラー）
         k = 1.0 if i == 9 else 1.6
-        yaw = t * 0.25 if i == 9 else 0.45 * math.sin(t * 1.3)
+        yaw = 0.6 * math.sin(t * 0.5) if i == 9 else 0.45 * math.sin(t * 1.3)
         cam, tgt, fov = camf(50 - (6 * u if i == 10 else 0), yaw, 34, 26, 40, 40, FY + 30)
         bg = space_bg(H // RS, W // RS, t, k)
         img, view = scene3d("void", cam, tgt, fov, [lambda c, m: man(c, m, FY + 30, "悟り", arms="front", phone=False, cz=40),
@@ -416,6 +437,8 @@ def lvl_frame(i, t, u, T):
         img = hue(img, t * 0.8)
         if u > 0.5:
             img = kaleido(img, 1)
+    if not text:
+        return img
     im = to_img(img); d = ImageDraw.Draw(im)
     hud(d, val, i, st, scol)
     txt, a = cap2(lines, u)
@@ -432,56 +455,48 @@ _BG = {}
 
 
 def scroll_frame(i, t, u):
-    """スクロールの瞬間：スマホのアップ、親指が上にはらう。上に「スクロール i回目」と大きな ×N"""
+    """深呼吸：目を閉じて「すぅーー」（吸う）→「はぁーー」（吐く、白い息）。吐き終わりで ×N に上がる"""
     prev, val = LV[i - 1][0], LV[i][0]
-    base = np.zeros((H, W, 3), f32) + np.array([0.08, 0.07, 0.12], f32) * (1 + 0.3 * i)
-    if i >= 5:
-        base = base + 0.25 * np.array([0.9, 0.5, 0.8], f32)
-    if i >= 8:
-        yy = np.linspace(0, 1, H, dtype=f32)[:, None, None]
-        base = np.zeros((H, W, 3), f32) + np.array([0.4, 0.1, 0.6], f32) * (1 - yy) + np.array([0.1, 0.3, 0.8], f32) * yy
-    im = to_img(base); lay = Image.new("RGBA", (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
-    pw, ph = 560, 1000
-    px0, py0 = W / 2 - pw / 2, H * 0.40
-    d.rounded_rectangle([px0 - 18, py0 - 18, px0 + pw + 18, py0 + ph + 60], radius=70, fill=(25, 25, 30, 255))
-    cols = [(240, 140, 60), (250, 220, 170), (60, 60, 80), (20, 120, 130), (250, 150, 200), (240, 170, 60), (120, 80, 220),
-            (40, 200, 160), (250, 120, 220), (40, 220, 250), (255, 255, 255)]
-    off = ease(min(1, u * 1.6)) * ph
-    for k, yy in enumerate((py0 - off, py0 + ph - off)):
-        col = cols[(i + k) % len(cols)]
-        top, bot = max(py0, yy), min(py0 + ph, yy + ph)
-        if bot <= top: continue
-        d.rectangle([px0, top, px0 + pw, bot], fill=col + (255,))
-        cy = yy + ph * 0.45                                               # 画面の中のまるい何か（猫・ハト・円）
-        if py0 < cy < py0 + ph:
-            ic = (255, 255, 255, 255) if sum(col) < 600 else (40, 40, 50, 255)
-            if (i + k) % 3 == 0:
-                d.rectangle([W / 2 - 90, cy - 70, W / 2 + 90, cy + 90], fill=ic)
-                d.polygon([(W / 2 - 90, cy - 70), (W / 2 - 60, cy - 130), (W / 2 - 30, cy - 70)], fill=ic)
-                d.polygon([(W / 2 + 90, cy - 70), (W / 2 + 60, cy - 130), (W / 2 + 30, cy - 70)], fill=ic)
-            elif (i + k) % 3 == 1:
-                d.ellipse([W / 2 - 110, cy - 110, W / 2 + 110, cy + 110], outline=ic, width=40)
-            else:
-                d.ellipse([W / 2 - 60, cy - 60, W / 2 + 60, cy + 60], fill=ic)
-            d.rounded_rectangle([px0 + 40, cy + 220, px0 + pw - 120, cy + 250], radius=12, fill=ic[:3] + (120,))
-    th_y = py0 + ph * 0.75 - 520 * ease(min(1, u * 1.6))                   # 親指
-    d.rounded_rectangle([W / 2 + 40, th_y, W / 2 + 230, th_y + 460], radius=90, fill=tuple(int(255 * v) for v in SKIN) + (255,))
-    d.rounded_rectangle([W / 2 + 70, th_y + 20, W / 2 + 200, th_y + 130], radius=50, fill=(250, 225, 205, 255))
-    for k in range(4):                                                       # 指
-        d.rounded_rectangle([px0 - 70, py0 + 220 + k * 120, px0 + 10, py0 + 320 + k * 120], radius=36, fill=tuple(int(255 * v) for v in SKIN) + (255,))
-    im = Image.alpha_composite(im, lay); d = ImageDraw.Draw(im)
-    d.text((W / 2, 150), f"スクロール {i}回目", font=ft(SANS, 32), fill=(255, 255, 255, 255), anchor="mm")
-    sw = smooth_(0.35, 0.6, u)
+    FACE_OVR[0] = "悟り" if u < 0.55 else "恍惚"
+    j = i - 1
+    img = lvl_frame(j, 4.0 + t, min(1.0, 0.8 + 0.2 * u), 5.0, text=False)
+    FACE_OVR[0] = None
+    view = LASTVIEW[0]
+    img = img * 0.82
+    lay = Image.new("RGBA", (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
+    mp = proj(view, (40, FY + 51, 36) if j >= 8 else (MX, FY + 21, MZ - 4))
+    if u >= 0.5 and mp:                                                    # 白い息
+        rg = np.random.default_rng(5)
+        e = (u - 0.5) / 0.5
+        for k in range(26):
+            ph = (e * 1.4 - k * 0.04)
+            if ph <= 0 or ph > 1: continue
+            x = mp[0] + rg.normal(0, 40) * ph + 30 * math.sin(k)
+            y = mp[1] + 40 + 520 * ph
+            r = 20 + 70 * ph
+            d.ellipse([x - r, y - r, x + r, y + r], fill=(245, 248, 255, int(120 * (1 - ph))))
+    if u < 0.5 and mp:                                                     # 吸いこむ光の線
+        rg = np.random.default_rng(int(t * 20))
+        for k in range(18):
+            ang = rg.uniform(0, 2 * math.pi); rr = 500 * (1 - (u * 2 + k * 0.05) % 1)
+            x, y = mp[0] + rr * math.cos(ang), mp[1] + rr * math.sin(ang)
+            d.line([(x, y), (x + 60 * math.cos(ang), y + 60 * math.sin(ang))], fill=(255, 255, 255, 140), width=5)
+    im = Image.alpha_composite(to_img(img), lay); d = ImageDraw.Draw(im)
+    d.text((W / 2, 150), f"深呼吸 {i}回目", font=ft(SANS, 32), fill=(255, 255, 255, 255), anchor="mm")
+    sw = smooth_(0.72, 0.88, u)
     if sw < 1:
-        d.text((W / 2, 260), num(prev), font=ft(SERIF, 150), fill=(150, 150, 160, int(255 * (1 - sw))), anchor="mm")
+        d.text((W / 2, 260), num(prev), font=ft(SERIF, 150), fill=(170, 170, 180, int(255 * (1 - sw))), anchor="mm")
     if sw > 0:
-        d.text((W / 2, 260), num(val), font=ft(SERIF, 150 + int(20 * (1 - sw))), fill=(255, 255, 255, int(255 * sw)), anchor="mm",
+        d.text((W / 2, 260), num(val), font=ft(SERIF, 150 + int(30 * (1 - sw))), fill=(255, 255, 255, int(255 * sw)), anchor="mm",
                stroke_width=3, stroke_fill=(0, 0, 0, 120))
+    word = "すぅーーー" if u < 0.5 else "はぁーーー"
+    a = min(1, (u % 0.5) / 0.08)
+    d.text((W / 2, 520), word, font=ft(SANS, 96), fill=(255, 255, 255, int(255 * a)), anchor="mm", stroke_width=8, stroke_fill=(60, 120, 200, int(255 * a)))
     return from_img(im)
 
 
 def glitch_frame(t, u):
-    base = lvl_frame(10, LVD - 0.05, 0.99, LVD)
+    base = lvl_frame(10, 5.0, 0.99, 5.0)
     rg = np.random.default_rng(int(t * 30) + 7)
     o = base.copy()
     for _ in range(14):
@@ -496,7 +511,7 @@ def glitch_frame(t, u):
     return from_img(im)
 
 
-def zero_frame(t, u, notif=0.0):
+def zero_frame(t, u, notif=0.0, k=0):
     """×0：真っ暗な部屋。床にへたりこんだまま動かない。スマホだけ床で光る"""
     if 'z' not in _BG:
         cam, tgt, fov = camf(50, 0.45, 34, 20, MX, 40)
@@ -517,8 +532,7 @@ def zero_frame(t, u, notif=0.0):
     im = to_img(img); d = ImageDraw.Draw(im)
     hud(d, 0, 10, "ただの温かい肉の塊", (90, 90, 100))
     if notif <= 0:
-        n = len(ZERO); k = min(n - 1, int(u * n)); uu = u * n - k
-        caption(d, ZERO[k], min(1, uu / 0.2) * (1 if uu < 0.85 else (1 - uu) / 0.15))
+        caption(d, ZERO[k], min(1, u / 0.1) * (1 if u < 0.88 else (1 - u) / 0.12))
     else:
         a = notif
         bx0, by0, bx1, by1 = 70, 430, W - 70, 600
@@ -535,13 +549,13 @@ def frame(t):
     kind, i, tt, d = seg_at(t)
     u = tt / d
     if kind == "intro":
-        img = lvl_frame(0, tt, 0.0, L0)
+        img = lvl_frame(0, tt, 0.0, L0, text=False)
         im = to_img(img * 0.55); dr = ImageDraw.Draw(im)
         dr.rectangle([0, 80, W, 560], fill=(0, 0, 0, 0))
         a = min(1, tt / 0.3)
         im2 = to_img(img * 0.55)
         dd = ImageDraw.Draw(im2)
-        for k, (s, col) in enumerate([("スクロールのたびに", (255, 255, 255)), ("セロトニンが", (255, 255, 255))]):
+        for k, (s, col) in enumerate([("深呼吸するたびに", (255, 255, 255)), ("セロトニンが", (255, 255, 255))]):
             dd.text((W / 2, 300 + k * 110), s, font=ft(SERIF, 84), fill=col + (int(255 * a),), anchor="mm", stroke_width=5, stroke_fill=(0, 0, 0, 150))
         f = ft(SERIF, 84); s1, s2 = "2倍", "になったら？"
         w1, w2 = dd.textlength(s1, font=f), dd.textlength(s2, font=f)
@@ -556,7 +570,7 @@ def frame(t):
     if kind == "glitch":
         return glitch_frame(tt, u)
     if kind == "zero":
-        return zero_frame(tt, u)
+        return zero_frame(tt, u, k=i)
     if kind == "notif":
         img = zero_frame(tt, 1.0, notif=min(1, tt / 0.25))
         fade = smooth_(0.62, 0.92, u)

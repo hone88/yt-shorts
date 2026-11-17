@@ -1,5 +1,5 @@
-"""個人用の実験「セロトニン×2」：音（BGM・効果音を1本にまとめた mix.wav）。
-python3 sero_sound.py taiyou_sound.py"""
+"""個人用の実験「深呼吸×セロトニン」：音（声・BGM・効果音を1本にまとめた mix.wav）。
+SERO_VDIR に声（p/*.wav, dur.json）。python3 sero_sound.py taiyou_sound.py"""
 import numpy as np, wave, sys, os
 src = open(sys.argv[1], encoding="utf-8").read().split("# ------------------------------------------------------------ compose")[0]
 exec(src)
@@ -36,9 +36,10 @@ put(out, pad(midi(40), b - a + 0.5), a, 0.07)
 # 2. スクロールのたび：シュッ＋数字が上がる「チーン」（だんだん高く）
 for i in range(1, 11):
     s0, s1 = st[("scroll", i)]
-    put(out, whoosh(0.5, True), s0, 0.35)
-    put(out, bell(midi(64 + 2 * i), 2.0), s0 + 0.4, 0.22)
-    put(out, bell(midi(71 + 2 * i), 2.0), s0 + 0.45, 0.12)
+    sw = s0 + 0.78 * (s1 - s0)
+    put(out, whoosh(0.5, True), sw - 0.4, 0.25)
+    put(out, bell(midi(64 + 2 * i), 2.0), sw, 0.22)
+    put(out, bell(midi(71 + 2 * i), 2.0), sw + 0.05, 0.12)
 # 3. 段ごとの音：明るいパッドが、段を追うごとに高く・厚く
 for i in range(1, 11):
     a, b = st[("lv", i)]
@@ -71,12 +72,27 @@ for k in range(10):
 # 5. ×0：ぶつっと無音 → かすかな冷蔵庫の音
 a, b = st[("zero", 0)]
 put(out, kick(), a, 0.9)
+mus = out.copy(); out[:] = 0
 put(out, lp(noise(VID - a), 120) * 0.6, a + 0.6, 0.05)
 # 6. 通知：ピロン、ピロン
 a, b = st[("notif", 0)]
 for k in range(2):
     put(out, bell(1318, 0.6), a + k * 0.9, 0.25); put(out, bell(1760, 0.6), a + k * 0.9 + 0.12, 0.2)
 
+# 声：のせて、声の間だけ音楽を下げる
+mus = mus if 'mus' in dir() else np.zeros_like(out)
+voice = np.zeros((N, 2))
+VD = os.environ.get("SERO_VDIR", ".")
+duck = np.ones(N)
+for t0, k in SVX.VOICE:
+    with wave.open(os.path.join(VD, "p", k + ".wav")) as w:
+        v = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(float) / 32768
+    put(voice, v, t0, 1.6)
+    i0 = int(t0 * SR); i1 = min(N, i0 + len(v))
+    duck[i0:i1] = 0.45
+duck = lp(duck, 4, 1)
+z0 = int(st[("zero", 0)][0] * SR)
+out = mus * duck[:, None] + out * duck[:, None] + voice
 fade = np.ones(N); fo = int(1.2 * SR); fade[-fo:] = np.linspace(1, 0, fo)
 out *= fade[:, None]
 x = out / max(1.0, np.abs(out).max() * 1.1)
