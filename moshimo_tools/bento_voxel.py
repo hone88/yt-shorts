@@ -59,31 +59,32 @@ def held_bento(cx, cz, f, fy=FY, empty=False):
 
 
 def tags2(img, cam, tgt, fov, items):
-    """items: [(頭の3D位置, 文字, 濃さ, 色)]。頭の上に置き、画面の上の方（12〜31%）からはみ出さないようにする。"""
+    """items: [(頭の3D位置, 文字, 濃さ, 色)]。顔の右どなりに、上に小さく名前・下に大きく数字の札を置く。
+    上の見出し（0〜22%）と真ん中の字幕（36%〜）にかからないよう、たての位置は 23〜33% におさめる。"""
     im = Image.fromarray((np.clip(img, 0, 1) * 255).astype(np.uint8)).convert("RGBA")
     lay = Image.new("RGBA", im.size, (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
     for p, text, a, col in items:
         if a <= 0.01:
             continue
-        pr = project(cam, tgt, fov, (p[0], p[1] + 4, p[2]))
+        pr = project(cam, tgt, fov, p)
         if pr is None:
             continue
         x, y, z = pr
-        sz = int(np.clip(5200 / z, 48, 120))
-        while sz > 40:
-            bb = d.textbbox((0, 0), text, font=font(sz), anchor="mm")
-            if bb[2] - bb[0] < W * 0.8:
-                break
-            sz -= 4
-        f = font(sz)
-        bb = d.textbbox((0, 0), text, font=f, anchor="mm")
-        tw, th = bb[2] - bb[0], bb[3] - bb[1]
-        pad = sz * 0.3
-        x = float(np.clip(x, tw / 2 + pad + 30, W - tw / 2 - pad - 30))
-        y = float(np.clip(y, H * 0.12, H * 0.31))
-        d.rounded_rectangle([x - tw / 2 - pad, y - th / 2 - pad * 0.8, x + tw / 2 + pad, y + th / 2 + pad * 0.8], radius=int(sz * 0.4),
-                            fill=(15, 23, 42, int(180 * a)), outline=col + (int(255 * a),), width=max(3, sz // 14))
-        d.text((x, y), text, font=f, fill=col + (int(255 * a),), anchor="mm")
+        lab, num = (text.rsplit(" ", 1) if " " in text else ("", text))
+        fl, fn = font(42), font(104)
+        bl = d.textbbox((0, 0), lab, font=fl, anchor="mm") if lab else (0, 0, 0, 0)
+        bn = d.textbbox((0, 0), num, font=fn, anchor="mm")
+        bw = max(bl[2] - bl[0], bn[2] - bn[0]) + 56
+        bh = (bn[3] - bn[1]) + (bl[3] - bl[1] + 18 if lab else 0) + 44
+        cx = float(np.clip(x + W * 0.17 + bw / 2, bw / 2 + 24, W - bw / 2 - 24))
+        cy = float(np.clip(y, H * 0.23 + bh / 2, H * 0.335 - bh / 2))
+        d.rounded_rectangle([cx - bw / 2, cy - bh / 2, cx + bw / 2, cy + bh / 2], radius=30,
+                            fill=(15, 23, 42, int(190 * a)), outline=col + (int(255 * a),), width=6)
+        if lab:
+            d.text((cx, cy - bh / 2 + 22 + (bl[3] - bl[1]) / 2), lab, font=fl, fill=(235, 238, 245, int(255 * a)), anchor="mm")
+            d.text((cx, cy + bh / 2 - 22 - (bn[3] - bn[1]) / 2), num, font=fn, fill=col + (int(255 * a),), anchor="mm")
+        else:
+            d.text((cx, cy), num, font=fn, fill=col + (int(255 * a),), anchor="mm")
     im = Image.alpha_composite(im, lay).convert("RGB")
     return np.asarray(im).astype(f32) / 255
 
@@ -95,7 +96,7 @@ def fixed_tags(img, items):
     for y, text, a, col in items:
         if a <= 0.01:
             continue
-        f = font(84); bb = d.textbbox((0, 0), text, font=f, anchor="mm"); tw, th = bb[2] - bb[0], bb[3] - bb[1]; pad = 26; x = W / 2
+        f = font(66); bb = d.textbbox((0, 0), text, font=f, anchor="mm"); tw, th = bb[2] - bb[0], bb[3] - bb[1]; pad = 26; x = W / 2
         d.rounded_rectangle([x - tw / 2 - pad, y - th / 2 - pad * 0.8, x + tw / 2 + pad, y + th / 2 + pad * 0.8], radius=34,
                             fill=(15, 23, 42, int(190 * a)), outline=col + (int(255 * a),), width=6)
         d.text((x, y), text, font=f, fill=col + (int(255 * a),), anchor="mm")
@@ -186,7 +187,7 @@ def frame(k, t):
     if k == 10:  # 1200回に、3回：僕の肩ごしに母さん。2つの数字をならべる
         cam = (BX + 10, FY + 34, BZ - 14 + 2 * u); tgt = (MX - 2, FY + 22, MZ)
         img = shoot("kitchen", cam, tgt, 50, [mom(MX, MZ), me(BX, BZ)], t=t, grade=EVE, vign=0.4)
-        return fixed_tags(img, [(H * 0.14, "母さん：お弁当 1200", 1.0, GOLD), (H * 0.25, "僕：ありがとう 3", fade(t, 0.4), PINK)])
+        return fixed_tags(img, [(H * 0.255, "母さん：お弁当 1200", 1.0, GOLD), (H * 0.325, "僕：ありがとう 3", fade(t, 0.4), PINK)])
     if k == 11:  # その夜：空のお弁当箱を持って、母さんの前へ
         c_, uu = cut(t, T, [0.5])
         dr = [mom(MX, MZ), me(BX, BZ + 4, arms="front"), held_bento(BX, BZ + 4, 1, empty=True)]
@@ -217,7 +218,7 @@ def frame(k, t):
         c1, t1, _ = aim(HEAD(60, FY, 60), -1, 34, 0.0, 6, 52)
         cam = lerp(c1, (80, FY + 60, 60 - 60), z); tgt = lerp(t1, (60, FY, 80), z)
         img = shoot("night", cam, tgt, 52, dr + [mine], t=t,
-                    tg=[(p, s, 1.0, 0.8, CYAN) for p, s in hd])
+                    tg=[(p, s, 1.0, 0.45, CYAN) for p, s in hd])
         return tags2(img, cam, tgt, 52, [(HEAD(60, FY, 60), "あなたは？", fade(t, T * 0.4), GOLD)])
 
 

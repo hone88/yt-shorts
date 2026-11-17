@@ -12,6 +12,8 @@ from earth_voxel import earth, hstreaks, GY, surf, TOKYO
 from kaguya2_voxel import snap, lerp
 
 W, H, FPS, RS = 1080, 1920, 30, 3
+import elevator_voxel as _EVX
+_EVX.RS = RS             # kaguya2_voxel を読むと elevator_voxel.RS が 4 になり、finish() の拡大がずれるので戻す（11/17）
 _est = [4.4, 2.2, 4.5, 5.5, 5.2, 7.6, 7.4, 7.5, 5.8, 5.6, 7.9]
 CLIPS = [round(x * 1.27 * 1.15, 1) for x in _est]
 PX, PZ = 40, 50          # 立つ位置
