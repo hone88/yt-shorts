@@ -79,7 +79,8 @@ A.put(music, A.fade(A.bgm_morning(rm.dur + en.dur + 0.3, bright=True), 0.4, 1.5)
 A.put(fx, A.sfx_tick(0.25), en.start + 0.3)
 
 music = A.duck(music, voice, 0.6)
-mix = voice * 1.0 + fx * 0.8 + music * 0.9
+FX_LEVEL = 0.7   # 11/17 ゆうきさん：効果音を7割に
+mix = voice * 1.0 + fx * 0.8 * FX_LEVEL + music * 0.9
 mix = mix[:int(total * A.SR)]
 mix /= np.abs(mix).max() / 0.95
 p = f"{OUT}/mix.wav"
