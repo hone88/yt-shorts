@@ -10,7 +10,7 @@ import earth_voxel as EV
 from earth_voxel import earth, town, hstreaks, GY, get, lerp, snap
 
 W, H, FPS, RS = 1080, 1920, 30, 3
-_est = [6.8, 3.7, 5.8, 4.9, 2.9, 8.1, 4.8, 3.1]
+_est = [4.2, 3.7, 5.8, 4.9, 2.9, 8.1, 4.8, 3.1]
 CLIPS = [round(x * 1.27 * 1.15, 1) for x in _est]
 
 
@@ -117,7 +117,7 @@ def gs(k):
 def frame(k, t):
     w, h = W // RS, H // RS
     T = CLIPS[k]; u = t / T
-    if k == 0:   # 前回の北極点：ポールのそばの僕に寄る → 「その通りです」でゆれる
+    if k == 0:   # 前回の北極点：ポールのそばの僕に寄る → 「公転も止まったら？」でゆれる（11/17 冒頭を変更）
         S = gs('pole'); c, m = S.base_c.copy(), S.base_m.copy()
         person(c, m, 40, GY, 46, "stand", look=int(round(math.sin(t * 1.5))))
         z = ease(min(1, u * 1.2))
