@@ -34,7 +34,7 @@ lofi(bgm, 0.0, DUR, 0.9)
 for k in range(1, len(S)):
     put(sfx, whoosh(0.4, True), S[k] - 0.4, 0.26)
 put(sfx, boom(1.2), at(0, 0.6), 0.6)                        # 自転が止まって投げ出される
-put(sfx, boom(0.6), at(1, CLIPS[1] * 0.82), 0.35)          # 「公転も止まったら？」
+put(sfx, boom(0.6), S[1] + 3.9, 0.35)                       # 「公転も止まったら？」
 put(sfx, shimmer(1.5, True), S[2] + 0.1, 0.12)             # 公転
 put(sfx, boom(1.8), at(3, 0.8), 0.8)                        # 北極点でも吹き飛ぶ
 w = lp(noise(E[3] - at(3, 0.8)), 1400) * 0.7
