@@ -60,7 +60,7 @@ GL, ND = 1.4, 4.5
 SEG = [("intro", 0, INTRO), ("lv", 0, L0)]
 VOICE = [(0.3, "00"), (INTRO + 0.25, "01")]
 for i in range(1, 11):
-    SEG += [("scroll", i, vd("br", 3.0) + 0.4), ("lv", i, max(4.2, vd(f"{i + 1:02d}") + 1.4))]
+    SEG += [("scroll", i, float(os.environ.get("SERO_BR", vd("br", 3.0) + 0.4))), ("lv", i, max(4.2, vd(f"{i + 1:02d}") + 1.4))]
 SEG += [("glitch", 0, GL)]
 for k in range(4):
     SEG += [("zero", k, vd(f"z{k + 1}") + 1.0)]
@@ -71,7 +71,7 @@ for s_ in SEG:
     STARTS.append(_t); _t += s_[2]
 DUR = _t
 for (kind, i, d), s0 in zip(SEG, STARTS):
-    if kind == "scroll": VOICE.append((s0 + 0.1, "br"))
+    if kind == "scroll" and "SERO_BR" not in os.environ: VOICE.append((s0 + 0.1, "br"))
     if kind == "lv" and i > 0: VOICE.append((s0 + 0.3, f"{i + 1:02d}"))
     if kind == "zero": VOICE.append((s0 + 0.35, f"z{i + 1}"))
 FACE_OVR = [None]

@@ -19,6 +19,21 @@ def tone(f0, f1, d, a=0.005, r=0.03):
     return np.sin(2 * np.pi * np.cumsum(np.linspace(f0, f1, n)) / SR) * env(n, a, r)
 
 
+fx = np.zeros((N, 2))      # 効果音（最後に80%で重ねる）
+
+
+def breath_in(d=0.65):
+    n = noise(d); n = lp(n, 3200, 1) - lp(n, 600, 1)
+    e = np.linspace(0, 1, len(n)) ** 1.5; e[-int(0.05 * SR):] *= np.linspace(1, 0, int(0.05 * SR))
+    return n * e * 2.2
+
+
+def breath_out(d=0.75):
+    n = noise(d); n = lp(n, 1500, 1) - lp(n, 250, 1)
+    e = env(len(n), 0.04, 0.5) * np.exp(-np.linspace(0, 1.2, len(n)))
+    return n * e * 2.6
+
+
 # 0. 導入：静かなドローン
 put(out, pad(midi(45), 3.2), 0.0, 0.08)
 put(out, bell(midi(81)), 0.4, 0.05)
@@ -30,16 +45,19 @@ while tt < b:
     tt += 0.125
 tt = a
 while tt < b:
-    put(out, lp(noise(0.03), 4000, 1) * env(int(0.03 * SR), 0.001, 0.02), tt, 0.25, pan=-0.2 + 0.4 * rng.random())
+    put(fx, lp(noise(0.03), 4000, 1) * env(int(0.03 * SR), 0.001, 0.02), tt, 0.25, pan=-0.2 + 0.4 * rng.random())
     tt += rng.uniform(0.06, 0.14)
 put(out, pad(midi(40), b - a + 0.5), a, 0.07)
 # 2. スクロールのたび：シュッ＋数字が上がる「チーン」（だんだん高く）
 for i in range(1, 11):
     s0, s1 = st[("scroll", i)]
     sw = s0 + 0.78 * (s1 - s0)
-    put(out, whoosh(0.5, True), sw - 0.4, 0.25)
-    put(out, bell(midi(64 + 2 * i), 2.0), sw, 0.22)
-    put(out, bell(midi(71 + 2 * i), 2.0), sw + 0.05, 0.12)
+    if "SERO_BR" in os.environ:
+        put(fx, breath_in(), s0 + 0.05, 0.5)
+        put(fx, breath_out(), s0 + 0.8, 0.5)
+    put(fx, whoosh(0.5, True), sw - 0.4, 0.25)
+    put(fx, bell(midi(64 + 2 * i), 2.0), sw, 0.22)
+    put(fx, bell(midi(71 + 2 * i), 2.0), sw + 0.05, 0.12)
 # 3. 段ごとの音：明るいパッドが、段を追うごとに高く・厚く
 for i in range(1, 11):
     a, b = st[("lv", i)]
@@ -52,7 +70,7 @@ for i in range(1, 11):
         for k in range(int((b - a) * (1 + i * 0.6))):
             put(out, bell(midi(root + 24 + int(rng.integers(0, 12))), 0.8), a + rng.uniform(0, b - a - 0.3), 0.02 + 0.003 * i, pan=rng.uniform(-0.8, 0.8))
     if i in (5, 6):                                                    # ハト
-        put(out, birds(b - a), a, 0.08)
+        put(fx, birds(b - a), a, 0.08)
     if i >= 7:                                                         # アルペジオ
         beat = 0.25 if i < 10 else 0.125
         k = 0; tt = a
@@ -66,18 +84,18 @@ for i in range(1, 11):
         put(out, pad(midi(36), b - a), a, 0.12)                       # 「オーム」
 # 4. バグる
 a, b = st[("glitch", 0)]
-put(out, crackle(b - a), a, 0.6)
+put(fx, crackle(b - a), a, 0.6)
 for k in range(10):
-    put(out, tone(rng.uniform(200, 3000), rng.uniform(100, 4000), 0.08), a + k * 0.13, 0.25)
+    put(fx, tone(rng.uniform(200, 3000), rng.uniform(100, 4000), 0.08), a + k * 0.13, 0.25)
 # 5. ×0：ぶつっと無音 → かすかな冷蔵庫の音
 a, b = st[("zero", 0)]
-put(out, kick(), a, 0.9)
+put(fx, kick(), a, 0.9)
 mus = out.copy(); out[:] = 0
-put(out, lp(noise(VID - a), 120) * 0.6, a + 0.6, 0.05)
+put(fx, lp(noise(VID - a), 120) * 0.6, a + 0.6, 0.05)
 # 6. 通知：ピロン、ピロン
 a, b = st[("notif", 0)]
 for k in range(2):
-    put(out, bell(1318, 0.6), a + k * 0.9, 0.25); put(out, bell(1760, 0.6), a + k * 0.9 + 0.12, 0.2)
+    put(fx, bell(1318, 0.6), a + k * 0.9, 0.25); put(fx, bell(1760, 0.6), a + k * 0.9 + 0.12, 0.2)
 
 # 声：のせて、声の間だけ音楽を下げる
 mus = mus if 'mus' in dir() else np.zeros_like(out)
@@ -92,7 +110,7 @@ for t0, k in SVX.VOICE:
     duck[i0:i1] = 0.45
 duck = lp(duck, 4, 1)
 z0 = int(st[("zero", 0)][0] * SR)
-out = mus * duck[:, None] + out * duck[:, None] + voice
+out = mus * duck[:, None] + out * duck[:, None] + 0.8 * fx + voice
 fade = np.ones(N); fo = int(1.2 * SR); fade[-fo:] = np.linspace(1, 0, fo)
 out *= fade[:, None]
 x = out / max(1.0, np.abs(out).max() * 1.1)

@@ -57,8 +57,8 @@ section { display: flex; flex-direction: column; gap: 16px; }
 .plan { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .plan.pick { border: 2px solid var(--accent); }
 .plan .tag { align-self: flex-start; font-size: 12px; font-weight: 600; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 2px 10px; }
-.plan .price { font-family: var(--display); font-size: 30px; font-weight: 800; font-variant-numeric: tabular-nums; }
-.plan .price small { font-size: 14px; font-weight: 500; color: var(--muted); }
+.plan .price { font-family: var(--display); font-size: clamp(24px, 2.6vw, 30px); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.plan .price small { font-size: 14px; font-weight: 500; color: var(--muted); white-space: nowrap; }
 .plan ul { margin: 0; padding-left: 1.1em; font-size: 14px; }
 .flow { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
 .flow li::marker { font-family: var(--display); font-weight: 800; color: var(--navy); }
@@ -104,14 +104,14 @@ footer { font-size: 12px; color: var(--muted); }
   <section>
     <h2>作っている人と、これまでの数字</h2>
     <p>広島の大学生「ゆうき」が、AIで動画をつくるチャンネル「もしもの続き」を毎日更新しています。企画・3Dの映像・ナレーション・BGMまで、AIと一緒に作っています。</p>
-    <p><strong>フォロワーが少なくても、知らない人に届く型です。</strong> Instagramのフォロワーは9人ですが、1本ごとに約1,700〜2,500人に見られています。</p>
+    <p><strong>フォロワーが少なくても、知らない人に届く型です。</strong> Instagramのフォロワーは9人ですが、1本ごとに約1,500〜2,500人に見られています。</p>
     <div class="stats">
       <div class="stat"><div class="n">100%</div><div class="l">物語回を見た人のうち、フォロワー以外の人（Instagram）</div></div>
       <div class="stat"><div class="n">96%</div><div class="l">YouTubeの視聴者のうち、新しい人</div></div>
-      <div class="stat"><div class="n">3.6万回</div><div class="l">YouTube 過去28日の視聴</div></div>
-      <div class="stat"><div class="n">34,188回</div><div class="l">Instagram 過去30日の閲覧</div></div>
+      <div class="stat"><div class="n">4.1万回</div><div class="l">YouTube 過去28日の視聴</div></div>
+      <div class="stat"><div class="n">36,533回</div><div class="l">Instagram 過去30日の閲覧</div></div>
     </div>
-    <p class="note">2026年11月16日時点。</p>
+    <p class="note">2026年11月17日時点。</p>
   </section>
 
   <section>
