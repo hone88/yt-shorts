@@ -95,25 +95,23 @@ def lens(img01, a, land):
     if a <= 0.01:
         return img01
     im = Image.fromarray((np.clip(img01, 0, 1) * 255).astype(np.uint8)).convert("RGBA")
-    R_, cx, cy = 300, W // 2, int(H * 0.2)
+    R_, cx, cy = 220, W - 250, int(H * 0.235)             # 1px＝約0.00045mm（髪の毛0.08mm＝176px、ズレ0.025mm＝55px）
     lay = Image.new("RGBA", im.size, (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
-    d.line([(cx + 120, cy + R_ - 20), (int(W * 0.56), int(H * 0.62))], fill=(255, 255, 255, 200), width=8)
+    d.line([(cx - 60, cy + R_ - 10), (int(W * 0.5), int(H * 0.62))], fill=(255, 255, 255, 200), width=8)
     inner = Image.new("RGBA", (2 * R_, 2 * R_), (205, 235, 250, 255)); di = ImageDraw.Draw(inner)
-    lx = R_ + 90                                                    # 元の位置（赤い線）
-    sx = lx - int(75 * land)                                        # くつのふち（着地で75pxだけ左＝西へ）
-    top = int(-2 * R_ + (2 * R_ + 0) * 1.0) if land >= 1 else int(-2 * R_ * (1 - land))
-    di.rectangle([sx, 0, 2 * R_, int(R_ * 1.05)], fill=(60, 62, 70, 255))
-    di.rectangle([sx, 0, sx + 10, int(R_ * 1.05)], fill=(35, 36, 42, 255))
-    for yy in range(0, 2 * R_, 28):
-        di.line([(lx, yy), (lx, yy + 16)], fill=(230, 40, 40, 255), width=8)
-    di.rectangle([0, int(R_ * 1.2), 2 * R_, int(R_ * 1.2) + 240], fill=(70, 45, 25, 255))   # 髪の毛
-    f = jfont(34)
-    di.text((lx + 14, int(R_ * 1.08)), "元の位置", font=f, fill=(220, 30, 30, 255))
-    di.text((150, int(R_ * 1.2) + 100), "髪の毛の太さ", font=jfont(40), fill=(255, 235, 200, 255))
+    lx = R_ + 70                                                    # 元の位置（赤い線）
+    sx = lx - int(55 * land)                                        # くつのふち（着地で55pxだけ左＝西へ）
+    di.rectangle([sx, 0, 2 * R_, int(R_ * 1.1)], fill=(60, 62, 70, 255))
+    di.rectangle([sx, 0, sx + 8, int(R_ * 1.1)], fill=(35, 36, 42, 255))
+    for yy in range(0, 2 * R_, 24):
+        di.line([(lx, yy), (lx, yy + 14)], fill=(230, 40, 40, 255), width=7)
+    di.rectangle([0, int(R_ * 1.25), 2 * R_, int(R_ * 1.25) + 176], fill=(70, 45, 25, 255))   # 髪の毛
+    di.text((lx + 12, int(R_ * 1.12)), "元の位置", font=jfont(30), fill=(220, 30, 30, 255))
+    di.text((110, int(R_ * 1.25) + 70), "髪の毛の太さ", font=jfont(36), fill=(255, 235, 200, 255))
     if land > 0.95:
-        y0 = int(R_ * 0.55)
+        y0 = int(R_ * 0.7)
         di.line([(sx, y0), (lx, y0)], fill=(255, 214, 90, 255), width=8)
-        di.text(((sx + lx) // 2, y0 - 34), "0.025mm", font=jfont(40), fill=(255, 214, 90, 255), anchor="mm",
+        di.text((sx - 10, y0), "0.025mm", font=jfont(40), fill=(255, 214, 90, 255), anchor="rm",
                 stroke_width=4, stroke_fill=(20, 20, 30, 255))
     mask = Image.new("L", inner.size, 0); ImageDraw.Draw(mask).ellipse([0, 0, 2 * R_ - 1, 2 * R_ - 1], fill=int(255 * a))
     lay.paste(inner, (cx - R_, cy - R_), mask)
@@ -236,7 +234,7 @@ def frame(k, t):
         FV.icy(c, m, 1.0)
         zz = int(round(20 + 60 * ease(u)))
         person(c, m, PX, GY, zz, "float", look=0)
-        cam = (PX + 50, GY + 70, 50 - 40); tgt = (PX, GY, 50)
+        cam = (PX + 24, GY + 46, zz - 34); tgt = (PX, GY + 4, zz + 4)
         img, depth = render(S, c, m, cam, tgt, 56, w, h)
         rg = np.random.default_rng(4); n = 30                  # 通ったあとの光るすじ
         p = np.stack([np.full(n, PX) + rg.normal(0, 0.6, n), np.full(n, GY + 0.2), np.linspace(20, zz, n)], 1)
