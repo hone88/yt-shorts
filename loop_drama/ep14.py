@@ -186,7 +186,7 @@ def sheet(img, u, strike=0.0, write=0.0, y0=700):
     img.alpha_composite(lay)
     if write > 0:   # 新しい目標（大きく書きすぎて「たい」が枠からはみ出す）
         n = int(len(NEW) * min(1, write))
-        f2 = O.F(BLACK, 64)   # 枠（右端990）から少しはみ出し、画面（1080）には収まる大きさ
+        f2 = O.F(BLACK, 70)   # わざと枠も画面もはみ出す（ハルト「…はみ出してる。」・ゆうきさんOK 11/19）
         dd = ImageDraw.Draw(img)
         dd.text((132, y0 + 112 + 3 * int(fs * 1.35) + 4), NEW[:n], font=f2, fill=(30, 70, 180, a))
 
