@@ -57,6 +57,7 @@ def speed_label(img01, text, a):
     if a <= 0.01:
         return img01
     from bento_voxel import font
+    _EVX.RS = RS             # bento_voxel（kaguya2_voxel）を読むと RS が 4 に変わるので戻す
     im = Image.fromarray((np.clip(img01, 0, 1) * 255).astype(np.uint8)).convert("RGBA")
     lay = Image.new("RGBA", im.size, (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
     f = font(96); bb = d.textbbox((0, 0), text, font=f, anchor="mm"); tw = bb[2] - bb[0]
