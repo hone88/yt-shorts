@@ -91,6 +91,7 @@ VOICEVOX:（その回で使った声だけ）
 - 投稿文は `out_epN/第N話_投稿文.txt` に置き、動画と一緒に渡す。
 
 ## 7. 作業手順（毎話）
+0. **【毎回必ず】これまでの物語の見直し（11/19 ゆうきさんの指示）**：GitHubの `epN.py`（`TEXT`・日付・画面の文字）と `tools/voice/loop_epN.json` から第1話〜前の話までを全部読み直し、①伏線と回収 ②日付・曜日・残りループ・学年 ③セリフの重なり（とくに第17話の「答えのためじゃなかった」を先取りしていないか）④誰が何を覚えているか（ルール⑤）⑤まだ回収していないもの を点検する。その結果で台本を見直してから出す（台本と一緒に、見直しで直した点を短く添える）。
 1. 完全版企画書の該当章＋このルールで台本を作り、**40章のチェックリスト**で自己点検（PDCA）。台本を求められたら先に出す。**台本は「企画書どおりの版」と「リメイク版」の両方を並べて比べられる形で出す**（企画書37章ルール11）。カナタの一人称は「ぼく」に直す。
 2. `tools/voice/loop_epN.json` を書いて push（`git pull --rebase` してから）。push で `voice.yml` が走らなければ `gh api -X POST repos/hone88/yt-shorts/actions/workflows/voice.yml/dispatches -f ref=main -f "inputs[file]=loop_epN.json"`。終わったら `bash tools/get_voice.sh loop_epN loop_drama/voice/epN`。
 3. `epN.py`（映像）を前の話をひな形に作り、各場面の一番にぎやかな瞬間を静止画で確認（顔の切れ・文字の重なり・時計との重なり）。
