@@ -19,6 +19,7 @@ import ep5 as V5
 import ep6 as S6
 import ep9 as S9
 import ep11 as S11
+import ep3 as R
 from engine import lerp, ease
 import engine as E
 
@@ -55,7 +56,22 @@ TEXT = {
     "06": ("H", "…[悪い]。|俺も、何も言えなかった。"),
     "07": ("K", "…[悔しい]。|今までで、一番。"),
     "08": ("T", "悔しいのは、|[本気だった]からなのだ。"),
+    "09": ("K", "（…今日は、|[未来自治体]の地方大会。）"),
+    "10": ("T", "ここまで来たのは、|[初めて]なのだ。"),
+    "11": ("K", "…1回目は、[布団から]出られなかった。|2回目は、来ても、|[何も考えてなかった]。"),
+    "12": ("A", "スライド、最後に|[もう一回]見よう。"),
+    "13": ("H", "…NPOでさ、放課後に|子どもと遊んでて、思ったんだ。|『行きたいけど、[遠い]』って|言う子が、多くて。"),
+    "14": ("K", "…議員さんの事務所でも、|[通学]の話、聞いたな。|森下さん、『それを、|聞きたかったんだ』って。"),
+    "15": ("B", "…交通も、子育ても、居場所も。|[ちゃんと]つながってる。"),
+    "16": ("K", "…うん。"),
+    "17": ("K", "30年後、広島の子どもが、|[自分の足で]遊びに行ける街に。"),
+    "18": ("H", "あ、NPOで、|子どもたちには…"),
+    "19": ("J", "子どもたち[以外の]、|地域の方には？"),
+    "20": ("A", "…あの質問、|[何も]返せなかったね。"),
+    "21": ("K", "…1回目も、2回目も、|[悔しくなかった]。|…何も、してなかったから。"),
 }
+O.SPEAK["A"] = ("メンバー", (200, 150, 230))
+O.SPEAK["B"] = ("メンバー", (120, 190, 240))
 
 
 def subtitle(img, sid):
@@ -64,7 +80,7 @@ def subtitle(img, sid):
     lines = text.split("|")
     d = ImageDraw.Draw(img)
     f, fn = O.F(BLACK, 72), O.F(BLACK, 40)
-    y = 1450 - (len(lines) - 1) * 70
+    y = 1450 - (len(lines) - 1) * 60
     nw = fn.getlength(name) + 40
     d.rounded_rectangle([540 - nw / 2, y - 78, 540 + nw / 2, y - 18], radius=30, fill=col)
     d.text((540 - nw / 2 + 20, y - 74), name, font=fn, fill=(20, 20, 30))
@@ -84,21 +100,27 @@ def seq(ids, start=0.4, gap=0.32, extra=None):
     return out, t
 
 
+def V_L(i):
+    return L(i)
+
+
 def plan():
     S = []
     S.append(O.Shot("cold", 5.0, []))                                                    # 名前が、ない。→ 2.4秒でタイトル
     ln, t = seq(["01"], 1.3)
     S.append(O.Shot("debate", t + 1.4, ln))                                              # 3/3 公開討論会
-    ln, t = seq(["02"], 2.6)
-    S.append(O.Shot("wings", t + 1.0, ln))                                               # 3/10 舞台そで
-    ln, t = seq(["03"], 0.8)
-    s = O.Shot("talk", t + 2.6, ln); s.slides = t + 0.1; S.append(s)                      # 発表 → スライド
-    ln, t = seq(["04", "05"], 0.9, extra={"05": 1.6})
-    s = O.Shot("q", t + 1.8, ln); s.hit = ln[0][0] + L("04") + 0.05; S.append(s)         # 審査員の質問 → 言葉が出ない
-    ln, t = seq(["06", "07"], 2.4, extra={"07": 1.1})
-    s = O.Shot("result", t + 2.2, ln); S.append(s)                                       # 張り出し → 悔しい
-    ln, t = seq(["08"], 2.2)
-    S.append(O.Shot("bench", t + 3.6, ln))                                               # 夕方のベンチ（余韻を長く）
+    ln, t = seq(["09", "10", "11"], 2.2, extra={"10": 1.0, "11": 0.4})
+    S.append(O.Shot("gate", t + 1.2, ln))                                               # 9:30 会場の入口（カナタとトケイ）
+    ln, t = seq(["12", "13", "14", "15", "02", "16"], 0.6, extra={"13": 0.3, "14": 0.5, "15": 0.4, "02": 1.0, "16": 0.3})
+    S.append(O.Shot("green", t + 1.0, ln))                                              # 10:30 控え室（4人）
+    ln, t = seq(["03", "17"], 0.8, extra={"17": 1.2})
+    s = O.Shot("talk", t + 1.2, ln); s.slides = ln[0][0] + V_L("03") + 0.1; S.append(s)   # 13:30 発表
+    ln, t = seq(["04", "18", "19", "05"], 0.9, extra={"18": 0.6, "19": 0.2, "05": 1.6})
+    s = O.Shot("q", t + 2.2, ln); s.hit = ln[0][0] + V_L("04") + 0.05; S.append(s)       # 審査員の質問 → 言葉が出ない
+    ln, t = seq(["20", "06", "07"], 2.4, extra={"06": 0.3, "07": 1.5})
+    s = O.Shot("result", t + 2.2, ln); S.append(s)                                      # 16:00 張り出し → 悔しい
+    ln, t = seq(["21", "08"], 2.2, extra={"08": 1.5})
+    S.append(O.Shot("bench", t + 3.8, ln))                                              # 17:30 夕方のベンチ（余韻を長く）
     S.append(O.Shot("end", 6.0))
     t = 0
     for s in S:
@@ -255,66 +277,102 @@ def frame(s, t):
         img = img.convert("RGBA")
         clock(img, "2027年3月3日（水）", "15:00")
         S9.bigbadge(img, "公開討論会", (40, 120, 200))
-    elif n == "wings":
+    elif n == "gate":                                    # 会場の入口（カナタとトケイだけ）
         u = ease(t / s.dur)
-        k = kanata((-0.2, 6.6, 0.6), math.pi / 2 + 0.35, "blank", armL=0.05, armR=0.05)
-        h = Rig(C.HARUTO, (-1.3, 6.6, 0.6), -math.pi / 2 - 0.35, tag="haruto")
-        h.set(armL=0.05, armR=0.6 if t > s.lines[0][0] else 0.05)
-        cam = Camera((lerp(-0.75, -0.75, u), lerp(-0.4, 0.0, u), 2.3), (-0.75, 6.6, 1.85), 40)
-        img, _ = render(STAGE + k.boxes() + h.boxes(), cam, BG_HALL)
+        a, b, c = (x[0] for x in s.lines)
+        k = kanata((2.5, 3.6, 0), math.pi, "normal" if t < c else "blank", head_pitch=-0.05)
+        tk = Q.tokei_near(t, "eyes", t - b + 0.6, (3.25, 3.3, 1.75)) if t > b - 0.6 else []
+        cam = Camera((lerp(3.1, 2.95, u), lerp(-0.6, 0.0, u), 1.75), (2.7, 4.6, 1.55), 50)
+        img, _ = render(R.OUTSIDE + k.boxes() + list(tk), cam, R.BG_SKY)
         img = img.convert("RGBA")
-        clock(img, "2027年3月10日（水）", "13:00")
-        if t < s.lines[0][0] - 0.1:
-            F.pill(img, "未来自治体 地方大会", 760, 60, (40, 120, 200), u=(t - 0.1) / 0.3)
-            F.pill(img, "勝てば：オンライン準決勝 → 東京の決勝", 880, 44, (230, 170, 30), (20, 20, 30), u=(t - 0.5) / 0.3)
+        clock(img, "2027年3月10日（水）", "9:30")
+        if t < a + L("09") + 0.3:
+            F.pill(img, "未来自治体 地方大会", 760, 60, (40, 120, 200), u=(t - 0.2) / 0.3)
+            F.pill(img, "勝てば：オンライン準決勝 → 東京の決勝", 880, 44, (230, 170, 30), (20, 20, 30), u=(t - 0.6) / 0.3)
+    elif n == "green":                                   # 控え室：4人（話し手が変わるときだけ切り替え）
+        u = ease(t / s.dur)
+        last = None
+        for (t0, i) in s.lines:
+            if t >= t0 - 0.1:
+                last = i
+        t02 = [x for x, i in s.lines if i == "02"][0]
+        k = R.kanata_seat("resolve" if t > t02 else "normal")
+        k.spec = C.KANATA_SUIT
+        h = Rig(C.HARUTO, (3.0, 5.5, 0), math.pi, tag="haruto")
+        h.set(sit=True, armL=0.55, armR=0.55 + (0.5 if t02 - 0.2 < t < t02 + 1.2 else 0))
+        h.expr = "smile" if last in ("02", "16") else "normal"
+        ra = Rig(C.TEAM_A, (1.55, 3.8, 0), -math.pi / 2, tag="ta"); ra.set(sit=True, armL=0.5, armR=0.5)
+        rb = Rig(C.TEAM_B, (4.45, 3.8, 0), math.pi / 2, tag="tb"); rb.set(sit=True, armL=0.5, armR=0.5)
+        rb.expr = "smile" if last == "15" else "normal"
+        if last in ("13", "02"):                         # カナタの背中越しにハルト
+            cam = R.cam_mio(t, s.dur)
+        elif last in ("14", "16"):                       # ハルトの側からカナタ
+            cam = R.cam_kanata(t, s.dur)
+        else:                                            # 4人（上から少し引いて）
+            cam = Camera((lerp(5.6, 5.5, u), lerp(-1.6, -1.3, u), 3.7), (3.0, 3.8, 0.8), 46)
+        img, _ = render(R.MEET + k.boxes() + h.boxes() + ra.boxes() + rb.boxes(), cam, R.BG_MEET)
+        img = img.convert("RGBA")
+        clock(img, "2027年3月10日（水）", "10:30")
+        S9.bigbadge(img, "控え室", (110, 110, 130))
     elif n == "talk":
         u = ease(t / s.dur)
         cam = Camera((lerp(3.2, 3.15, u), lerp(1.4, 2.0, u), 1.9), (3.0, 6.6, 1.85), 44)   # 審査員の頭越しに、前で話すカナタ
-        img = stage_img(t, cam, "resolve", talk=sid == "03")
-        clock(img, "2027年3月10日（水）", "13:40")
+        img = stage_img(t, cam, "resolve", talk=sid in ("03", "17"))
+        clock(img, "2027年3月10日（水）", "13:30")
         S9.bigbadge(img, "発表", (40, 120, 200))
-        if t > s.slides:
-            slide(img, (t - s.slides) / 0.3, 0 if t < s.slides + 1.2 else 1)
+        if s.slides < t < s.lines[1][0] - 0.2:
+            slide(img, (t - s.slides) / 0.3, 0 if t < s.slides + 1.3 else 1)
     elif n == "q":
-        a, b = (x[0] for x in s.lines)
-        if t < s.hit + 0.6:                             # 審査員（後ろ姿）の質問
-            u = ease(t / (s.hit + 0.6))
+        a, b, c, d_ = (x[0] for x in s.lines)
+        if t < b - 0.1 or c - 0.1 <= t < c + L("19") + 0.3:   # 審査員（後ろ姿）の質問
+            u = ease(t / s.dur)
             cam = Camera((lerp(3.55, 3.5, u), lerp(-0.5, -0.3, u), 1.9), (3.0, 6.6, 1.95), 42)
-            img = stage_img(t, cam, "normal")
-            if t > a:
+            img = stage_img(t, cam, "normal" if t < b else "blank")
+            if a < t < b - 0.1:
                 E.paste_center(img, E.fit_text(["地域の人には、", "聞きましたか？"], 96, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=12, hl={0: YEL}),
                                540, 800, E.pop(t - a))
-        else:                                           # 第8話の面接と同じ：止まるカナタの顔
-            u = ease((t - s.hit - 0.6) / max(0.1, s.dur - s.hit - 0.6))
+            if t >= c - 0.1:
+                E.paste_center(img, E.fit_text(["子どもたち以外の、", "地域の方には？"], 90, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=12, hl={0: YEL}),
+                               540, 800, E.pop(t - c + 0.1))
+        elif t < c - 0.1:                                  # あわてて答えるハルト（舞台の後ろ）
+            u = ease((t - b) / max(0.1, c - b))
+            cam = Camera((lerp(4.3, 4.35, u), lerp(3.4, 3.6, u), 2.2), (4.6, 7.4, 2.25), 44)
+            img = stage_img(t, cam, "blank")
+        else:                                              # 第8話の面接と同じ：止まるカナタの顔
+            u = ease((t - c - L("19") - 0.3) / max(0.1, s.dur - c - L("19") - 0.3))
             cam = Camera((lerp(3.15, 3.1, u), lerp(3.6, 3.85, u), 2.1), (3.0, 6.55, 2.2), 44)
             img = stage_img(t, cam, "blank")
             img.alpha_composite(Image.new("RGBA", (W, H), (10, 14, 40, 50)))
         clock(img, "2027年3月10日（水）", "13:44")
     elif n == "result":
-        a, b = (x[0] for x in s.lines)
+        a, b, c = (x[0] for x in s.lines)
         u = ease(t / s.dur)
-        k = kanata((2.2, 1.4, 0), 0.0, "blank" if t < b - 0.1 else "resolve", head_pitch=0.1)
-        h = Rig(C.HARUTO, (3.3, 1.4, 0), 0.0, tag="haruto")
-        h.set(armL=0.05, armR=0.05, head_pitch=0.2 if t > a else 0.0)
-        if t < a - 0.1:                                  # 2人の背中越しに張り出し
-            cam = Camera((lerp(2.75, 2.75, u), lerp(-1.6, -1.3, u), 2.0), (2.75, 5.0, 1.9), 44)
-            img, _ = render(S11.HALL + k.boxes() + h.boxes(), cam, S11.BG_HALL)
+        k = kanata((2.35, 1.4, 0), 0.0, "blank" if t < c - 0.1 else "resolve", head_pitch=0.1)
+        h = Rig(C.HARUTO, (3.2, 1.4, 0), 0.0, tag="haruto")
+        h.set(armL=0.05, armR=0.05, head_pitch=0.2 if t > b else 0.0)
+        ra = Rig(C.TEAM_A, (1.65, 0.9, 0), 0.0, tag="ta"); ra.set(armL=0.05, armR=0.05, head_pitch=0.15 if t > a else 0)
+        rb = Rig(C.TEAM_B, (3.9, 0.9, 0), 0.0, tag="tb"); rb.set(armL=0.05, armR=0.05, head_pitch=0.15)
+        people = k.boxes() + h.boxes() + ra.boxes() + rb.boxes()
+        if t < a - 0.1:                                  # 4人の背中越しに張り出し
+            cam = Camera((lerp(2.75, 2.75, u), lerp(-1.9, -1.6, u), 2.0), (2.75, 5.0, 1.9), 44)
+            img, _ = render(S11.HALL + people, cam, S11.BG_HALL)
             img = img.convert("RGBA")
             board(img, (t - 0.3) / 0.3)
-        else:                                            # 2人の顔（張り出しの側から）
-            cam = Camera((lerp(2.75, 2.75, u), lerp(4.8, 4.6, u), 1.95), (2.75, 1.4, 1.85), 46)
-            img, _ = render(S11.HALL + k.boxes() + h.boxes(), cam, S11.BG_HALL)
+        else:                                            # 4人の顔（張り出しの側から）
+            cam = Camera((lerp(2.75, 2.75, u), lerp(4.85, 4.7, u), 1.9), (2.75, 1.5, 1.6), 64)
+            img, _ = render(S11.HALL + people, cam, S11.BG_HALL)
             img = img.convert("RGBA")
         clock(img, "2027年3月10日（水）", "16:00")
         S9.bigbadge(img, "結果発表", (110, 110, 130))
     elif n == "bench":
         u = ease(t / s.dur)
+        a, b = (x[0] for x in s.lines)
         k = Rig(C.KANATA_SUIT, (2.6, 4.3, 0), math.pi, tag="kanata")
-        k.set(sit=True, armL=0.6, armR=0.6, head_pitch=0.42 if t < s.lines[0][0] + L("08") + 0.4 else 0.3)
+        k.set(sit=True, armL=0.6, armR=0.6, head_pitch=lerp(0.42, 0.32, ease(min(1, max(0, t - b - L("08")) / 1.0))))
         k.expr = "blank"
-        tk = C.tokei_boxes((3.45, 4.0, 1.4), t, "eyes", 0.45, math.pi + 0.3)
+        tk = C.tokei_boxes((3.45, 4.0, 1.4 + (1 - ease(min(1, max(0, t - b + 0.8) / 0.5))) * 1.2), t, "eyes", 0.45, math.pi + 0.3) if t > b - 0.8 else []
         cam = Camera((lerp(2.95, 2.9, u), lerp(0.3, 0.7, u), 1.6), (2.9, 4.3, 1.05), 44)
-        img, _ = render(S9.CAMPUS + k.boxes() + tk, cam, BG_EVE)
+        img, _ = render(S9.CAMPUS + k.boxes() + list(tk), cam, BG_EVE)
         img = img.convert("RGBA")
         img.alpha_composite(Image.new("RGBA", (W, H), (255, 130, 60, 30)))
         img.alpha_composite(Image.new("RGBA", (W, H), (30, 20, 60, int(50 * u))))
