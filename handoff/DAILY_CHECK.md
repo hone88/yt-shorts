@@ -1,6 +1,6 @@
 # DAILY_CHECK｜毎日のチェック手順（11/21 ゆうき指示）
 
-投稿は2〜3日に1回。でも**チェックは毎日**やる。スケジュール実行（毎日 13時台）でも、「おはよう」でも、この順。
+投稿は2〜3日に1回。でも**チェックは毎日**やる。この会話の中で、毎日12:47に send_later で自分を起こしてやる（終わったら翌日分を予約し直す）。「おはよう」でも、この順。
 道具：内蔵ブラウザ（mcp__remote-devices__Claude_Browser__*。YouTube Studio / TikTok Studio / Instagram / note / X / Threads はログイン済み）。
 
 ## 1．数字を見る（スクショで残す）
@@ -34,7 +34,8 @@
   - 見せた内容から変えたところがある
   - 事実が確かめきれていない／訂正・謝罪を含む
   - 新しいアカウント・新しい種類の投稿（DM・お店への連絡など）
-- TikTok・Instagram は、動画ファイルの選択だけゆうきの操作が必要（サイトの制限でブラウザに流し込めない・11/21時点）。
+- TikTok：Claude in Chrome（@moshimono_tsuzuki でログイン済み）の file_upload。10MBまでなので2パスで約9.3MBに圧縮→PCの Videos\もしもの続き に保存→device_stage_files→/mnt/user-data/uploads/Videos/もしもの続き/ のパスで file_upload。
+- Instagram：Chrome は hiroshima_dotjp でログイン中（11/21）。もしもの続きに切り替えられるまでは未解決。内蔵ブラウザは file_upload が無い。
 
 ## 7．最後に
 - DECISION_LOG.md・PROGRESS_STATUS.md を更新して commit / push。
