@@ -35,7 +35,8 @@
   - 事実が確かめきれていない／訂正・謝罪を含む
   - 新しいアカウント・新しい種類の投稿（DM・お店への連絡など）
 - TikTok：Claude in Chrome（@moshimono_tsuzuki でログイン済み）の file_upload。10MBまでなので2パスで約9.3MBに圧縮→PCの Videos\もしもの続き に保存→device_stage_files→/mnt/user-data/uploads/Videos/もしもの続き/ のパスで file_upload。
-- Instagram：Chrome は hiroshima_dotjp でログイン中（11/21）。もしもの続きに切り替えられるまでは未解決。内蔵ブラウザは file_upload が無い。
+- Instagram：Claude in Chrome。moshimono_tsuzuki と hiroshima_dotjp の両方が入っている（11/21追加）。**投稿前に必ず /accounts/edit/ でアカウント名が moshimono_tsuzuki か確かめる。** 動画は TikTok と同じ手順で file_upload。
+- note：Claude in Chrome（ai_1h_yuki でログイン済み・11/21）。画像は file_upload。
 
 ## 7．最後に
 - DECISION_LOG.md・PROGRESS_STATUS.md を更新して commit / push。
