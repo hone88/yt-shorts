@@ -18,7 +18,7 @@ CLIPS = [max(2.6, round(x * 1.27 * 1.15, 1)) for x in _est]
 BV.SV.CLIPS = CLIPS
 HX, HMZ, HBZ = BV.HX, BV.HMZ, BV.HBZ
 NAVY = (15, 23, 42)
-CY0, CY1 = 780, 1225          # カードを置く高さ（見出しと字幕の間）
+CY0, CY1 = 830, 1262          # カードを置く高さ（見出しと字幕の間）
 
 
 def _im(img):
@@ -158,10 +158,10 @@ def frame(k, t):
         mine = me(60, 60, f=-1)
         c1_, t1_, _ = aim(HEAD(60, FY, 60), -1, 34, 0.0, 6, 52)
         cam = lerp(c1_, (80, FY + 60, 0), z); tgt = lerp(t1_, (60, FY, 80), z)
-        img = shoot("night", cam, tgt, 52, dr_ + [mine], t=t, tg=[(p, "同じ設計図", 1.0, 0.45, CYAN) for p, s in hd])
+        img = shoot("night", cam, tgt, 52, dr_ + [mine], t=t, tg=[(p, "同じ設計図", 1.0, 0.45, CYAN) for p, s in hd if math.dist(p, cam) > 45])
         return tags2(img, cam, tgt, 52, [(HEAD(60, FY, 60), "あなたも", fade(t, T * 0.3), GOLD)])
     if k == 8:   # 次は、どんなもしもがいい？
-        return base("笑顔", [(bh, "次のもしもは？", fade(t, 0.2), GOLD)])
+        return base("笑顔", [(bh, "？", fade(t, 0.2), GOLD)])
 
 
 def render_clip(k, out):
