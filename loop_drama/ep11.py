@@ -180,7 +180,10 @@ def memo(img, u, lines, y0=760):
         d.line([200, y + 140 + j * 92, W - 200, y + 140 + j * 92], fill=(170, 200, 230, int(255 * e)), width=3)
     d.text((210, y + 24), "メモ", font=O.F(BOLD, 34), fill=(120, 110, 90, int(255 * e)))
     for j, (ln, col) in enumerate(lines):
-        d.text((220, y + 70 + j * 92), ln, font=O.F(BLACK, 62), fill=col + (int(255 * e),))
+        f = O.F(BLACK, 62)
+        while f.getlength(ln) > W - 220 - 210:          # メモ用紙（右端 W-170）からはみ出さない大きさに
+            f = O.F(BLACK, f.size - 2)
+        d.text((220, y + 70 + j * 92 + (62 - f.size) * 0.6), ln, font=f, fill=col + (int(255 * e),))
     img.alpha_composite(lay)
 
 
