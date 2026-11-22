@@ -30,14 +30,13 @@
 - note：親しみのある話し言葉で、短い段落。**スクショ・図を必ず添付**（見出しごとに1枚目安）。day18_v2 の型、前回動画のURLは冒頭に1行。
 
 ## 6．投稿の確認ルール
-- 投稿前に、動画・タイトル・本文をすべて見せて「出していい？」と聞く。
-- **30分返事がなければ投稿してよい**（ゆうき 11/21）。ただし次は返事を待つ：
-  - 見せた内容から変えたところがある
-  - 事実が確かめきれていない／訂正・謝罪を含む
-  - 新しいアカウント・新しい種類の投稿（DM・お店への連絡など）
+- **11/22〜 投稿は確認なしで出してよい**（ゆうき「全部投稿していいよ許可求めんで」）。出したら何を出したかだけ報告する。
+- お店へのDMなど、もしもの続き・ai_1h_yuki 以外の相手に送るものだけは、送る前に一言伝える。
 - TikTok：Claude in Chrome（@moshimono_tsuzuki でログイン済み）の file_upload。10MBまでなので2パスで約9.3MBに圧縮→PCの Videos\もしもの続き に保存→device_stage_files→/mnt/user-data/uploads/Videos/もしもの続き/ のパスで file_upload。
-- Instagram：Claude in Chrome。moshimono_tsuzuki と hiroshima_dotjp の両方が入っている（11/21追加）。**投稿前に必ず /accounts/edit/ でアカウント名が moshimono_tsuzuki か確かめる。** 動画は TikTok と同じ手順で file_upload。
-- note：Claude in Chrome（ai_1h_yuki でログイン済み・11/21）。画像は file_upload。
+- Instagram：ブラウザのログインが1日で切れ、毎回パスワード変更が必要になる（11/22）→ **ブラウザからは投稿しない**。Meta Business Suite（Facebookページ連携）での予約投稿に切り替える（ゆうき 11/22「Bでいこ」）。準備ができるまでは、動画とキャプションをチャットに送り、ゆうきがスマホで出す。
+- note：Claude in Chrome（ai_1h_yuki）。本文は text/html の paste、YouTube URL は行末で Enter すると埋め込み。画像は、ページに一時の file input を作って file_upload → 置き場所の段落を選択して0.5秒待つ → File を paste → 置き場所の文字を Delete と BackSpace で消す。見出し画像は input.click を差しかえて「画像をアップロード」→「保存」。タグは公開設定のハッシュタグ欄。
+- X：内蔵ブラウザ（ai_1h_yuki）。Threads：内蔵ブラウザで本文入力後 ctrl+Enter で投稿。
+- PCがスリープするとすべて止まる（11/22に2回）。
 
 ## 7．最後に
 - DECISION_LOG.md・PROGRESS_STATUS.md を更新して commit / push。
