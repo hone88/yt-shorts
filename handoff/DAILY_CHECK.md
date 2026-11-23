@@ -33,7 +33,7 @@
 - **11/22〜 投稿は確認なしで出してよい**（ゆうき「全部投稿していいよ許可求めんで」）。出したら何を出したかだけ報告する。
 - お店へのDMなど、もしもの続き・ai_1h_yuki 以外の相手に送るものだけは、送る前に一言伝える。
 - TikTok：Claude in Chrome（@moshimono_tsuzuki でログイン済み）の file_upload。10MBまでなので2パスで約9.3MBに圧縮→PCの Videos\もしもの続き に保存→device_stage_files→/mnt/user-data/uploads/Videos/もしもの続き/ のパスで file_upload。
-- Instagram：ブラウザのログインが1日で切れ、毎回パスワード変更が必要になる（11/22）→ **ブラウザからは投稿しない**。Meta Business Suite（Facebookページ連携）での予約投稿に切り替える（ゆうき 11/22「Bでいこ」）。準備ができるまでは、動画とキャプションをチャットに送り、ゆうきがスマホで出す。
+- Instagram：**Meta Business Suite**（Claude in Chrome・business.facebook.com、asset_id=1455644864300237）で予約投稿する（11/24 連携済み）。インスタ本体へのブラウザログインはしない。投稿一覧は /latest/posts/published_posts/?platform=Instagram で確認。
 - note：Claude in Chrome（ai_1h_yuki）。本文は text/html の paste、YouTube URL は行末で Enter すると埋め込み。画像は、ページに一時の file input を作って file_upload → 置き場所の段落を選択して0.5秒待つ → File を paste → 置き場所の文字を Delete と BackSpace で消す。見出し画像は input.click を差しかえて「画像をアップロード」→「保存」。タグは公開設定のハッシュタグ欄。
 - X：内蔵ブラウザ（ai_1h_yuki）。Threads：内蔵ブラウザで本文入力後 ctrl+Enter で投稿。
 - PCがスリープするとすべて止まる（11/22に2回）。
