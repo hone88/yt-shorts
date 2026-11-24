@@ -54,7 +54,7 @@ def L(i):
 TEXT = {
     "01": ("H", "緊張してる？"),
     "02": ("K", "…してる。|でも、[地方大会]ほどじゃない。"),
-    "03": ("H", "NPOの人たちに聞いた話、|[入れてくれた]？"),
+    "03": ("H", "NPOの人たちに聞いた話、|[入れた]？"),
     "04": ("K", "うん。『[送り迎え]できる大人が、|足りない』って。"),
     "05": ("K", "…公園で聞いた|『[見守る大人]が減った』と、|同じだった。"),
     "06": ("H", "…[つながった]な。"),
@@ -369,7 +369,7 @@ def frame(s, t):
         img, _ = render(R.MEET + k.boxes() + h.boxes() + mio.boxes() + tk, cam, R.BG_MEET)
         img = img.convert("RGBA")
         clock(img, DATE, "13:00")
-        S9.bigbadge(img, "控え室", (110, 110, 130))
+        S9.bigbadge(img, "発表前", (110, 110, 130))
     elif n == "talk":                                   # 客席から、前で話すカナタ（ゆっくり寄る）
         cam = Camera((lerp(3.25, 3.15, u), lerp(1.0, 2.6, u), 1.8), (3.0, 6.6, 2.5), 44)
         img = stage_img(t, cam, "normal" if t < at(s, "15") else "resolve", talk=sid is not None, shake=1.0)
