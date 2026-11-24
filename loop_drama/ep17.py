@@ -371,7 +371,7 @@ def frame(s, t):
         clock(img, DATE, "13:00")
         S9.bigbadge(img, "控え室", (110, 110, 130))
     elif n == "talk":                                   # 客席から、前で話すカナタ（ゆっくり寄る）
-        cam = Camera((lerp(3.25, 3.15, u), lerp(1.0, 2.6, u), 1.95), (3.0, 6.6, 1.9), 44)
+        cam = Camera((lerp(3.25, 3.15, u), lerp(1.0, 2.6, u), 1.8), (3.0, 6.6, 2.5), 44)
         img = stage_img(t, cam, "normal" if t < at(s, "15") else "resolve", talk=sid is not None, shake=1.0)
         clock(img, DATE, "13:20")
         S9.bigbadge(img, "最終報告会", (40, 120, 200))
@@ -379,7 +379,7 @@ def frame(s, t):
         t17 = at(s, "17")
         clap = ease(min(1, max(0, t - s.clap) / 0.3)) * (1 - ease(min(1, max(0, t - s.clap - 2.6) / 0.6)))
         tk = C.tokei_boxes((3.55, 6.0, 2.0 + (1 - ease(min(1, max(0, t - t17 + 0.8) / 0.5))) * 1.2), t, "eyes", 0.42, math.pi - 0.3) if t > t17 - 0.8 else []
-        cam = Camera((lerp(3.15, 3.1, u), lerp(2.6, 3.2, u), 1.95), (3.1, 6.6, 1.95), 44)
+        cam = Camera((lerp(3.15, 3.1, u), lerp(2.6, 3.2, u), 1.8), (3.1, 6.6, 2.45), 44)
         img = stage_img(t, cam, "resolve" if t < s.clap else "smile", talk=sid == "16", shake=1.0 if t < s.clap + 1.0 else 0.4, clap=clap, tk=tk)
         clock(img, DATE, "13:24")
         S9.bigbadge(img, "最終報告会", (40, 120, 200))

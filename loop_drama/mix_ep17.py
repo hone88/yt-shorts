@@ -25,18 +25,32 @@ def sparse(sec):
     return A.bgm_sparse(max(sec, 3.6))[:int(sec * A.SR)]
 
 
-def claps(sec, vol=0.22, seed=7):
-    """拍手（短いノイズの粒をたくさん）"""
+def claps(sec, vol=0.5, seed=7, people=24):
+    """会場の拍手：一人ずつの「パン」（中高域の短い破裂音）を何十人分も重ね、響きと、ざわっとした厚みを足す"""
     rng = np.random.default_rng(seed)
-    y = np.zeros(int(sec * A.SR))
-    n = int(sec * 38)
-    for _ in range(n):
-        at = rng.uniform(0, sec - 0.05)
-        g = A.noise(0.03, int(rng.integers(1 << 20))) * np.exp(-np.linspace(0, 6, int(0.03 * A.SR)))
-        i = int(at * A.SR)
-        y[i:i + len(g)] += g[:len(y) - i] * rng.uniform(0.5, 1.0)
-    env = np.minimum(1, np.minimum(np.linspace(0, sec / 0.4, len(y)), np.linspace(sec / 0.8, 0, len(y))))
-    return y * env * vol
+    n = int(sec * A.SR)
+    y = np.zeros(n)
+    for p in range(people):
+        rate = rng.uniform(3.6, 5.2)                    # 1人あたり1秒に4〜5回
+        tone = rng.uniform(0.6, 1.4)                    # 手の大きさで音色が少し違う
+        amp = rng.uniform(0.4, 1.0) * (0.5 if p % 3 == 0 else 1.0)   # 遠い席は小さく
+        t = rng.uniform(0, 0.25)
+        while t < sec - 0.05:
+            L_ = int((0.008 + 0.01 * rng.random()) * tone * A.SR)
+            g = rng.standard_normal(L_) * np.exp(-np.linspace(0, 5.5, L_))
+            k = int(t * A.SR)
+            y[k:k + L_] += g[:n - k] * amp * rng.uniform(0.7, 1.0)
+            t += 1 / rate * rng.uniform(0.85, 1.15)
+    # 帯域を 700〜5000Hz に（「コツコツ」した低い音を消して、拍手らしい「パチパチ」に）
+    F_ = np.fft.rfft(y)
+    f = np.fft.rfftfreq(n, 1 / A.SR)
+    F_ *= np.clip((f - 500) / 400, 0, 1) * np.clip((6500 - f) / 2000, 0, 1) * (1 + 0.6 * np.exp(-((f - 2200) / 900) ** 2))
+    y = np.fft.irfft(F_, n)
+    y = A.reverb(y, 0.35)[:n]
+    env = np.minimum(1, np.minimum(np.linspace(0, sec / 0.35, n), np.linspace(sec / 1.0, 0, n)))
+    y = y * env
+    y = y / (np.sqrt((y ** 2).mean()) + 1e-9) * vol * 0.16       # 大きさは平均（RMS）でそろえる
+    return np.clip(y, -0.6, 0.6)
 
 
 SH = V.SH
