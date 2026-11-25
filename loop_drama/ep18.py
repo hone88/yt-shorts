@@ -99,9 +99,19 @@ def at(s, i):
     return next(t0 for t0, j in s.lines if j == i)
 
 
+# 前の話の画（ep1b の interview、ep8 の iv）から使う区間（各話の場面内の秒）
+L1 = (2.75, 6.95)          # 第1話：「…教えてください。」→「…え、っと……」→ 止まる
+L2A = (7.95, 10.95)        # 第8話：「それで、何を考えましたか？」
+L2B = (21.45, 23.45)       # 第8話：沈黙 → 止まる
+RW_DUR = [0.62 * 0.87 ** k for k in range(17)]   # 巻き戻し：だんだん速く（第17話→第1話）
+
+
 def plan():
     S = []
-    S.append(O.Shot("cold", 5.0, []))
+    S.append(O.Shot("rewind", 5.0, []))                                  # 第17話→第1話を巻き戻す「3回、やり直した。」
+    S.append(O.Shot("loop1", L1[1] - L1[0], []))                          # 1回目（第1話）：同じ質問で止まる
+    S.append(O.Shot("loop2", (L2A[1] - L2A[0]) + (L2B[1] - L2B[0]), []))  # 2回目（第8話）：深掘りで止まる
+    S.append(O.Shot("cold", 4.0, []))                                     # 3回目 → タイトル
     ln, t = seq(["q1", "02"], 0.6, extra={"02": 2.6})                     # 同じ質問 → 秒針は止まらない →「…はい。」
     s = O.Shot("q", t + 0.6, ln); s.wait = ln[0][0] + L("q1") + 0.3; S.append(s)
     ln, t = seq(["03", "04", "05", "06", "07"], 0.5, extra={"04": 0.5, "05": 0.6, "06": 0.6, "07": 0.6})
@@ -115,6 +125,7 @@ def plan():
     ln, t = seq(["18"], 1.6)
     s = O.Shot("look", t + 1.8, ln); s.hit = ln[0][0] + L("18") + 0.05; S.append(s)
     S.append(O.Shot("end", 8.0))
+    S.append(O.Shot("invite", 7.0))                                       # 最後の案内（カナタとハルト）
     t = 0
     for s in S:
         s.dur += PAD
@@ -146,7 +157,9 @@ def iv_img(t, kexpr, cam_mode, u, iv_expr="normal", iv_talk=False, head=0.0, bow
     iv.expr = iv_expr
     if iv_talk:
         iv.set(armL=0.55 + 0.25 * math.sin(t * 7))
-    if cam_mode == "iv":
+    if cam_mode == "ivfast":                       # 「何を考えましたか？」：少し速く寄る
+        cam = Camera((lerp(3.75, 3.35, u), lerp(0.55, 2.5, u), lerp(1.62, 1.55, u)), (3.0, 5.5, lerp(1.38, 1.5, u)), lerp(48, 40, u))
+    elif cam_mode == "iv":
         cam = Camera((lerp(3.75, 3.6, u), lerp(0.55, 1.0, u), 1.62), (3.0, 5.5, 1.38), 48)
     elif cam_mode == "k":
         cam = Camera((lerp(3.42, 3.36, u), lerp(4.25, 4.0, u), 1.52), (3.0, 2.1, 1.42), 44)
@@ -167,13 +180,32 @@ def gclock(img, s, t, loop=True, alpha=1.0):
         O.counter(img, 1)
 
 
+_RW = {}
+
+
+def rw_still(n):
+    if n not in _RW:
+        _RW[n] = Image.open(f"{OUT}/rw/{n:02d}.png").convert("RGB").resize((W, H))
+    return _RW[n]
+
+
+def loop_tag(img, text, t):
+    """左上の「1回目／2回目／3回目」"""
+    a = min(1, t / 0.25)
+    d = ImageDraw.Draw(img)
+    f = O.F(BLACK, 54)
+    w = f.getlength(text) + 60
+    d.rounded_rectangle([540 - w / 2, 1690, 540 + w / 2, 1780], radius=20, fill=(200, 50, 50, int(235 * a)) if text != "3回目" else (40, 140, 90, int(235 * a)))
+    d.text((540 - w / 2 + 30, 1702), text, font=f, fill=(255, 255, 255, int(255 * a)))
+
+
 def hook(img, t):
-    if t < 2.4:
+    if t < 1.6:
         im = E.fit_text(["最後の、面接。"], 130, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=12, hl={0: YEL})
         E.paste_center(img, im, 540, 1450, E.pop(t))
     elif t < 4.6:
         im = E.fit_text(["ガクチカ・ループ 第18話", "最後の面接"], 96, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=10, hl={1: YEL})
-        E.paste_center(img, im, 540, 1450, E.pop(t - 2.4))
+        E.paste_center(img, im, 540, 1450, E.pop(t - 1.6))
 
 
 def flash_img(src, label):
@@ -190,8 +222,8 @@ def flash_src(key, t):
         s = next(x for x in V8.SH if x.name == "iv")
         f_ = s.lines[5][0]
         return V8.frame(s, f_ + 0.4 + t * 0.5)
-    s = next(x for x in O.SH if x.name == "phone")
-    return O.frame(s, 0.3 + min(t, O.L("10") - 0.05))
+    s = next(x for x in P.SH if x.name == "phone")
+    return P.frame(s, 0.3 + min(t, O.L("10") - 0.05))
 
 
 def kanata_out(expr, yaw=math.pi, **pose):
@@ -202,16 +234,62 @@ def kanata_out(expr, yaw=math.pi, **pose):
     return r
 
 
+def name_pills(img, t):
+    a = max(0.0, min(1.0, (t - 0.7) / 0.3))
+    if a <= 0:
+        return
+    d = ImageDraw.Draw(img)
+    f = O.F(BLACK, 50)
+    for txt, x, col in (("議員インターン", 300, (40, 120, 200)), ("NPOインターン", 780, (40, 150, 90))):
+        w = f.getlength(txt) + 56
+        d.rounded_rectangle([x - w / 2, 1270, x + w / 2, 1350], radius=40, fill=col + (int(245 * a),))
+        d.text((x - w / 2 + 28, 1280), txt, font=f, fill=(255, 255, 255, int(255 * a)))
+
+
 # ---------- 1コマ ----------
 def frame(s, t):
     n = s.name
     sid = speaking(s, t)
     u = ease(t / s.dur)
-    if n == "cold":                                       # 第1話と同じ構図：面接室のカナタ
+    if n == "rewind":                                     # 巻き戻し：第17話 → 第1話
+        acc, k = 0.0, 0
+        while k < 16 and t >= acc + RW_DUR[k]:
+            acc += RW_DUR[k]; k += 1
+        ep = 17 - k
+        v = (t - acc) / RW_DUR[k]
+        im = rw_still(ep)
+        z = 1.06 - 0.06 * v                                 # 逆再生のように少しずつ引く
+        w2, h2 = int(W * z), int(H * z)
+        im = im.resize((w2, h2)).crop(((w2 - W) // 2, (h2 - H) // 2, (w2 - W) // 2 + W, (h2 - H) // 2 + H))
+        img = O.glitch(im.convert("RGBA"), 0.35, int(t * 30))
+        img.alpha_composite(Image.new("RGBA", (W, H), (0, 0, 0, 70)))
+        d = ImageDraw.Draw(img)
+        y = int((t * 900) % H)                              # テープのノイズの線
+        d.rectangle([0, y, W, y + 14], fill=(255, 255, 255, 60))
+        F.pill(img, f"◀◀ 第{ep}話", 1700, 52, (30, 30, 40))
+        im2 = E.fit_text(["3回、", "やり直した。"], 130, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=14, hl={1: YEL})
+        E.paste_center(img, im2, 540, 1020, E.pop(t))
+    elif n in ("loop1", "loop2"):
+        if n == "loop1":
+            src = next(x for x in P.SH if x.name == "interview")   # 投稿した第1話（寄りのカメラ版）
+            img = P.frame(src, L1[0] + t).convert("RGBA")
+            lab = "1回目"
+        else:
+            import ep8 as V8
+            src = next(x for x in V8.SH if x.name == "iv")
+            a = L2A[1] - L2A[0]
+            tt = L2A[0] + t if t < a else L2B[0] + (t - a)
+            img = V8.frame(src, tt).convert("RGBA")
+            lab = "2回目"
+            if a - 0.05 < t < a + 0.12:                     # つなぎ目：ノイズで飛ばす
+                img = O.glitch(img, 0.5, int(t * 30))
+        loop_tag(img, lab, t)
+    elif n == "cold":                                     # 3回目：第1話と同じ構図の面接室
         img = iv_img(t, "normal", "two", u)
         O.clock_big(img, DATE, "10:00:00", grade="大学4年")
         O.counter(img, 1)
         hook(img, t)
+        loop_tag(img, "3回目", t)
     elif n == "q":
         if t < s.wait:                                    # 面接官：同じ質問
             img = iv_img(t, "normal", "iv", ease(t / s.wait), iv_talk=sid == "q1")
@@ -228,7 +306,7 @@ def frame(s, t):
     elif n == "deep":
         t9 = at(s, "09")
         if t < s.fb - 0.1:                                # 第8話と同じ深掘り
-            img = iv_img(t, "normal", "iv", ease(t / s.fb), iv_talk=sid == "q8")
+            img = iv_img(t, "normal", "ivfast", ease(min(1, t / (at(s, "q8") + L("q8")))), iv_talk=sid == "q8")
         else:
             v = ease((t - s.fb) / (s.dur - s.fb))
             img = iv_img(t, "smile" if s.fb + 1.0 < t < t9 + 0.2 else "resolve", "k", v)
@@ -284,6 +362,22 @@ def frame(s, t):
                                           (["ドットジェイピー広島第一支部", "春インターン（2月1日〜3月31日）", "申込は12月31日まで"], 1070, 50, YEL, BLACK, 1.6),
                                           (["この動画は「勇気を出して一歩を踏み出そう」という", "メッセージを伝えるための創作ドラマです", "インターンの内容は受け入れ先によって異なります"], 1290, 32, (220, 226, 245), BOLD, 1.8)):
             E.paste_center(img, E.fit_text(txt, sz, 1000, fill=col, sw=6, path=path), 540, y, E.pop(t - d0))
+    elif n == "invite":                                   # 最後の案内：カナタとハルト
+        k = kanata_out("smile")
+        k.pos = (1.85, 3.4, 0)
+        h = Rig(C.HARUTO, (3.25, 3.4, 0), math.pi, tag="haruto")
+        h.set(armL=0.05, armR=0.05)
+        h.expr = "smile"
+        u2 = ease(min(1, t / 6.5))
+        bg, _ = render(R.OUTSIDE + k.boxes() + h.boxes(), Camera((2.55, lerp(-2.6, -2.3, u2), 1.9), (2.55, 3.4, 1.7), 44), R.BG_SKY)
+        img = bg.convert("RGBA")
+        img.alpha_composite(Image.new("RGBA", (W, H), (10, 14, 40, 70)))
+        E.paste_center(img, E.fit_text(["最後まで見てくれて、", "ありがとうございました。"], 60, 1000, fill=(255, 255, 255), sw=8, path=BLACK), 540, 560, E.pop(t))
+        for txt, x, col in (("カナタが参加した", 300, (40, 120, 200)), ("ハルトが参加した", 780, (40, 150, 90))):
+            E.paste_center(img, E.fit_text([txt], 36, 440, fill=(255, 255, 255), sw=6, path=BOLD), x, 1235, E.pop(t - 0.6))
+        name_pills(img, t)
+        E.paste_center(img, E.fit_text(["どちらも", "12月31日まで募集中"], 76, 1000, fill=YEL, sw=8, path=BLACK, hl={0: (255, 255, 255)}), 540, 1520, E.pop(t - 1.4))
+        E.paste_center(img, E.fit_text(["気になった人は、DMで気軽に聞いてね"], 50, 1000, fill=(255, 255, 255), sw=6, path=BLACK), 540, 1700, E.pop(t - 2.0))
     if sid and sid not in NOSUB_IDS:
         subtitle(img, sid)
     return img
