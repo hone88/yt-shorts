@@ -69,6 +69,9 @@ def scene(n):
     if n == 17:   # 最終報告会：客席から、前で話すカナタ
         import ep17 as S17
         img = S17.stage_img(1.0, Camera((3.2, 3.4, 1.75), (3.0, 6.6, 2.55), 44), "resolve")
+        from PIL import ImageEnhance
+        img = ImageEnhance.Brightness(img.convert("RGB")).enhance(1.25)      # 会場が暗いので明るく（11/26）
+        img = ImageEnhance.Color(img).enhance(1.1).convert("RGBA")
         E.paste_center(img, E.fit_text(["最初は、", "答えるために来た。"], 92, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=12, hl={1: (255, 216, 77)}), 540, 780, 1.0)
         return img
     if n == 16:   # 公園で地域の方に聞く（メモ）
