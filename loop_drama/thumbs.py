@@ -61,7 +61,9 @@ def scene(n):
         k.expr = "resolve"
         cam = Camera((3.5, 4.9, 1.6), (3.0, 2.1, 1.66), 46)          # 顔を少し下げて、文字は顔の上のすき間に
         img, _ = render(S18.P.OFFICE + iv.boxes() + k.boxes(), cam, S18.P.BG_OFFICE)
-        img = img.convert("RGBA")
+        from PIL import ImageEnhance
+        img = ImageEnhance.Brightness(img.convert("RGB")).enhance(1.28)      # 画面が暗いので明るく（11/26）
+        img = ImageEnhance.Color(img).enhance(1.12).convert("RGBA")
         E.paste_center(img, E.fit_text(["時計は、", "止まらない。"], 84, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=12, hl={1: (255, 216, 77)}), 540, 790, 1.0)
         return img
     if n == 17:   # 最終報告会：客席から、前で話すカナタ
