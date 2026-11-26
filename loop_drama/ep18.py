@@ -124,7 +124,9 @@ def plan():
     s = O.Shot("outside", t + 2.6, ln); s.vanish = t + 0.2; S.append(s)      # トケイが消える
     ln, t = seq(["18"], 1.6)
     s = O.Shot("look", t + 1.8, ln); s.hit = ln[0][0] + L("18") + 0.05; S.append(s)
-    S.append(O.Shot("end", 8.0))
+    S.append(O.Shot("end", 4.6))                                          # まだ作れる。
+    S.append(O.Shot("curtain", 8.6))                                      # カーテンコール：全員集合 →「ありがとう」ドーン
+    S.append(O.Shot("fin", 4.8))                                          # 幕が閉じる →「完」ドーン
     S.append(O.Shot("invite", 7.0))                                       # 最後の案内（カナタとハルト）
     t = 0
     for s in S:
@@ -246,6 +248,142 @@ def name_pills(img, t):
         d.text((x - w / 2 + 28, 1280), txt, font=f, fill=(255, 255, 255, int(255 * a)))
 
 
+# ---------- 最終回の幕引き ----------
+CAST = [(C.MORISHITA, 1.0, "森下議員"), (C.MIO, 2.0, "ミオ"), (C.KANATA_SUIT, 3.0, "カナタ"), (C.HARUTO, 4.0, "ハルト"), (C.INTERVIEWER, 5.0, "面接官")]
+T_POP = [0.5 + 0.28 * i for i in (2, 1, 3, 0, 4)]      # 真ん中のカナタから順に登場
+T_THX = 3.7                                            #「ありがとう」ドーン
+CONF = [(c, ) for c in ((255, 216, 77), (240, 90, 90), (90, 170, 240), (110, 210, 140), (255, 255, 255), (230, 130, 220))]
+
+
+def shake(img, t, t0, amp=26, dur=0.5):
+    """ドーンの揺れ"""
+    if not (t0 <= t < t0 + dur):
+        return img
+    k = 1 - (t - t0) / dur
+    dx, dy = int(amp * k * math.sin(t * 90)), int(amp * k * math.cos(t * 70))
+    out = Image.new("RGBA", (W, H), (0, 0, 0, 255))
+    out.alpha_composite(img, (max(0, dx), max(0, dy)), (max(0, -dx), max(0, -dy)))
+    return out
+
+
+def confetti(img, t, t0, n=170, seed=3):
+    """紙吹雪：ドーンの瞬間に上から一斉に"""
+    if t < t0:
+        return
+    rnd = np.random.default_rng(seed)
+    d = ImageDraw.Draw(img)
+    tt = t - t0
+    for i in range(n):
+        x0, delay = rnd.uniform(-60, W + 60), rnd.uniform(0, 0.9)
+        vy, sway, ph, sz = rnd.uniform(380, 760), rnd.uniform(20, 70), rnd.uniform(0, 6.28), rnd.uniform(14, 26)
+        col = CONF[i % len(CONF)][0]
+        a = tt - delay
+        if a < 0:
+            continue
+        y = -40 + vy * a - (220 if i % 2 else 0) * max(0, 0.4 - a)
+        if y > H + 40:
+            continue
+        x = x0 + sway * math.sin(a * 4 + ph)
+        r = a * 6 + ph
+        c, s_ = math.cos(r), math.sin(r)
+        w2, h2 = sz, sz * 0.45 * (0.3 + abs(math.sin(a * 5 + ph)))
+        pts = [(x + c * dx - s_ * dy, y + s_ * dx + c * dy) for dx, dy in ((-w2, -h2), (w2, -h2), (w2, h2), (-w2, h2))]
+        d.polygon(pts, fill=col + (235,))
+
+
+def bounce(u):
+    """着地で少しはねる"""
+    if u >= 1:
+        return 1.0
+    return 1 - abs(math.cos(u * math.pi * 1.5)) * (1 - u) ** 1.6 if u > 0 else 0.0
+
+
+def curtain_img(t, names=True):
+    import ep17 as S17
+    u = ease(min(1, t / 8.6))
+    cam = Camera((3.0, lerp(-4.1, -3.2, u), lerp(3.3, 3.1, u)), (3.0, 6.6, 2.75), 46)
+    bow = ease(min(1, max(0, (t - T_THX - 0.15) / 0.4))) * (1 - ease(min(1, max(0, (t - T_THX - 1.5) / 0.5))))
+    boxes = list(S17.STAGE[:-2])                             # 演台はどける
+    heads = []
+    for (spec, x, name), tp in zip(CAST, T_POP):
+        if t < tp:
+            continue
+        z = 0.6 + (1 - bounce(min(1, (t - tp) / 0.55))) * 2.2
+        r = Rig(spec, (x, 6.6, z), math.pi, tag=name)
+        r.set(armL=0.05, armR=0.05, head_pitch=0.45 * bow, lean=0.3 * bow)
+        if t > T_THX + 2.2:                                  # 最後は手を振る
+            r.set(armR=2.6 + 0.35 * math.sin((t - T_THX) * 6 + x))
+        r.expr = "smile"
+        boxes += r.boxes()
+        heads.append((name, (x, 6.6, 0.6 + 2.25 * spec.get("scale", 1.0)), tp))
+    tp_tk = T_POP[0] + 1.6
+    if t > tp_tk:                                            # トケイは最後に、カナタの上へ
+        z = 2.55 + (1 - bounce(min(1, (t - tp_tk) / 0.5))) * 1.5 + 0.06 * math.sin(t * 3)
+        boxes += list(C.tokei_boxes((3.5, 6.3, z), t, "eyes", 0.42, math.pi))
+        heads.append(("トケイ", (3.5, 6.3, z + 0.6), tp_tk))
+    clap = ease(min(1, max(0, (t - T_THX) / 0.3)))
+    img, _ = render(boxes + S17.audience(t, clap), cam, S17.BG_HALL)
+    img = img.convert("RGBA")
+    # スポットライト：暗い所から明るく
+    img.alpha_composite(Image.new("RGBA", (W, H), (0, 0, 0, int(210 * (1 - ease(min(1, t / 0.7)))))))
+    if T_THX <= t < T_THX + 0.35:
+        img.alpha_composite(Image.new("RGBA", (W, H), (255, 255, 255, int(200 * (1 - (t - T_THX) / 0.35)))))
+    if names:
+        d = ImageDraw.Draw(img)
+        f = O.F(BLACK, 34)
+        for name, p3, tp in heads:
+            a = min(1, max(0, (t - tp - 0.35) / 0.25))
+            if a <= 0 or t > T_THX - 0.2:
+                continue
+            x, y = cam.proj(cam.to_cam(p3))
+            x, y = x / G.SS, y / G.SS - 40
+            w = f.getlength(name) + 30
+            d.rounded_rectangle([x - w / 2, y - 26, x + w / 2, y + 26], radius=26, fill=(20, 20, 30, int(220 * a)))
+            d.text((x - w / 2 + 15, y - 22), name, font=f, fill=(255, 255, 255, int(255 * a)))
+    if t > 2.5:                                              # 最後まで見てくれて、
+        E.paste_center(img, E.fit_text(["最後まで見てくれて、"], 76, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=10), 540, 470, E.pop(t - 2.5))
+    if t > T_THX:                                            # ありがとう（ドーン）
+        k = min(1, (t - T_THX) / 0.22)
+        sc = 2.6 - 1.6 * ease(k) + 0.05 * math.sin(min(1, (t - T_THX) / 0.6) * math.pi * 3) * (1 - k)
+        im = E.fit_text(["ありがとう"], 210, 1040, fill=YEL, stroke=(8, 10, 24), sw=18)
+        im = im.resize((max(1, int(im.width * sc)), max(1, int(im.height * sc))))
+        E.paste_center(img, im, 540, 640, min(1, k * 2.5))
+    if t > T_THX + 0.5:
+        E.paste_center(img, E.fit_text(["ございました！"], 96, 1000, fill=(255, 255, 255), stroke=(8, 10, 24), sw=12), 540, 830, E.pop(t - T_THX - 0.5))
+    confetti(img, t, T_THX)
+    return shake(img, t, T_THX)
+
+
+CURT = (150, 24, 36)
+
+
+def fin_img(t):
+    img = curtain_img(8.6 + t, names=False)
+    # 幕が両側から閉じる
+    c = ease(min(1, t / 1.1))
+    d = ImageDraw.Draw(img)
+    wcl = int(W / 2 * c) + 2
+    for side in (0, 1):
+        x0, x1 = (0, wcl) if side == 0 else (W - wcl, W)
+        d.rectangle([x0, 0, x1, H], fill=CURT + (255,))
+        for j in range(9):                                   # ひだ
+            xx = (x0 + (x1 - x0) * (j + 0.5) / 9)
+            d.rectangle([xx - 6, 0, xx + 6, H], fill=(110, 14, 24, 255))
+        d.rectangle([x0, 0, x1, 70], fill=(200, 160, 60, 255))
+    if t > 1.2:
+        E.paste_center(img, E.fit_text(["ガクチカ・ループ"], 104, 1000, fill=(255, 255, 255), stroke=(40, 6, 10), sw=12), 540, 660, E.pop(t - 1.2))
+    if t > 1.9:                                              # 完（ドーン：はんこのように落ちる）
+        k = min(1, (t - 1.9) / 0.2)
+        sc = 3.2 - 2.2 * ease(k)
+        im = E.fit_text(["完"], 330, 1000, fill=YEL, stroke=(40, 6, 10), sw=22)
+        im = im.resize((max(1, int(im.width * sc)), max(1, int(im.height * sc))))
+        E.paste_center(img, im, 540, 1000, min(1, k * 3))
+    if t > 2.6:
+        E.paste_center(img, E.fit_text(["全18話　ありがとうございました"], 50, 1000, fill=(255, 236, 200), stroke=(40, 6, 10), sw=6), 540, 1330, E.pop(t - 2.6))
+    confetti(img, t, 1.9, n=90, seed=11)
+    return shake(img, t, 1.9, amp=30)
+
+
 # ---------- 1コマ ----------
 def frame(s, t):
     n = s.name
@@ -358,10 +496,12 @@ def frame(s, t):
         img.alpha_composite(Image.new("RGBA", (W, H), (10, 14, 40, 150)))
         O.caption(img, "あなたの『力を入れたこと』は、", 560, t, size=72)
         O.caption(img, "まだ作れる。", 690, t - 0.3, size=130, col=YEL)
-        for txt, y, sz, col, path, d0 in ((["ガクチカ・ループ　完"], 880, 64, (255, 255, 255), BLACK, 1.2),
-                                          (["ドットジェイピー広島第一支部", "春インターン（2月1日〜3月31日）", "申込は12月31日まで"], 1070, 50, YEL, BLACK, 1.6),
-                                          (["この動画は「勇気を出して一歩を踏み出そう」という", "メッセージを伝えるための創作ドラマです", "インターンの内容は受け入れ先によって異なります"], 1290, 32, (220, 226, 245), BOLD, 1.8)):
+        for txt, y, sz, col, path, d0 in ((["この動画は「勇気を出して一歩を踏み出そう」という", "メッセージを伝えるための創作ドラマです", "インターンの内容は受け入れ先によって異なります"], 1000, 32, (220, 226, 245), BOLD, 1.2),):
             E.paste_center(img, E.fit_text(txt, sz, 1000, fill=col, sw=6, path=path), 540, y, E.pop(t - d0))
+    elif n == "curtain":
+        img = curtain_img(t)
+    elif n == "fin":
+        img = fin_img(t)
     elif n == "invite":                                   # 最後の案内：カナタとハルト
         k = kanata_out("smile")
         k.pos = (1.85, 3.4, 0)
@@ -372,7 +512,7 @@ def frame(s, t):
         bg, _ = render(R.OUTSIDE + k.boxes() + h.boxes(), Camera((2.55, lerp(-2.6, -2.3, u2), 1.9), (2.55, 3.4, 1.7), 44), R.BG_SKY)
         img = bg.convert("RGBA")
         img.alpha_composite(Image.new("RGBA", (W, H), (10, 14, 40, 70)))
-        E.paste_center(img, E.fit_text(["最後まで見てくれて、", "ありがとうございました。"], 60, 1000, fill=(255, 255, 255), sw=8, path=BLACK), 540, 560, E.pop(t))
+        E.paste_center(img, E.fit_text(["春インターン、募集中！"], 76, 1000, fill=(255, 255, 255), sw=8, path=BLACK), 540, 560, E.pop(t))
         for txt, x, col in (("カナタが参加した", 300, (40, 120, 200)), ("ハルトが参加した", 780, (40, 150, 90))):
             E.paste_center(img, E.fit_text([txt], 36, 440, fill=(255, 255, 255), sw=6, path=BOLD), x, 1235, E.pop(t - 0.6))
         name_pills(img, t)

@@ -25,6 +25,34 @@ def sparse(sec):
     return A.bgm_sparse(max(sec, 3.6))[:int(sec * A.SR)]
 
 
+def claps(sec, vol=0.5, seed=7, people=24):
+    """会場の拍手：一人ずつの「パン」（中高域の短い破裂音）を何十人分も重ね、響きと、ざわっとした厚みを足す"""
+    rng = np.random.default_rng(seed)
+    n = int(sec * A.SR)
+    y = np.zeros(n)
+    for p in range(people):
+        rate = rng.uniform(3.6, 5.2)                    # 1人あたり1秒に4〜5回
+        tone = rng.uniform(0.6, 1.4)                    # 手の大きさで音色が少し違う
+        amp = rng.uniform(0.4, 1.0) * (0.5 if p % 3 == 0 else 1.0)   # 遠い席は小さく
+        t = rng.uniform(0, 0.25)
+        while t < sec - 0.05:
+            L_ = int((0.008 + 0.01 * rng.random()) * tone * A.SR)
+            g = rng.standard_normal(L_) * np.exp(-np.linspace(0, 5.5, L_))
+            k = int(t * A.SR)
+            y[k:k + L_] += g[:n - k] * amp * rng.uniform(0.7, 1.0)
+            t += 1 / rate * rng.uniform(0.85, 1.15)
+    # 帯域を 700〜5000Hz に（「コツコツ」した低い音を消して、拍手らしい「パチパチ」に）
+    F_ = np.fft.rfft(y)
+    f = np.fft.rfftfreq(n, 1 / A.SR)
+    F_ *= np.clip((f - 500) / 400, 0, 1) * np.clip((6500 - f) / 2000, 0, 1) * (1 + 0.6 * np.exp(-((f - 2200) / 900) ** 2))
+    y = np.fft.irfft(F_, n)
+    y = A.reverb(y, 0.35)[:n]
+    env = np.minimum(1, np.minimum(np.linspace(0, sec / 0.35, n), np.linspace(sec / 1.0, 0, n)))
+    y = y * env
+    y = y / (np.sqrt((y ** 2).mean()) + 1e-9) * vol * 0.16       # 大きさは平均（RMS）でそろえる
+    return np.clip(y, -0.6, 0.6)
+
+
 SH = V.SH
 total = sum(s.dur for s in SH)
 S = {s.name: s for s in SH}
@@ -34,7 +62,7 @@ music = np.zeros_like(voice)
 for s in SH:
     for (t0, sid) in s.lines:
         A.put(voice, V.vo(sid) * (0.85 if sid == "f1" else 1.0), s.start + t0)
-rw, l1, l2, co, q, an, de, th, ou, lo, en, inv = (S[k] for k in ("rewind", "loop1", "loop2", "cold", "q", "answer", "deep", "thanks", "outside", "look", "end", "invite"))
+rw, l1, l2, co, q, an, de, th, ou, lo, en, cu, fi, inv = (S[k] for k in ("rewind", "loop1", "loop2", "cold", "q", "answer", "deep", "thanks", "outside", "look", "end", "curtain", "fin", "invite"))
 at = V.at
 
 
@@ -111,6 +139,18 @@ A.put(fx, A.sfx_boom(1.0, 2.8), lo.start + lo.hit)
 # 終わり：明るい締め、音楽だけで4秒
 A.put(music, A.fade(A.bgm_morning(en.dur + 0.3), 0.3, 1.6), en.start)
 A.put(fx, A.sfx_chime_end(), en.start + 0.2)
+
+# カーテンコール：1人ずつ着地（ポン）→「ありがとう」ドーン＋拍手＋紙吹雪 → 幕が閉じて「完」ドーン
+A.put(fx, TR(0.5), cu.start - 0.45)
+A.put(music, A.fade(A.bgm_morning(cu.dur + fi.dur + 0.3) * 0.8, 0.8, 1.4), cu.start)
+for tp in V.T_POP + [V.T_POP[0] + 1.6]:
+    A.put(fx, A.sfx_pop(0.35), cu.start + tp + 0.35)
+A.put(fx, A.sfx_boom(1.0, 3.0), cu.start + V.T_THX)
+A.put(fx, A.sfx_ding(0.4), cu.start + V.T_THX + 0.05)
+A.put(music, claps(cu.dur - V.T_THX + 1.6, vol=0.55), cu.start + V.T_THX)
+A.put(fx, A.sfx_whoosh(0.6, True, 0.9), fi.start + 0.05)
+A.put(fx, A.sfx_boom(1.0, 3.2), fi.start + 1.9)
+A.put(fx, A.sfx_chime_end(), fi.start + 2.1)
 
 # 最後の案内：明るいまま
 A.put(music, A.fade(A.bgm_morning(inv.dur + 0.3), 0.6, 1.6), inv.start)
