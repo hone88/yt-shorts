@@ -1,12 +1,12 @@
 """ガクチカ・ループ 第18話の音。python3 mix_ep18.py → out_ep18/ガクチカループ_第18話.mp4
-秒針は面接のあいだ止めない（第1話との対比）。転換音・環境音は6割、効果音は7割。"""
+秒針は面接のあいだ止めない（第1話との対比）。転換音・環境音は6割、効果音は7割×0.65（11/26）。"""
 import os, subprocess, wave
 import numpy as np
 import audio as A
 import ep18 as V
 
 OUT = V.OUT
-FX_LEVEL = 0.7
+FX_LEVEL = 0.7 * 0.65          # 11/26 ゆうきさん：効果音をいまの65%に（特に冒頭）
 
 
 def TR(*a):
@@ -73,13 +73,13 @@ def vo_from(path, t0, t1=None):
 
 
 # 巻き戻し：「3回、やり直した。」ドン ＋ テープの逆回転（だんだん速く）
-A.put(fx, A.sfx_boom(1.0, 2.6), 0.02)
+A.put(fx, A.sfx_boom(1.0, 2.6) * 0.75, 0.02)
 rew = A.sfx_rewind()
 k = 0
 while k * len(rew) / A.SR < rw.dur - 0.2:
-    A.put(fx, rew * 0.8, 0.1 + k * len(rew) / A.SR)
+    A.put(fx, rew * 0.4, 0.1 + k * len(rew) / A.SR)
     k += 1
-A.put(music, A.fade(A.bgm_mystery(rw.dur + 0.3) * 0.5, 0.1, 0.4), 0)
+A.put(music, A.fade(A.bgm_mystery(rw.dur + 0.3) * 0.38, 0.1, 0.4), 0)
 
 # 1回目（第1話）：質問の終わり →「…え、っと……」→ 止まる
 import ep1c as P1
@@ -89,7 +89,7 @@ A.put(fx, TR(0.4), l1.start - 0.3)
 A.put(voice, vo_from(f"{V.HERE}/voice/ep1/01.wav", V.L1[0] - a1) * 0.9, l1.start)
 A.put(voice, vo_from(f"{V.HERE}/voice/ep1/02.wav", 0) * 0.9, l1.start + b1 - V.L1[0])
 A.put(fx, A.sfx_stopwatch(s1.tf - V.L1[0], 0.5, 0.15), l1.start)
-A.put(fx, A.sfx_freeze() * 0.8, l1.start + s1.tf - V.L1[0])
+A.put(fx, A.sfx_freeze() * 0.6, l1.start + s1.tf - V.L1[0])
 
 # 2回目（第8話）：「それで、何を考えましたか？」→ 沈黙 → 止まる
 import ep8 as V8
@@ -100,7 +100,7 @@ A.put(voice, vo_from(f"{V.HERE}/voice/ep8/01.wav", V.L2A[0] - q8) * 0.9, l2.star
 a = V.L2A[1] - V.L2A[0]
 A.put(fx, A.sfx_heart(0.5), l2.start + a + 0.2)
 A.put(fx, A.sfx_heart(0.55), l2.start + a + 1.0)
-A.put(fx, A.sfx_freeze() * 0.8, l2.start + a + (s8.tf - V.L2B[0]))
+A.put(fx, A.sfx_freeze() * 0.6, l2.start + a + (s8.tf - V.L2B[0]))
 
 A.put(music, AMB_R(l1.dur + l2.dur, 0.05), l1.start)                       # 面接室の空気（無音にしない）
 # 3回目：「最後の、面接。」→ タイトル
@@ -147,7 +147,7 @@ for tp in V.T_POP + [V.T_POP[0] + 1.6]:
     A.put(fx, A.sfx_pop(0.35), cu.start + tp + 0.35)
 A.put(fx, A.sfx_boom(1.0, 3.0), cu.start + V.T_THX)
 A.put(fx, A.sfx_ding(0.4), cu.start + V.T_THX + 0.05)
-A.put(music, claps(cu.dur - V.T_THX + 1.6, vol=0.55), cu.start + V.T_THX)
+A.put(music, claps(cu.dur - V.T_THX + 1.6, vol=0.36), cu.start + V.T_THX)
 A.put(fx, A.sfx_whoosh(0.6, True, 0.9), fi.start + 0.05)
 A.put(fx, A.sfx_boom(1.0, 3.2), fi.start + 1.9)
 A.put(fx, A.sfx_chime_end(), fi.start + 2.1)
