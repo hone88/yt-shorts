@@ -34,6 +34,7 @@
 - **11/22〜 投稿は確認なしで出してよい**（ゆうき「全部投稿していいよ許可求めんで」）。出したら何を出したかだけ報告する。
 - お店へのDMなど、もしもの続き・ai_1h_yuki 以外の相手に送るものだけは、送る前に一言伝える。
 - TikTok：Claude in Chrome（@moshimono_tsuzuki でログイン済み）の file_upload。10MBまでなので2パスで約9.3MBに圧縮→PCの Videos\もしもの続き に保存（11/25〜 借りたPC laptop-n7558ivf：C:\Users\hit2025\Videos\もしもの続き。ブラウザ拡張は Edge に入っている。約3週間。返すときは全サービスからログアウトして拡張を外す）→device_stage_files→/mnt/user-data/uploads/Videos/もしもの続き/ のパスで file_upload。
+- Instagram：**キャプションは動画の処理が終わってから貼り、「次へ」の前にプレビューに出ているか必ず確認**（11/27 心臓の回でキャプションが抜けた）。
 - Instagram：**Meta Business Suite**（Claude in Chrome・business.facebook.com、asset_id=1455644864300237）で予約投稿する（11/24 連携済み）。インスタ本体へのブラウザログインはしない。投稿一覧は /latest/posts/published_posts/?platform=Instagram で確認。
 - note：Claude in Chrome（ai_1h_yuki）。本文は text/html の paste、YouTube URL は行末で Enter すると埋め込み。画像は、ページに一時の file input を作って file_upload → 置き場所の段落を選択して0.5秒待つ → File を paste → 置き場所の文字を Delete と BackSpace で消す。見出し画像は input.click を差しかえて「画像をアップロード」→「保存」。タグは公開設定のハッシュタグ欄。
 - X：内蔵ブラウザ（ai_1h_yuki）。**本文は改行を入れない**（execCommand で改行を入れると最後の行しか投稿されなかった・11/27）。日本語は約120字まで（長いと Premium の画面に飛ぶ）。Threads：内蔵ブラウザで本文入力後 ctrl+Enter で投稿。
