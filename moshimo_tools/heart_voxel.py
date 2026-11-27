@@ -62,8 +62,7 @@ def frame(k, t):
         c_, uu = cut(t, T, [0.5])
         if c_ == 0:
             cam, tgt, fov = aim(h, -1, 36, 0.3 + 0.2 * uu, 10, 56, 0.3)
-            img = shoot("room1", cam, tgt, fov, [me(40, 40, f=-1)], t=t, grade=NIGHT, vign=0.5)
-            return fixed_tags(img, [(H * 0.28, "1日 約10万回", fade(t, 0.1), RED)])
+            return shoot("room1", cam, tgt, fov, [me(40, 40, f=-1)], t=t, grade=NIGHT, vign=0.5)
         cam, tgt, fov = aim(h, -1, 22, -0.7, 2, 48, 0.28)
         img = shoot("room1", cam, tgt, fov, [me(40, 40, f=-1, face="ふつう")], t=t, grade=NIGHT, vign=0.6)
         return fixed_tags(img, [(H * 0.28, "残り " + count_txt(n), 1.0, RED)])
@@ -82,8 +81,7 @@ def frame(k, t):
         c_, uu = cut(t, T, [0.55])
         if c_ == 0:
             cam, tgt, fov = aim(sh_, 1, 26 - 3 * uu, 0.6, 4, 52, 0.32)
-            img = shoot("train", cam, tgt, fov, [me(60, 8, f=1, sit=True)], t=t)
-            return fixed_tags(img, [(H * 0.255, "ドキドキ ＋数十回", 1.0, PINK), (H * 0.325, "一生 約30億回", fade(t, 0.6), RED)])
+            return shoot("train", cam, tgt, fov, [me(60, 8, f=1, sit=True)], t=t)
         cam, tgt, fov = aim(sh_, 1, 30, 1.2, 2, 50, 0.3)
         return shoot("train", cam, tgt, fov, [me(60, 8, f=1, sit=True, face="笑顔")], t=t)
     if k == 5:   # 最初の1回は？：夕方の通り。歩いて、立ち止まる
@@ -104,8 +102,7 @@ def frame(k, t):
             return shoot("kitchen", cam, tgt, fov, [mom(MX, MZ, face="笑顔", arms="front")], t=t, grade=SEPIA, vign=0.6)
         z = ease(uu)
         c1, t1, _ = aim(mh, -1, 30, 0.1, 2, 46); c2, t2, _ = aim(mh, -1, 24, 0.0, 2, 46)
-        img = shoot("kitchen", lerp(c1, c2, z), lerp(t1, t2, z), 46, [mom(MX, MZ, face="笑顔", arms="front")], t=t, grade=SEPIA, vign=0.6)
-        return fixed_tags(img, [(H * 0.28, "妊娠5〜6週ごろ", fade(uu * T * 0.55, 0.05, 0.3), GOLD)])
+        return shoot("kitchen", lerp(c1, c2, z), lerp(t1, t2, z), 46, [mom(MX, MZ, face="笑顔", arms="front")], t=t, grade=SEPIA, vign=0.6)
     if k == 7:   # そのとき：セピアの玄関。どくん、どくん（画面がふるえ、赤い光がにじむ）
         mh = HEAD(HX, FY + 4, HMZ)
         b = beat(t)
@@ -122,8 +119,7 @@ def frame(k, t):
         c_, uu = cut(t, T, [0.45])
         if c_ == 0:
             cam = (BX + 10, FY + 34, BZ - 14 + 2 * uu); tgt = (MX - 2, FY + 22, MZ)
-            return shot("kitchen", cam, tgt, 50, [mom(MX, MZ), me(BX, BZ)], t=t, grade=EVE, vign=0.4,
-                        tg=[(mh, "お母さんの心臓", fade(t, 0.2, 0.3), RED)])
+            return shot("kitchen", cam, tgt, 50, [mom(MX, MZ), me(BX, BZ)], t=t, grade=EVE, vign=0.4)
         z = ease(uu)
         c1, t1, _ = aim(mh, -1, 28, 0.2, 2, 46); c2, t2, _ = aim(mh, -1, 20, 0.05, 1, 44)
         return shoot("kitchen", lerp(c1, c2, z), lerp(t1, t2, z), 46, [mom(MX, MZ, face="笑顔")], t=t, grade=EVE, vign=0.4)
@@ -132,8 +128,7 @@ def frame(k, t):
         z = ease(u)
         c1, t1, _ = aim(HEAD(60, FY, 60), -1, 22, 0.15, 10, 52)
         cam = lerp(c1, (80, FY + 64, 0), z); tgt = lerp(t1, (60, FY, 80), z)
-        img = shoot("night", cam, tgt, 52, dr + [me(60, 60, f=-1, face="笑顔")], t=t)
-        return fixed_tags(img, [(H * 0.28, "誰に使う？", fade(t, T * 0.35), PINK)])
+        return shoot("night", cam, tgt, 52, dr + [me(60, 60, f=-1, face="笑顔")], t=t)
 
 
 def render_clip(k, out):
