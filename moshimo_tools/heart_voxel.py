@@ -128,7 +128,7 @@ def frame(k, t):
         c1, t1, _ = aim(mh, -1, 28, 0.2, 2, 46); c2, t2, _ = aim(mh, -1, 20, 0.05, 1, 44)
         return shoot("kitchen", lerp(c1, c2, z), lerp(t1, t2, z), 46, [mom(MX, MZ, face="笑顔")], t=t, grade=EVE, vign=0.4)
     if k == 9:   # 誰に使う？：夜の通り。僕から一気に上へ引く
-        dr, _ = crowd(9, 5, 34, 86, 10, 130, t)
+        dr, _ = crowd(6, 5, 30, 50, 10, 130, t); dr2, _ = crowd(6, 9, 70, 90, 10, 130, t); dr = dr + dr2
         z = ease(u)
         c1, t1, _ = aim(HEAD(60, FY, 60), -1, 22, 0.15, 10, 52)
         cam = lerp(c1, (80, FY + 64, 0), z); tgt = lerp(t1, (60, FY, 80), z)
