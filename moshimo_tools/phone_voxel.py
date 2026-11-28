@@ -13,6 +13,7 @@ from elevator_voxel import person, put, finish, shake
 import ball_voxel as BL
 from ball_voxel import speed_label
 
+from kaguya2_voxel import cut   # 読むと elevator_voxel.RS が 4 に変わるので、このあと 3 に戻す
 W, H, FPS, RS = 1080, 1920, 30, 3
 _EVX.RS = RS
 _est = [3.6, 3.1, 4.1, 4.1, 2.8, 4.6, 5.6, 2.8, 6.0, 2.6]
@@ -71,7 +72,6 @@ def sky_frame(k, t, T, p, w, h):
         hand(c, m, 30, 33 + dy, 19, s=0.6)
         phone(c, m, 30, 31 - (0 if t < rel else (t - rel) ** 2 * 4), 26, flat=True)
         if k == 0:
-            from kaguya2_voxel import cut
             ci, uu = cut(t, T, [0.5])
             if ci == 0:
                 cam = (30 + 34 * math.sin(0.7 + 0.3 * uu), 40, 30 - 34 * math.cos(0.7 + 0.3 * uu)); tgt = (30, 31, 26); fov = 58
@@ -94,7 +94,6 @@ def sky_frame(k, t, T, p, w, h):
             cam = (30 + 24 * math.sin(a), 34, 30 - 24 * math.cos(a)); tgt = (30, 30, 30); fov = 56
             lab = ("2〜3秒で 一定の速さ", smooth(T * 0.35, T * 0.5, t))
         else:
-            from kaguya2_voxel import cut
             ci, uu = cut(t, T, [0.45])
             cam = (31, 8, 31) if ci == 0 else (46, 22, 14); tgt = (30, 30, 30); fov = 60
             lab = ("時速 約50km", smooth(T * 0.3, T * 0.45, t))
@@ -102,7 +101,6 @@ def sky_frame(k, t, T, p, w, h):
         plane(c, m, 30, 44, 34)
         q = smooth(0.6, T, t)
         phone(c, m, 34, 40 - 34 * q, 30 - 6 * q, s=0.5, flat=(int(t * 3) % 2 == 0))
-        from kaguya2_voxel import cut
         ci, uu = cut(t, T, [0.5])
         if ci == 0:
             cam = (30 + 55 * math.sin(0.5 + 0.2 * p), 26 - 4 * p, 34 - 55 * math.cos(0.5 + 0.2 * p)); tgt = (30, 34 - 10 * q, 32); fov = 70
@@ -129,7 +127,6 @@ def frame(k, t):
     S = get('ground', build_ground)
     c, m = S.base_c.copy(), S.base_m.copy()
     S.lights = []
-    from kaguya2_voxel import cut
     if k == 4:   # 手から落とす：道路の上。立った人の手から携帯が落ちる → 道路すれすれ
         person(c, m, 40, GY, 30, "stand", look=0)
         q = min(1.0, max(0.0, (t - 0.7) / 0.55)) ** 2
