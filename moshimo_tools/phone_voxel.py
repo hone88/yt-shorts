@@ -102,7 +102,13 @@ def sky_frame(k, t, T, p, w, h):
         plane(c, m, 30, 44, 34)
         q = smooth(0.6, T, t)
         phone(c, m, 34, 40 - 34 * q, 30 - 6 * q, s=0.5, flat=(int(t * 3) % 2 == 0))
-        cam = (30 + 55 * math.sin(0.5 + 0.2 * p), 26 - 4 * p, 34 - 55 * math.cos(0.5 + 0.2 * p)); tgt = (30, 34 - 10 * q, 32); fov = 70
+        from kaguya2_voxel import cut
+        ci, uu = cut(t, T, [0.5])
+        if ci == 0:
+            cam = (30 + 55 * math.sin(0.5 + 0.2 * p), 26 - 4 * p, 34 - 55 * math.cos(0.5 + 0.2 * p)); tgt = (30, 34 - 10 * q, 32); fov = 70
+        else:
+            py = 40 - 34 * q
+            cam = (52, py - 6 + 2 * uu, 14); tgt = (34, py + 4, 28); fov = 60
         lab = ("約5000m", smooth(T * 0.15, T * 0.3, t))
     img, depth = render(S, c, m, cam, tgt, fov, w, h)
     falling = (k in (2, 3)) or (k == 0 and t > 1.4) or k == 1
@@ -112,8 +118,6 @@ def sky_frame(k, t, T, p, w, h):
         for kk in range(5):
             particles(img, depth, cam, tgt, fov, sp - np.array([0, kk * 0.9, 0]), np.tile(C(1, 1, 1) * (1 - kk / 5), (n, 1)), 0.12)
     out = finish(img)
-    if lab:
-        out = speed_label(out, lab[0], lab[1])
     return out
 
 
@@ -136,14 +140,14 @@ def frame(k, t):
         else:
             cam = (54, GY + 5, 14); tgt = (44, GY + 2, 27); fov = 52
         img, depth = render(S, c, m, cam, tgt, fov, w, h)
-        return speed_label(finish(img), "時速 約20km", smooth(T * 0.3, T * 0.45, t))
+        return finish(img)
     if k == 5:   # くらべる：人のまわりを回る
         person(c, m, 40, GY, 52, "stand", look=int(round(math.sin(t * 1.5))))
         phone(c, m, 45, GY + 13, 49, s=0.22, flat=False)
         a = -0.6 + 1.2 * p
         cam = (40 + 26 * math.sin(a), GY + 22, 52 - 26 * math.cos(a)); tgt = (40, GY + 16, 52)
         img, depth = render(S, c, m, cam, tgt, 56, w, h)
-        return speed_label(finish(img), "手 20km ／ 塔 50km", smooth(T * 0.2, T * 0.35, t))
+        return finish(img)
     if k == 7:   # 草むら：遠くから → 草の中の携帯に寄る
         rg = np.random.default_rng(3)
         bush(c, m, 40, 60, rg)
